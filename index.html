@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Grafica</title>
+    <script
+      type="text/javascript"
+      src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"
+    ></script>
+  </head>
+  <body onload="graficar();">
+    Grafica
+    <div
+      style="height: 500px; width: 500px; border: 1px solid"
+      id="grafica"
+    ></div>
+    <h4>Agregar nodo</h4>
+    Etiqueta:
+    <input type="text" id="etiqueta" />
+    <button onclick="agregaVertice();">Agregar</button>
+    <br />
+    <br />
+    <h4>Agregar Arista</h4>
+    De:
+    <input type="text" id="de" />
+    a:
+    <input type="text" id="a" />
+    <button onclick="agregaArista();">Agregar</button>
+    <br />
+    <br />
+    <h4>Eliminar Vertice</h4>
+    Etiqueta:
+    <input type="text" id="eliminar" />
+    <button onclick="eliminarVertice();">Eliminar</button>
+  </body>
+  <script type="text/javascript">
+    let vertices,
+      aristas,
+      grafica,
+      idVertice = 1,
+      idArista = 1;
+
+    const graficar = () => {
+      vertices = new vis.DataSet([]);
+      aristas = new vis.DataSet([]);
+
+      let contenedor = document.getElementById("grafica");
+
+      let datos = {
+        nodes: vertices,
+        edges: aristas,
+      };
+      let opciones = {};
+      grafica = new vis.Network(contenedor, datos, opciones);
+    };
+
+    const agregaVertice = () => {
+      if (
+        vertices.get({
+          filter: (item) => {
+            return item.label == document.getElementById("etiqueta").value;
+          },
+        })[0]
+      ) {
+        return;
+      }
+
+      vertices.add({
+        id: idVertice,
+        label: document.getElementById("etiqueta").value,
+        adyacentes: [],
+      });
+
+      idVertice += 1;
+    };
+
+    const agregaArista = () => {
+      let v1, v2;
+
+      v1 = vertices.get({
+        filter: (item) => {
+          return item.label == document.getElementById("de").value;
+        },
+      })[0];
+
+      v2 = vertices.get({
+        filter: (item) => {
+          return item.label == document.getElementById("a").value;
+        },
+      })[0];
+
+      aristas.add([
+        {
+          id: idArista,
+          from: v1.id,
+          to: v2.id,
+        },
+      ]);
+
+      v1.adyacentes[v2.id] = v2.id;
+      v2.adyacentes[v1.id] = v1.id;
+
+      console.log(v1.adyacentes);
+
+      idArista += 1;
+    };
+
+    const eliminarVertice = () => {
+      vertices.remove({
+        id: vertices.get({
+          filter: (item) => {
+            return item.label == document.getElementById("eliminar").value;
+          },
+        })[0].id,
+      });
+    };
+  </script>
+</html>
