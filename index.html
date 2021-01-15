@@ -53,9 +53,8 @@
     <button onclick="buscaVertice();">Buscar</button>
   </body>
   <script type="text/javascript">
-
     class Grafica {
-      constructor(){
+      constructor() {
         this.vertices = [];
         this.aristas = {};
         this.numVertices = 0;
@@ -68,41 +67,37 @@
       }
 
       agregarArista(v1, v2, peso, etiqueta) {
-        this.aristas[v1].push({etiqueta: etiqueta, vertice: v2, peso:peso});
-        this.aristas[v2].push({etiqueta: etiqueta, vertice: v1, peso: peso});
+        this.aristas[v1].push({ etiqueta: etiqueta, vertice: v2, peso: peso });
+        this.aristas[v2].push({ etiqueta: etiqueta, vertice: v1, peso: peso });
       }
 
-      eliminarVertice(vertice){
-        this.vertices = this.vertices.filter(v => v != vertice)
+      eliminarVertice(vertice) {
+        this.vertices = this.vertices.filter((v) => v != vertice);
       }
 
       eliminarArista(etiqueta, v1, v2) {
-        this.aristas[v1] = this.aristas[v1].filter((i)=>i.etiqueta != etiqueta)
-        this.aristas[v2] = this.aristas[v2].filter((i)=>i.etiqueta != etiqueta)
+        this.aristas[v1] = this.aristas[v1].filter(
+          (i) => i.etiqueta != etiqueta
+        );
+        this.aristas[v2] = this.aristas[v2].filter(
+          (i) => i.etiqueta != etiqueta
+        );
       }
 
       // eliminarArista(arista)
 
-      pintarVertices(){
-        console.log(this.vertices)
+      pintarVertices() {
+        console.log(this.vertices);
       }
 
       pintarAristas() {
-        console.log(this.aristas)
+        console.log(this.aristas);
       }
 
       buscaVertice(vertice) {
-      return console.log(this.vertices.includes(vertice))
+        return console.log(this.vertices.includes(vertice));
+      }
     }
-
-
-
-
-
-    }
-
-
-
 
     let vertices,
       aristas,
@@ -110,7 +105,7 @@
       idVertice = 1,
       idArista = 1;
 
-    const grafica = new Grafica()
+    const grafica = new Grafica();
 
     const graficar = () => {
       vertices = new vis.DataSet([]);
@@ -137,7 +132,7 @@
         return;
       }
 
-      let etiqueta = document.getElementById("etiqueta").value
+      let etiqueta = document.getElementById("etiqueta").value;
       vertices.add({
         id: idVertice,
         label: etiqueta,
@@ -145,14 +140,11 @@
 
       idVertice += 1;
 
-      grafica.agregarVertice(etiqueta)
-      grafica.pintarVertices()
-
+      grafica.agregarVertice(etiqueta);
+      grafica.pintarVertices();
     };
 
     const agregaArista = () => {
-
-
       if (
         aristas.get({
           filter: (item) => {
@@ -177,21 +169,26 @@
         },
       })[0];
 
-      let width = 10
+      let width = 10;
 
       aristas.add([
         {
           id: idArista,
           from: v1.id,
           to: v2.id,
-          label: document.getElementById("arista").value
+          label: document.getElementById("arista").value,
         },
       ]);
 
       idArista += 1;
 
-      grafica.agregarArista(v1.label, v2.label, 0 , document.getElementById("arista").value)
-      grafica.pintarAristas()
+      grafica.agregarArista(
+        v1.label,
+        v2.label,
+        0,
+        document.getElementById("arista").value
+      );
+      grafica.pintarAristas();
     };
 
     const eliminaVertice = () => {
@@ -203,29 +200,30 @@
         })[0].id,
       });
 
-      grafica.eliminarVertice(document.getElementById("eliminar").value)
-      grafica.pintarVertices()
+      grafica.eliminarVertice(document.getElementById("eliminar").value);
+      grafica.pintarVertices();
     };
 
-    const eliminaArista = ()=>{
-
-      let arista =aristas.get({
-          filter: (item) => {
-            return item.label == document.getElementById("eliminarArista").value;
-          },
-        })[0]
-
+    const eliminaArista = () => {
+      let arista = aristas.get({
+        filter: (item) => {
+          return item.label == document.getElementById("eliminarArista").value;
+        },
+      })[0];
 
       aristas.remove({ id: arista.id });
 
-      grafica.eliminarArista(arista.label, document.getElementById("deEliminar").value, document.getElementById("aEliminar").value )
+      grafica.eliminarArista(
+        arista.label,
+        document.getElementById("deEliminar").value,
+        document.getElementById("aEliminar").value
+      );
 
-      grafica.pintarAristas()
+      grafica.pintarAristas();
+    };
 
-    }
-
-    const buscaVertice = ()=>{
-      grafica.buscaVertice(document.getElementById("buscarVertice").value)
-    }
+    const buscaVertice = () => {
+      grafica.buscaVertice(document.getElementById("buscarVertice").value);
+    };
   </script>
 </html>
