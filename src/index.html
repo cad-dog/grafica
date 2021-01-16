@@ -8,78 +8,220 @@
       type="text/javascript"
       src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"
     ></script>
+
+    <link rel="stylesheet" href="tailwind.css" />
   </head>
   <body onload="graficar();">
-    Grafica
-    <div
-      style="height: 500px; width: 500px; border: 1px solid"
-      id="grafica"
-    ></div>
-    <h4>Agregar Vertice</h4>
-    Etiqueta:
-    <input type="text" id="etiqueta" />
-    <button onclick="agregaVertice();">Agregar</button>
-    <br />
-    <br />
-    <h4>Agregar Arista</h4>
-    Etiqueta:
-    <input type="text" id="arista" />
-    De:
-    <input type="text" id="de" />
-    a:
-    <input type="text" id="a" />
-    <button onclick="agregaArista();">Agregar</button>
-    <br />
-    <br />
-    <h4>Eliminar Vertice</h4>
-    Etiqueta:
-    <input type="text" id="eliminar" />
-    <button onclick="eliminaVertice();">Eliminar</button>
-    <br />
-    <br />
-    <h4>Eliminar Arista</h4>
-    Etiqueta:
-    <input type="text" id="eliminarArista" />
-    De:
-    <input type="text" id="deEliminar" />
-    a:
-    <input type="text" id="aEliminar" />
-    <button onclick="eliminaArista();">Eliminar</button>
-    <br />
-    <br />
-    <h4>Buscar vertice</h4>
-    Etiqueta:
-    <input type="text" id="buscarVertice" />
-    <button onclick="buscaVertice();">Buscar</button>
-    <br />
-    <br />
-    <h4>Buscar Arista</h4>
-    Etiqueta:
-    <input type="text" id="buscarArista" />
-    <button onclick="buscaArista();">Buscar</button>
-    <br />
-    <br />
-    <h4>Grado Vertice</h4>
-    Etiqueta:
-    <input type="text" id="gradoVertice" />
-    <button onclick="gradoVertice();">Conseguir grado</button>
-    <br />
-    <br />
-    Numero de vertices
-    <button onclick="numVertices();">numero vertices</button>
-    <br />
-    <br />
-    Numero de aristas
-    <button onclick="numAristas();">numero aristas</button>
-    <br />
-    <br />
-    Vaciar vertice Etiqueta:
-    <input type="text" id="vaciarVertice" />
-    <button onclick="vaciarVertice();">Vaciar vertice</button>
-    <br />
-    <br />
-    Vaciar grafica
-    <button onclick="vaciaGrafica();">Vaciar grafica</button>
+    <div class="p-4">
+      <div class="text-3xl text-gray-800 ml-32">Grafica</div>
+
+      <div class="flex justify-center">
+        <div class="w-1/2 flex-col text-gray-800">
+          <div
+            id="grafica"
+            class="h-96 w-full border-2 border-gray-800 mt-2"
+          ></div>
+          <div class="flex">
+            <div class="flex">
+              <div>Vertices:</div>
+              <div id="numVertices" class="ml-1">0</div>
+            </div>
+            <div class="flex ml-4">
+              <div>Aristas:</div>
+              <div id="numAristas" class="ml-1">0</div>
+            </div>
+          </div>
+          <div id="grado" class="text-gray-600"></div>
+          <div id="busquedaVertice" class="text-gray-600"></div>
+          <div id="busquedaArista" class="text-gray-600"></div>
+        </div>
+        <!-- input vertice -->
+
+        <div class="bg-gray-200 ml-2 mt-2 p-2">
+          <div>
+            <div class="text-gray-600 text-lg font-bold">Agregar Vertice</div>
+            <div class="mt-1 flex text-gray-600">
+              <div class="text-gray-600 mt-1">Etiqueta:</div>
+              <input
+                type="text"
+                id="etiqueta"
+                class="w-20 border-2 border-gray-300 rounded-md ml-1"
+              />
+              <button
+                onclick="agregaVertice();"
+                class="bg-blue-500 py-1 px-2 rounded-md text-white focus:outline-none ml-1 hover:bg-blue-600"
+              >
+                Agregar
+              </button>
+            </div>
+          </div>
+
+          <!-- input arista -->
+
+          <div class="mt-1">
+            <div class="text-gray-600 text-lg font-bold">Agregar Arista</div>
+            <div class="mt-1 flex text-gray-600">
+              <div class="mt-1">Etiqueta:</div>
+              <input
+                type="text"
+                id="arista"
+                class="w-20 border-2 border-gray-300 rounded-md ml-1"
+              />
+              <div class="ml-1 mt-1">de:</div>
+              <input
+                type="text"
+                id="de"
+                class="w-20 border-2 border-gray-300 rounded-md ml-1"
+              />
+              <div class="ml-1 mt-1">a:</div>
+              <input
+                type="text"
+                id="a"
+                class="w-20 border-2 border-gray-300 rounded-md ml-1"
+              />
+              <button
+                onclick="agregaArista();"
+                class="bg-blue-500 py-1 px-2 rounded-md text-white focus:outline-none ml-1 hover:bg-blue-600"
+              >
+                Agregar
+              </button>
+            </div>
+          </div>
+
+          <!-- Grado vertice -->
+          <div class="mt-1">
+            <div class="text-gray-600 text-lg font-bold">Grado vertice</div>
+            <div class="mt-1 flex text-gray-600">
+              <div class="mt-1">Etiqueta:</div>
+              <input
+                type="text"
+                id="gradoVertice"
+                class="w-20 border-2 border-gray-300 rounded-md ml-1"
+              />
+              <button
+                onclick="gradoVertice();"
+                class="bg-blue-500 py-1 px-2 rounded-md text-white focus:outline-none ml-1 hover:bg-blue-600"
+              >
+                Buscar
+              </button>
+            </div>
+          </div>
+
+          <!-- Buscar -->
+          <div class="flex space-x-4">
+            <!-- Buscar vertice -->
+            <div class="mt-1">
+              <div class="text-gray-600 text-lg font-bold">Buscar vertice</div>
+              <div class="mt-1 flex text-gray-600">
+                <div class="mt-1">Etiqueta:</div>
+                <input
+                  type="text"
+                  id="buscarVertice"
+                  class="w-20 border-2 border-gray-300 rounded-md ml-1"
+                />
+                <button
+                  onclick="buscaVertice();"
+                  class="bg-blue-500 py-1 px-2 rounded-md text-white focus:outline-none ml-1 hover:bg-blue-600"
+                >
+                  Buscar
+                </button>
+              </div>
+            </div>
+
+            <!-- Buscar arista -->
+            <div class="mt-1">
+              <div class="text-gray-600 text-lg font-bold">Buscar Arista</div>
+              <div class="mt-1 flex text-gray-600">
+                <div class="mt-1">Etiqueta:</div>
+                <input
+                  type="text"
+                  id="buscarArista"
+                  class="w-20 border-2 border-gray-300 rounded-md ml-1"
+                />
+                <button
+                  onclick="buscaArista();"
+                  class="bg-blue-500 py-1 px-2 rounded-md text-white focus:outline-none ml-1 hover:bg-blue-600"
+                >
+                  Buscar
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Eliminar -->
+
+          <div class="flex">
+            <!-- Eliminar vertice -->
+
+            <div class="mt-1">
+              <div class="text-gray-600 text-lg font-bold">
+                Eliminar Vertice
+              </div>
+              <div class="mt-1 flex text-gray-600">
+                <div class="mt-1">Etiqueta:</div>
+                <input
+                  type="text"
+                  id="eliminar"
+                  class="w-20 border-2 border-gray-300 rounded-md ml-1"
+                />
+                <button
+                  onclick="eliminaVertice();"
+                  class="bg-red-500 py-1 px-2 rounded-md text-white focus:outline-none ml-1 hover:bg-red-600"
+                >
+                  Eliminar
+                </button>
+              </div>
+            </div>
+
+            <!-- Eliminar arista -->
+
+            <div class="mt-1 ml-4">
+              <div class="text-gray-600 text-lg font-bold">Eliminar Arista</div>
+              <div class="mt-1 flex text-gray-600">
+                <div class="mt-1">Etiqueta:</div>
+                <input
+                  type="text"
+                  id="eliminarArista"
+                  class="w-20 border-2 border-gray-300 rounded-md ml-1"
+                />
+                <button
+                  onclick="eliminaArista();"
+                  class="bg-red-500 py-1 px-2 rounded-md text-white focus:outline-none ml-1 hover:bg-red-600"
+                >
+                  Eliminar
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- Vaciar vertice -->
+          <div class="mt-1">
+            <div class="text-gray-600 text-lg font-bold">Vaciar vertice</div>
+            <div class="flex">
+              <div class="mt-1 text-gray-600">Etiqueta:</div>
+              <input
+                type="text"
+                id="vaciarVertice"
+                class="w-20 border-2 border-gray-300 rounded-md ml-1"
+              />
+              <button
+                onclick="vaciarVertice();"
+                class="bg-red-500 py-1 px-2 rounded-md text-white focus:outline-none ml-1 hover:bg-red-600"
+              >
+                Vaciar vertice
+              </button>
+            </div>
+          </div>
+
+          <!-- Vaciar grafica -->
+          <button
+            onclick="vaciaGrafica();"
+            class="mt-4 bg-red-500 py-1 px-2 rounded-md text-white focus:outline-none hover:bg-red-600"
+          >
+            Vaciar grafica
+          </button>
+        </div>
+      </div>
+    </div>
   </body>
   <script type="text/javascript" src="./scripts/grafica.js"></script>
   <script type="text/javascript" src="./scripts/vis.js"></script>

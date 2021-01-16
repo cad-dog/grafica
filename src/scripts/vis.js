@@ -38,6 +38,10 @@ const agregaVertice = () => {
   });
 
   idVertice += 1;
+  grafica.numVertices += 1;
+
+  document.getElementById("numVertices").innerHTML =
+    "<p>" + grafica.numVertices + "</p>";
 
   grafica.agregarVertice(etiqueta);
   grafica.pintarVertices();
@@ -69,7 +73,9 @@ const agregaArista = () => {
     },
   })[0];
 
-  let width = 10;
+  if (v1.label == v2.label) {
+    grafica.lazos[v1.label] += 1;
+  }
 
   aristas.add([
     {
@@ -91,6 +97,9 @@ const agregaArista = () => {
 
   grafica.numAristas += 1;
 
+  document.getElementById("numAristas").innerHTML =
+    "<p>" + grafica.numAristas + "</p>";
+
   grafica.pintarAristas();
 };
 
@@ -103,8 +112,17 @@ const eliminaVertice = () => {
     })[0].id,
   });
 
+  grafica.numAristas -=
+    grafica.gradoVertice(document.getElementById("eliminar").value) -
+    grafica.lazos[document.getElementById("eliminar").value];
+
+  grafica.numVertices -= 1;
+  document.getElementById("numVertices").innerHTML =
+    "<p>" + grafica.numVertices + "</p>";
+  document.getElementById("numAristas").innerHTML =
+    "<p>" + grafica.numAristas + "</p>";
   grafica.eliminarVertice(document.getElementById("eliminar").value);
-  grafica.pintarVertices();
+  grafica.pintarAristas();
 };
 
 const eliminaArista = () => {
@@ -116,21 +134,42 @@ const eliminaArista = () => {
 
   aristas.remove({ id: arista.id });
 
+  grafica.numAristas -= 1;
+  document.getElementById("numAristas").innerHTML =
+    "<p>" + grafica.numAristas + "</p>";
+
   grafica.eliminarArista(arista.label);
   grafica.numAristas -= 1;
   grafica.pintarAristas();
 };
 
 const buscaVertice = () => {
-  grafica.buscaVertice(document.getElementById("buscarVertice").value);
+  document.getElementById("busquedaVertice").innerHTML =
+    "<p> El vertice " +
+    document.getElementById("buscarVertice").value +
+    (grafica.buscaVertice(document.getElementById("buscarVertice").value)
+      ? ""
+      : " no") +
+    " existe</p>";
 };
 
 const buscaArista = () => {
-  grafica.buscaArista(document.getElementById("buscarArista").value);
+  document.getElementById("busquedaArista").innerHTML =
+    "<p> La arista " +
+    document.getElementById("buscarArista").value +
+    (grafica.buscaArista(document.getElementById("buscarArista").value)
+      ? ""
+      : " no") +
+    " existe</p>";
 };
 
 const gradoVertice = () => {
-  grafica.gradoVertice(document.getElementById("gradoVertice").value);
+  document.getElementById("grado").innerHTML =
+    "<p>El grado del vertice " +
+    document.getElementById("gradoVertice").value +
+    " es: " +
+    grafica.gradoVertice(document.getElementById("gradoVertice").value) +
+    " </p>";
 };
 
 const numVertices = () => {
@@ -143,7 +182,6 @@ const numAristas = () => {
 
 const vaciarVertice = () => {
   let vertice = document.getElementById("vaciarVertice").value;
-  let arista;
   grafica.aristas[vertice].map((arista) => {
     arista = aristas.get({
       filter: (item) => {
@@ -151,8 +189,17 @@ const vaciarVertice = () => {
       },
     })[0];
 
-    aristas.remove({ id: arista.id });
+    if (arista) {
+      aristas.remove({ id: arista.id });
+    }
   });
+
+  grafica.numAristas -=
+    grafica.gradoVertice(document.getElementById("vaciarVertice").value) -
+    grafica.lazos[document.getElementById("vaciarVertice").value];
+
+  document.getElementById("numAristas").innerHTML =
+    "<p>" + grafica.numAristas + "</p>";
 
   grafica.vaciaVertice(vertice);
   grafica.pintarAristas();
@@ -168,8 +215,15 @@ const vaciaGrafica = () => {
     edges: aristas,
   };
   let opciones = {};
+
   graficaVis = new vis.Network(contenedor, datos, opciones);
   grafica.vaciaGrafica();
+
+  document.getElementById("numVertices").innerHTML =
+    "<p>" + grafica.numVertices + "</p>";
+  document.getElementById("numAristas").innerHTML =
+    "<p>" + grafica.numAristas + "</p>";
+
   grafica.pintarAristas();
   grafica.pintarVertices();
 };

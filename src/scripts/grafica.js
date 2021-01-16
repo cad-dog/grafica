@@ -3,9 +3,12 @@ class Grafica {
     this.vertices = [];
     this.aristas = {};
     this.numAristas = 0;
+    this.numVertices = 0;
+    this.lazos = {};
   }
 
   agregarVertice(vertice) {
+    this.lazos[vertice] = 0;
     this.vertices.push(vertice);
     this.aristas[vertice] = [];
   }
@@ -17,6 +20,8 @@ class Grafica {
 
   eliminarVertice(vertice) {
     this.vertices = this.vertices.filter((v) => v != vertice);
+    this.vaciaVertice(vertice);
+    delete this.aristas[vertice];
   }
 
   eliminarArista(arista) {
@@ -26,7 +31,7 @@ class Grafica {
   }
 
   buscaVertice(vertice) {
-    return console.log(this.vertices.includes(vertice));
+    return this.vertices.includes(vertice);
   }
 
   buscaArista(arista) {
@@ -36,11 +41,11 @@ class Grafica {
         encontrado = true;
       }
     });
-    return console.log(encontrado);
+    return encontrado;
   }
 
   gradoVertice(vertice) {
-    return console.log(this.aristas[vertice].length);
+    return this.aristas[vertice].length;
   }
 
   numeroVertices() {
@@ -63,6 +68,9 @@ class Grafica {
   vaciaGrafica() {
     this.vertices = [];
     this.aristas = {};
+    this.lazos = {};
+    this.numAristas = 0;
+    this.numVertices = 0;
   }
 
   pintarVertices() {
