@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Grafica</title>
+    <script
+      type="text/javascript"
+      src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"
+    ></script>
+  </head>
+  <body onload="graficar();">
+    Grafica
+    <div
+      style="height: 500px; width: 500px; border: 1px solid"
+      id="grafica"
+    ></div>
+    <h4>Agregar Vertice</h4>
+    Etiqueta:
+    <input type="text" id="etiqueta" />
+    <button onclick="agregaVertice();">Agregar</button>
+    <br />
+    <br />
+    <h4>Agregar Arista</h4>
+    Etiqueta:
+    <input type="text" id="arista" />
+    De:
+    <input type="text" id="de" />
+    a:
+    <input type="text" id="a" />
+    <button onclick="agregaArista();">Agregar</button>
+    <br />
+    <br />
+    <h4>Eliminar Vertice</h4>
+    Etiqueta:
+    <input type="text" id="eliminar" />
+    <button onclick="eliminaVertice();">Eliminar</button>
+    <br />
+    <br />
+    <h4>Eliminar Arista</h4>
+    Etiqueta:
+    <input type="text" id="eliminarArista" />
+    De:
+    <input type="text" id="deEliminar" />
+    a:
+    <input type="text" id="aEliminar" />
+    <button onclick="eliminaArista();">Eliminar</button>
+    <br />
+    <br />
+    <h4>Buscar vertice</h4>
+    Etiqueta:
+    <input type="text" id="buscarVertice" />
+    <button onclick="buscaVertice();">Buscar</button>
+    <br />
+    <br />
+    <h4>Buscar Arista</h4>
+    Etiqueta:
+    <input type="text" id="buscarArista" />
+    <button onclick="buscaArista();">Buscar</button>
+    <br />
+    <br />
+    <h4>Grado Vertice</h4>
+    Etiqueta:
+    <input type="text" id="gradoVertice" />
+    <button onclick="gradoVertice();">Conseguir grado</button>
+    <br />
+    <br />
+    Numero de vertices
+    <button onclick="numVertices();">numero vertices</button>
+    <br />
+    <br />
+    Numero de aristas
+    <button onclick="numAristas();">numero aristas</button>
+    <br />
+    <br />
+    Vaciar vertice Etiqueta:
+    <input type="text" id="vaciarVertice" />
+    <button onclick="vaciarVertice();">Vaciar vertice</button>
+    <br />
+    <br />
+    Vaciar grafica
+    <button onclick="vaciaGrafica();">Vaciar grafica</button>
+  </body>
+  <script type="text/javascript" src="./scripts/grafica.js"></script>
+  <script type="text/javascript" src="./scripts/vis.js"></script>
+</html>
