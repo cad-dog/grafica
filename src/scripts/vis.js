@@ -1,10 +1,13 @@
 let vertices,
   aristas,
+  aristasCopia,
+  verticesCopia,
   graficaVis,
   idVertice = 1,
-  idArista = 1;
+  idArista = 1,
+  graficaCopia;
 
-const grafica = new Grafica();
+let grafica = new Grafica();
 
 const graficar = () => {
   vertices = new vis.DataSet([]);
@@ -104,6 +107,23 @@ const agregaArista = () => {
 };
 
 const eliminaVertice = () => {
+  if (
+    !vertices.get({
+      filter: (item) => {
+        return item.label == document.getElementById("eliminar").value;
+      },
+    })[0]
+  ) {
+    document.getElementById("error").innerHTML =
+      "<p>El vertice " +
+      document.getElementById("eliminar").value +
+      " no existe</p>";
+    console.log(
+      "El vertice " + document.getElementById("eliminar").value + " no existe"
+    );
+    return;
+  }
+
   vertices.remove({
     id: vertices.get({
       filter: (item) => {
@@ -126,6 +146,17 @@ const eliminaVertice = () => {
 };
 
 const eliminaArista = () => {
+  if (
+    !aristas.get({
+      filter: (item) => {
+        return item.label == document.getElementById("eliminarArista").value;
+      },
+    })[0]
+  ) {
+    console.log("No se puede eliminar un arista que no existe");
+    return;
+  }
+
   let arista = aristas.get({
     filter: (item) => {
       return item.label == document.getElementById("eliminarArista").value;
@@ -217,13 +248,46 @@ const vaciaGrafica = () => {
   let opciones = {};
 
   graficaVis = new vis.Network(contenedor, datos, opciones);
-  grafica.vaciaGrafica();
+  grafica = new Grafica();
 
   document.getElementById("numVertices").innerHTML =
     "<p>" + grafica.numVertices + "</p>";
   document.getElementById("numAristas").innerHTML =
     "<p>" + grafica.numAristas + "</p>";
 
-  grafica.pintarAristas();
-  grafica.pintarVertices();
+  console.log(grafica);
+};
+
+const copiaGrafica = () => {
+  graficaCopia = grafica;
+  aristasCopia = aristas;
+  verticesCopia = vertices;
+
+  console.log(graficaCopia);
+};
+
+const restauraGrafica = () => {
+  if (!grafica.numVertices) {
+    console.log("No hay una copia guardada");
+    return;
+  }
+
+  vertices = verticesCopia;
+  aristas = aristasCopia;
+  let contenedor = document.getElementById("grafica");
+
+  let datos = {
+    nodes: vertices,
+    edges: aristas,
+  };
+  let opciones = {};
+
+  graficaVis = new vis.Network(contenedor, datos, opciones);
+
+  grafica = graficaCopia;
+
+  document.getElementById("numVertices").innerHTML =
+    "<p>" + grafica.numVertices + "</p>";
+  document.getElementById("numAristas").innerHTML =
+    "<p>" + grafica.numAristas + "</p>";
 };

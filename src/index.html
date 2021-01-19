@@ -34,6 +34,7 @@
           <div id="grado" class="text-gray-600"></div>
           <div id="busquedaVertice" class="text-gray-600"></div>
           <div id="busquedaArista" class="text-gray-600"></div>
+          <div id="error" class="text-red-500"></div>
         </div>
         <!-- input vertice -->
 
@@ -212,7 +213,25 @@
             </div>
           </div>
 
+          <!-- Copiar grafica -->
+          <button
+            onclick="copiaGrafica();"
+            class="mt-4 bg-blue-500 py-1 px-2 rounded-md text-white focus:outline-none hover:bg-blue-600"
+          >
+            Copiar grafica
+          </button>
+
+          <!-- Restaurar grafica -->
+
+          <button
+            onclick="restauraGrafica();"
+            class="mt-4 bg-blue-500 py-1 px-2 rounded-md text-white focus:outline-none hover:bg-blue-600"
+          >
+            Restaurar grafica
+          </button>
+
           <!-- Vaciar grafica -->
+
           <button
             onclick="vaciaGrafica();"
             class="mt-4 bg-red-500 py-1 px-2 rounded-md text-white focus:outline-none hover:bg-red-600"
