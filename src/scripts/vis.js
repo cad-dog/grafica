@@ -115,11 +115,11 @@ const eliminaVertice = () => {
     })[0]
   ) {
     document.getElementById("error").innerHTML =
-      "<p>El vertice " +
+      "<p>El vértice " +
       document.getElementById("eliminar").value +
       " no existe</p>";
     console.log(
-      "El vertice " + document.getElementById("eliminar").value + " no existe"
+      "El vértice " + document.getElementById("eliminar").value + " no existe"
     );
     return;
   }
@@ -176,7 +176,7 @@ const eliminaArista = () => {
 
 const buscaVertice = () => {
   document.getElementById("busquedaVertice").innerHTML =
-    "<p> El vertice " +
+    "<p> El vértice " +
     document.getElementById("buscarVertice").value +
     (grafica.buscaVertice(document.getElementById("buscarVertice").value)
       ? ""
@@ -196,7 +196,7 @@ const buscaArista = () => {
 
 const gradoVertice = () => {
   document.getElementById("grado").innerHTML =
-    "<p>El grado del vertice " +
+    "<p>El grado del vértice " +
     document.getElementById("gradoVertice").value +
     " es: " +
     grafica.gradoVertice(document.getElementById("gradoVertice").value) +
