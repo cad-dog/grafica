@@ -31,8 +31,15 @@ const agregaVertice = () => {
       },
     })[0]
   ) {
+    document.getElementById("error").innerHTML =
+      "<p>El vértice " +
+      document.getElementById("etiqueta").value +
+      " ya existe</p>";
+
     return;
   }
+
+  document.getElementById("error").innerHTML = "";
 
   let etiqueta = document.getElementById("etiqueta").value;
   vertices.add({
@@ -47,11 +54,26 @@ const agregaVertice = () => {
     "<p>" + grafica.numVertices + "</p>";
 
   grafica.agregarVertice(etiqueta);
-  grafica.pintarVertices();
   grafica.pintarAristas();
 };
 
 const agregaArista = () => {
+  if (!grafica.aristas[document.getElementById("de").value]) {
+    document.getElementById("exito").innerHTML = "";
+
+    document.getElementById("error").innerHTML =
+      "<p>El vértice " + document.getElementById("de").value + " no existe</p>";
+
+    return;
+  } else if (!grafica.aristas[document.getElementById("a").value]) {
+    document.getElementById("exito").innerHTML = "";
+
+    document.getElementById("error").innerHTML =
+      "<p>El vértice " + document.getElementById("a").value + " no existe</p>";
+
+    return;
+  }
+
   if (
     aristas.get({
       filter: (item) => {
@@ -59,8 +81,13 @@ const agregaArista = () => {
       },
     })[0]
   ) {
+    document.getElementById("error").innerHTML =
+      "<p>La arista " +
+      document.getElementById("arista").value +
+      " ya existe</p>";
     return;
   }
+  document.getElementById("error").innerHTML = "";
 
   let v1, v2;
 
@@ -121,8 +148,12 @@ const eliminaVertice = () => {
     console.log(
       "El vértice " + document.getElementById("eliminar").value + " no existe"
     );
+
+    document.getElementById("exito").innerHTML = "";
+
     return;
   }
+  document.getElementById("error").innerHTML = "";
 
   vertices.remove({
     id: vertices.get({
@@ -153,9 +184,22 @@ const eliminaArista = () => {
       },
     })[0]
   ) {
-    console.log("No se puede eliminar un arista que no existe");
+    document.getElementById("error").innerHTML =
+      "<p>La arista " +
+      document.getElementById("eliminarArista").value +
+      " no existe</p>";
+    console.log(
+      "La arista " +
+        document.getElementById("eliminarArista").value +
+        " no existe"
+    );
+
+    document.getElementById("exito").innerHTML = "";
+
     return;
   }
+
+  document.getElementById("error").innerHTML = "";
 
   let arista = aristas.get({
     filter: (item) => {
@@ -175,27 +219,66 @@ const eliminaArista = () => {
 };
 
 const buscaVertice = () => {
-  document.getElementById("busquedaVertice").innerHTML =
-    "<p> El vértice " +
-    document.getElementById("buscarVertice").value +
-    (grafica.buscaVertice(document.getElementById("buscarVertice").value)
-      ? ""
-      : " no") +
-    " existe</p>";
+  if (grafica.buscaVertice(document.getElementById("buscarVertice").value)) {
+    document.getElementById("exito").innerHTML =
+      "<p> El vértice " +
+      document.getElementById("buscarVertice").value +
+      " existe</p>";
+
+    document.getElementById("error").innerHTML = "";
+  } else {
+    document.getElementById("error").innerHTML =
+      "<p> El vértice " +
+      document.getElementById("buscarVertice").value +
+      " no existe</p>";
+
+    document.getElementById("exito").innerHTML = "";
+  }
 };
 
 const buscaArista = () => {
-  document.getElementById("busquedaArista").innerHTML =
-    "<p> La arista " +
-    document.getElementById("buscarArista").value +
-    (grafica.buscaArista(document.getElementById("buscarArista").value)
-      ? ""
-      : " no") +
-    " existe</p>";
+  if (grafica.buscaArista(document.getElementById("buscarArista").value)) {
+    document.getElementById("exito").innerHTML =
+      "<p> La arista " +
+      document.getElementById("buscarArista").value +
+      " existe</p>";
+
+    document.getElementById("error").innerHTML = "";
+  } else {
+    document.getElementById("error").innerHTML =
+      "<p> La arista " +
+      document.getElementById("buscarArista").value +
+      " no existe</p>";
+
+    document.getElementById("exito").innerHTML = "";
+  }
 };
 
 const gradoVertice = () => {
-  document.getElementById("grado").innerHTML =
+  if (
+    !vertices.get({
+      filter: (item) => {
+        return item.label == document.getElementById("gradoVertice").value;
+      },
+    })[0]
+  ) {
+    document.getElementById("error").innerHTML =
+      "<p>El vértice " +
+      document.getElementById("gradoVertice").value +
+      " no existe</p>";
+
+    document.getElementById("exito").innerHTML = "";
+
+    console.log(
+      "El vértice " +
+        document.getElementById("gradoVertice").value +
+        " no existe"
+    );
+    return;
+  }
+  document.getElementById("error").innerHTML = "";
+
+  document.getElementById("exito").innerHTML =
     "<p>El grado del vértice " +
     document.getElementById("gradoVertice").value +
     " es: " +
@@ -212,6 +295,29 @@ const numAristas = () => {
 };
 
 const vaciarVertice = () => {
+  if (
+    !vertices.get({
+      filter: (item) => {
+        return item.label == document.getElementById("vaciarVertice").value;
+      },
+    })[0]
+  ) {
+    document.getElementById("error").innerHTML =
+      "<p>El vértice " +
+      document.getElementById("vaciarVertice").value +
+      " no existe</p>";
+
+    document.getElementById("exito").innerHTML = "";
+
+    console.log(
+      "El vértice " +
+        document.getElementById("vaciarVertice").value +
+        " no existe"
+    );
+    return;
+  }
+  document.getElementById("error").innerHTML = "";
+
   let vertice = document.getElementById("vaciarVertice").value;
   grafica.aristas[vertice].map((arista) => {
     arista = aristas.get({
@@ -259,22 +365,27 @@ const vaciaGrafica = () => {
 };
 
 const copiaGrafica = () => {
-  graficaCopia = grafica;
-  aristasCopia = aristas;
-  verticesCopia = vertices;
+  graficaCopia = JSON.parse(JSON.stringify(grafica));
+
+  aristasCopia = new vis.DataSet();
+  verticesCopia = new vis.DataSet();
+
+  aristasCopia.add(aristas.get());
+  verticesCopia.add(vertices.get());
 
   console.log(graficaCopia);
 };
 
 const restauraGrafica = () => {
-  if (!grafica.numVertices) {
+  if (!graficaCopia) {
     console.log("No hay una copia guardada");
     return;
   }
 
+  let contenedor = document.getElementById("grafica");
+
   vertices = verticesCopia;
   aristas = aristasCopia;
-  let contenedor = document.getElementById("grafica");
 
   let datos = {
     nodes: vertices,
@@ -282,9 +393,11 @@ const restauraGrafica = () => {
   };
   let opciones = {};
 
+  console.log(datos);
+
   graficaVis = new vis.Network(contenedor, datos, opciones);
 
-  grafica = graficaCopia;
+  grafica = JSON.parse(JSON.stringify(graficaCopia));
 
   document.getElementById("numVertices").innerHTML =
     "<p>" + grafica.numVertices + "</p>";

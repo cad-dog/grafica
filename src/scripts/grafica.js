@@ -73,10 +73,6 @@ class Grafica {
     this.numVertices = 0;
   }
 
-  // copiaGrafica() {
-
-  // }
-
   pintarVertices() {
     console.log(this.vertices);
   }
