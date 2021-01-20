@@ -26,7 +26,7 @@ class Grafica {
 
   eliminarArista(arista) {
     Object.keys(this.aristas).map((i) => {
-      this.aristas[i] = this.aristas[i].filter((j) => j.arista != arista);
+      this.aristas[i] = this.aristas[i].filter((j) => j.etiqueta != arista);
     });
   }
 
@@ -71,6 +71,10 @@ class Grafica {
     this.lazos = {};
     this.numAristas = 0;
     this.numVertices = 0;
+  }
+
+  copiaGrafica() {
+    return this;
   }
 
   pintarVertices() {

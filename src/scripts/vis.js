@@ -184,6 +184,8 @@ const eliminaArista = () => {
       },
     })[0]
   ) {
+    grafica.eliminarArista(document.getElementById("eliminarArista").value);
+
     document.getElementById("error").innerHTML =
       "<p>La arista " +
       document.getElementById("eliminarArista").value +
@@ -214,7 +216,6 @@ const eliminaArista = () => {
     "<p>" + grafica.numAristas + "</p>";
 
   grafica.eliminarArista(arista.label);
-  grafica.numAristas -= 1;
   grafica.pintarAristas();
 };
 
@@ -365,7 +366,7 @@ const vaciaGrafica = () => {
 };
 
 const copiaGrafica = () => {
-  graficaCopia = JSON.parse(JSON.stringify(grafica));
+  graficaCopia = grafica.copiaGrafica();
 
   aristasCopia = new vis.DataSet();
   verticesCopia = new vis.DataSet();
@@ -393,11 +394,11 @@ const restauraGrafica = () => {
   };
   let opciones = {};
 
-  console.log(datos);
-
   graficaVis = new vis.Network(contenedor, datos, opciones);
 
-  grafica = JSON.parse(JSON.stringify(graficaCopia));
+  grafica = graficaCopia.copiaGrafica();
+
+  grafica.pintarAristas();
 
   document.getElementById("numVertices").innerHTML =
     "<p>" + grafica.numVertices + "</p>";
