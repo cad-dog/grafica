@@ -5,7 +5,8 @@ let vertices,
   graficaVis,
   idVertice = 1,
   idArista = 1,
-  graficaCopia;
+  graficaCopia,
+  bipartita;
 
 let grafica = new Grafica();
 
@@ -21,6 +22,11 @@ const graficar = () => {
   };
   let opciones = {};
   graficaVis = new vis.Network(contenedor, datos, opciones);
+
+  bipartita = grafica.esBipartita();
+
+  document.getElementById("bipartita").innerHTML =
+    "<p>Grafica " + (bipartita ? "" : "no ") + "bipartita</p>";
 };
 
 const agregaVertice = () => {
@@ -54,7 +60,12 @@ const agregaVertice = () => {
     "<p>" + grafica.numVertices + "</p>";
 
   grafica.agregarVertice(etiqueta);
+
+  document.getElementById("bipartita").innerHTML =
+    "<p>Grafica " + (grafica.esBipartita() ? "" : "no ") + "bipartita</p>";
+
   grafica.pintarAristas();
+  grafica.pintarVertices();
 };
 
 const agregaArista = () => {
@@ -129,8 +140,11 @@ const agregaArista = () => {
 
   document.getElementById("numAristas").innerHTML =
     "<p>" + grafica.numAristas + "</p>";
+  document.getElementById("bipartita").innerHTML =
+    "<p>Grafica " + (grafica.esBipartita() ? "" : "no ") + "bipartita</p>";
 
   grafica.pintarAristas();
+  grafica.pintarVertices();
 };
 
 const eliminaVertice = () => {
@@ -173,7 +187,10 @@ const eliminaVertice = () => {
   document.getElementById("numAristas").innerHTML =
     "<p>" + grafica.numAristas + "</p>";
   grafica.eliminarVertice(document.getElementById("eliminar").value);
+  document.getElementById("bipartita").innerHTML =
+    "<p>Grafica " + (grafica.esBipartita() ? "" : "no ") + "bipartita</p>";
   grafica.pintarAristas();
+  grafica.pintarVertices();
 };
 
 const eliminaArista = () => {
@@ -184,8 +201,6 @@ const eliminaArista = () => {
       },
     })[0]
   ) {
-    grafica.eliminarArista(document.getElementById("eliminarArista").value);
-
     document.getElementById("error").innerHTML =
       "<p>La arista " +
       document.getElementById("eliminarArista").value +
@@ -216,6 +231,8 @@ const eliminaArista = () => {
     "<p>" + grafica.numAristas + "</p>";
 
   grafica.eliminarArista(arista.label);
+  document.getElementById("bipartita").innerHTML =
+    "<p>Grafica " + (grafica.esBipartita() ? "" : "no ") + "bipartita</p>";
   grafica.pintarAristas();
 };
 
@@ -340,6 +357,10 @@ const vaciarVertice = () => {
     "<p>" + grafica.numAristas + "</p>";
 
   grafica.vaciaVertice(vertice);
+
+  document.getElementById("bipartita").innerHTML =
+    "<p>Grafica " + (grafica.esBipartita() ? "" : "no ") + "bipartita</p>";
+
   grafica.pintarAristas();
 };
 
@@ -361,6 +382,8 @@ const vaciaGrafica = () => {
     "<p>" + grafica.numVertices + "</p>";
   document.getElementById("numAristas").innerHTML =
     "<p>" + grafica.numAristas + "</p>";
+  document.getElementById("bipartita").innerHTML =
+    "<p>Grafica " + (grafica.esBipartita() ? "" : "no ") + "bipartita</p>";
 
   console.log(grafica);
 };
@@ -404,4 +427,6 @@ const restauraGrafica = () => {
     "<p>" + grafica.numVertices + "</p>";
   document.getElementById("numAristas").innerHTML =
     "<p>" + grafica.numAristas + "</p>";
+  document.getElementById("bipartita").innerHTML =
+    "<p>Grafica " + (grafica.esBipartita() ? "" : "no ") + "bipartita</p>";
 };

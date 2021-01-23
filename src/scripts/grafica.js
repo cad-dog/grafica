@@ -1,6 +1,6 @@
 class Grafica {
   constructor() {
-    this.vertices = [];
+    this.vertices = {};
     this.aristas = {};
     this.numAristas = 0;
     this.numVertices = 0;
@@ -9,7 +9,7 @@ class Grafica {
 
   agregarVertice(vertice) {
     this.lazos[vertice] = 0;
-    this.vertices.push(vertice);
+    this.vertices[vertice] = { etiqueta: vertice };
     this.aristas[vertice] = [];
   }
 
@@ -19,8 +19,8 @@ class Grafica {
   }
 
   eliminarVertice(vertice) {
-    this.vertices = this.vertices.filter((v) => v != vertice);
     this.vaciaVertice(vertice);
+    delete this.vertices[vertice];
     delete this.aristas[vertice];
   }
 
@@ -66,7 +66,7 @@ class Grafica {
   }
 
   vaciaGrafica() {
-    this.vertices = [];
+    this.vertices = {};
     this.aristas = {};
     this.lazos = {};
     this.numAristas = 0;
@@ -75,6 +75,39 @@ class Grafica {
 
   copiaGrafica() {
     return this;
+  }
+
+  esBipartita() {
+    if (Object.keys(this.vertices).length < 1) {
+      return false;
+    }
+    this.vertices[Object.keys(this.vertices)[0]].conjunto = 1;
+    let cola = [],
+      u,
+      bipartita = true;
+
+    cola.push(Object.keys(this.vertices)[0]);
+
+    while (cola.length > 0) {
+      u = cola.pop();
+      if (this.lazos[u]) return false;
+      this.aristas[u].map((i) => {
+        if (!this.vertices[i.vertice].conjunto) {
+          this.vertices[i.vertice].conjunto = 1 - this.vertices[u].conjunto;
+          cola.push(i.vertice);
+        } else if (
+          this.vertices[i.vertice].conjunto == this.vertices[u].conjunto
+        ) {
+          bipartita = false;
+        }
+      });
+    }
+
+    Object.keys(this.vertices).map((i) => {
+      if (this.vertices[i].conjunto) delete this.vertices[i].conjunto;
+    });
+
+    return bipartita;
   }
 
   pintarVertices() {
