@@ -8,7 +8,6 @@ class Grafica {
   }
 
   agregarVertice(vertice) {
-    this.lazos[vertice] = 0;
     this.vertices[vertice] = { etiqueta: vertice };
     this.aristas[vertice] = [];
   }
@@ -78,34 +77,58 @@ class Grafica {
   }
 
   esBipartita() {
-    if (Object.keys(this.vertices).length < 1) {
-      return false;
-    }
-    this.vertices[Object.keys(this.vertices)[0]].conjunto = 1;
-    let cola = [],
-      u,
-      bipartita = true;
-
-    cola.push(Object.keys(this.vertices)[0]);
-
-    while (cola.length > 0) {
-      u = cola.pop();
-      if (this.lazos[u]) return false;
-      this.aristas[u].map((i) => {
-        if (!this.vertices[i.vertice].conjunto) {
-          this.vertices[i.vertice].conjunto = 1 - this.vertices[u].conjunto;
-          cola.push(i.vertice);
-        } else if (
-          this.vertices[i.vertice].conjunto == this.vertices[u].conjunto
-        ) {
-          bipartita = false;
-        }
-      });
-    }
-
     Object.keys(this.vertices).map((i) => {
       if (this.vertices[i].conjunto) delete this.vertices[i].conjunto;
     });
+
+    if (Object.keys(this.vertices).length < 1) {
+      return true;
+    }
+
+    if (this.numAristas < 1) {
+      console.log("hola");
+      Object.keys(this.vertices).map((i) => {
+        this.vertices[i].conjunto = 1;
+      });
+    }
+
+    this.vertices[Object.keys(this.vertices)[0]].conjunto = 1;
+    let cola = [],
+      u,
+      bipartita = true,
+      seguir = true;
+
+    cola.push(Object.keys(this.vertices)[0]);
+
+    if (Object.keys(this.lazos).length > 0) return false;
+    while (seguir) {
+      while (cola.length > 0) {
+        u = cola.pop();
+
+        this.aristas[u].map((i) => {
+          if (!this.vertices[i.vertice].conjunto) {
+            this.vertices[i.vertice].conjunto = 1 - this.vertices[u].conjunto;
+            cola.push(i.vertice);
+          } else if (
+            this.vertices[i.vertice].conjunto == this.vertices[u].conjunto ||
+            this.aristas[i.vertice].filter((j) => {
+              return j.vertice == u;
+            }).length > 1
+          ) {
+            bipartita = false;
+          }
+        });
+      }
+
+      for (let i in this.vertices) {
+        if (this.vertices[i].conjunto == undefined) {
+          this.vertices[i].conjunto = 1;
+          cola.push(i);
+          break;
+        }
+      }
+      if (cola.length < 1) seguir = false;
+    }
 
     return bipartita;
   }
