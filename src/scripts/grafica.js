@@ -19,6 +19,7 @@ class Grafica {
 
   eliminarVertice(vertice) {
     this.vaciaVertice(vertice);
+    if (this.lazos[vertice]) delete this.lazos[vertice];
     delete this.vertices[vertice];
     delete this.aristas[vertice];
   }
@@ -30,7 +31,7 @@ class Grafica {
   }
 
   buscaVertice(vertice) {
-    return this.vertices.includes(vertice);
+    return Object.keys(this.vertices).includes(vertice);
   }
 
   buscaArista(arista) {
