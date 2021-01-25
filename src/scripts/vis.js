@@ -39,7 +39,7 @@ const graficar = () => {
   graficaVis = new vis.Network(contenedor, datos, opciones);
 
   bipartita.innerHTML =
-    "<p>Grafica " + (esBipartita ? "" : "no ") + "bipartita</p>";
+    "<p>Gráfica " + (esBipartita ? "" : "no ") + "bipartita</p>";
 };
 
 const agregaVertice = () => {
@@ -83,7 +83,7 @@ const agregaVertice = () => {
 
   // Imprimimimos si la grafica es o no es bipartita
   bipartita.innerHTML =
-    "<p>Grafica " + (esBipartita ? "" : "no ") + "bipartita</p>";
+    "<p>Gráfica " + (esBipartita ? "" : "no ") + "bipartita</p>";
 
   // Imprimimos la leyenda
   leyenda.innerHTML = esBipartita
@@ -182,7 +182,7 @@ const agregaArista = () => {
 
   // Imprimimimos si la grafica es o no es bipartita
   bipartita.innerHTML =
-    "<p>Grafica " + (esBipartita ? "" : "no ") + "bipartita</p>";
+    "<p>Gráfica " + (esBipartita ? "" : "no ") + "bipartita</p>";
 
   // Imprimimos la leyenda
   leyenda.innerHTML = esBipartita
@@ -258,7 +258,7 @@ const eliminaVertice = () => {
 
   // Imprimimimos si la grafica es o no es bipartita
   bipartita.innerHTML =
-    "<p>Grafica " + (esBipartita ? "" : "no ") + "bipartita</p>";
+    "<p>Gráfica " + (esBipartita ? "" : "no ") + "bipartita</p>";
 
   // Imprimimos la leyenda
   leyenda.innerHTML = esBipartita
@@ -340,7 +340,7 @@ const eliminaArista = () => {
 
   // Imprimimimos si la grafica es o no es bipartita
   bipartita.innerHTML =
-    "<p>Grafica " + (esBipartita ? "" : "no ") + "bipartita</p>";
+    "<p>Gráfica " + (esBipartita ? "" : "no ") + "bipartita</p>";
 
   // Imprimimos la leyenda
   leyenda.innerHTML = esBipartita
@@ -470,7 +470,7 @@ const vaciarVertice = () => {
 
   // Imprimimos si la grafica es bipartita o no
   bipartita.innerHTML =
-    "<p>Grafica " + (esBipartita ? "" : "no ") + "bipartita</p>";
+    "<p>Gráfica " + (esBipartita ? "" : "no ") + "bipartita</p>";
 
   // Imprimimos la leyenda
   leyenda.innerHTML = esBipartita
@@ -498,7 +498,7 @@ const vaciaGrafica = () => {
 
   // Imprimimos si la grafica es bipartita o no
   bipartita.innerHTML =
-    "<p>Grafica " + (esBipartita ? "" : "no ") + "bipartita</p>";
+    "<p>Gráfica " + (esBipartita ? "" : "no ") + "bipartita</p>";
 
   // Imprimimos la leyenda
   leyenda.innerHTML = esBipartita
@@ -542,7 +542,7 @@ const restauraGrafica = () => {
 
   // Imprimimos si la grafica es bipartita o no
   bipartita.innerHTML =
-    "<p>Grafica " + (esBipartita ? "" : "no ") + "bipartita</p>";
+    "<p>Gráfica " + (esBipartita ? "" : "no ") + "bipartita</p>";
 
   // Actualizamos el numero de vertices y aristas
   numVertices.innerHTML = "<p>" + grafica.numVertices + "</p>";
