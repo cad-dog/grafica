@@ -78,6 +78,16 @@ const agregaVertice = () => {
     i.group = grafica.vertices[i.label].conjunto ? "a" : "b";
   });
 
+  // Si la grafica no es bipartita ponemos todos los vertices en el mismo conjunto
+  if (!esBipartita) {
+    vertices.get().map((i) => {
+      i.group = "c";
+    });
+  }
+
+  // Actualizamos la grafica
+  vertices.update(vertices.get());
+
   idVertice += 1;
   grafica.numVertices += 1;
 
