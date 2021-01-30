@@ -78,6 +78,16 @@ const agregaVertice = () => {
     i.group = grafica.vertices[i.label].conjunto ? "a" : "b";
   });
 
+  // Si la grafica no es bipartita ponemos todos los vertices en el mismo conjunto
+  if (!esBipartita) {
+    vertices.get().map((i) => {
+      i.group = "c";
+    });
+  }
+
+  // Actualizamos la grafica
+  vertices.update(vertices.get());
+
   idVertice += 1;
   grafica.numVertices += 1;
 
@@ -95,6 +105,8 @@ const agregaVertice = () => {
 
   grafica.pintarAristas();
   grafica.pintarVertices();
+
+  algoritmoFleury(grafica);
 };
 
 const agregaArista = () => {
@@ -161,7 +173,6 @@ const agregaArista = () => {
       color: "#6762cc",
     },
   ]);
-  grafica.numAristas += 1;
 
   // Actualizamos el conjunto al que pertenece cada vertice
   esBipartita = grafica.esBipartita();
@@ -194,6 +205,7 @@ const agregaArista = () => {
 
   grafica.pintarAristas();
   grafica.pintarVertices();
+  algoritmoFleury(grafica);
 };
 
 const eliminaVertice = () => {
@@ -218,10 +230,6 @@ const eliminaVertice = () => {
       return item.label == etiqueta;
     },
   })[0];
-
-  grafica.numAristas -=
-    grafica.gradoVertice(vertice.label) -
-    (grafica.lazos[vertice.label] ? grafica.lazos[vertice.label] : 0);
 
   grafica.numVertices -= 1;
 
@@ -336,7 +344,6 @@ const eliminaArista = () => {
 
   // Actualizamos la grafica
   vertices.update(vertices.get());
-  grafica.numAristas -= 1;
 
   // Imprimimimos si la grafica es o no es bipartita
   bipartita.innerHTML =
@@ -350,6 +357,7 @@ const eliminaArista = () => {
   // Actualizamos el numero de aristas en la pagina
   numAristas.innerHTML = "<p>" + grafica.numAristas + "</p>";
 
+  grafica.pintarVertices();
   grafica.pintarAristas();
 };
 
@@ -438,19 +446,13 @@ const vaciarVertice = () => {
       },
     })[0];
 
-    // Vaciamos el vertice en la estructura grafica
-    grafica.vaciaVertice(etiqueta);
-
-    grafica.numAristas -=
-      grafica.gradoVertice(etiqueta) -
-      (grafica.lazos[etiqueta] ? grafica.lazos[etiqueta] : 0);
-
-    delete grafica.lazos[etiqueta];
-
     if (arista) {
       aristas.remove({ id: arista.id });
     }
   });
+
+  // Vaciamos el vertice en la estructura grafica
+  grafica.vaciaVertice(etiqueta);
 
   // Asignamos la particion
   esBipartita = grafica.esBipartita();
@@ -481,6 +483,7 @@ const vaciarVertice = () => {
   numAristas.innerHTML = "<p>" + grafica.numAristas + "</p>";
 
   grafica.pintarAristas();
+  grafica.pintarVertices();
 };
 
 const vaciaGrafica = () => {
@@ -510,7 +513,7 @@ const vaciaGrafica = () => {
   numAristas.innerHTML = "<p>" + grafica.numAristas + "</p>";
 };
 
-const copiaGrafica = () => {
+const copiarGrafica = () => {
   graficaCopia = grafica.copiaGrafica();
 
   aristasCopia = new vis.DataSet();

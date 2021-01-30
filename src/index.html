@@ -197,7 +197,7 @@
           <div class="mt-2">
             <button
               class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none"
-              onclick="copiaGrafica()"
+              onclick="copiarGrafica()"
             >
               Copiar gráfica
             </button>
@@ -220,16 +220,13 @@
     <div class="px-10 text-gray-800">
       <div class="flex">
         <div id="bipartita"></div>
-        <div id="leyenda" class="flex items-center ml-2">
-          <!-- <div class="h-4 w-4" style="background-color: #f7f6b1"></div>
-          <div class="ml-1">V1</div>
-          <div class="h-4 w-4 ml-2" style="background-color: #f4b1f7"></div>
-          <div class="ml-1">V2</div> -->
-        </div>
+        <div id="leyenda" class="flex items-center ml-2"></div>
       </div>
       <div id="mensaje"></div>
     </div>
   </body>
+  <script src="lodash.js"></script>
   <script src="scripts/grafica.js"></script>
   <script src="scripts/vis.js"></script>
+  <script src="scripts/algoritmos.js"></script>
 </html>

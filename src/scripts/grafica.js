@@ -8,24 +8,39 @@ class Grafica {
   }
 
   agregarVertice(vertice) {
-    this.vertices[vertice] = { etiqueta: vertice };
+    this.vertices[vertice] = { etiqueta: vertice, grado: 0 };
     this.aristas[vertice] = [];
   }
 
   agregarArista(v1, v2, peso, etiqueta) {
+    this.numAristas += 1;
+    if (v1 == v2) {
+      this.vertices[v1].grado += 2;
+    } else {
+      this.vertices[v1].grado += 1;
+      this.vertices[v2].grado += 1;
+    }
+
     this.aristas[v1].push({ etiqueta: etiqueta, vertice: v2, peso: peso });
     this.aristas[v2].push({ etiqueta: etiqueta, vertice: v1, peso: peso });
   }
 
   eliminarVertice(vertice) {
     this.vaciaVertice(vertice);
-    if (this.lazos[vertice]) delete this.lazos[vertice];
     delete this.vertices[vertice];
     delete this.aristas[vertice];
   }
 
   eliminarArista(arista) {
+    this.numAristas -= 1;
+
     Object.keys(this.aristas).map((i) => {
+      this.aristas[i]
+        .filter((j) => j.etiqueta == arista)
+        .map((k) => {
+          this.vertices[k.vertice].grado -= 1;
+        });
+
       this.aristas[i] = this.aristas[i].filter((j) => j.etiqueta != arista);
     });
   }
@@ -45,7 +60,7 @@ class Grafica {
   }
 
   gradoVertice(vertice) {
-    return this.aristas[vertice].length;
+    return this.vertices[vertice].grado;
   }
 
   numeroVertices() {
@@ -57,11 +72,22 @@ class Grafica {
   }
 
   vaciaVertice(vertice) {
+    this.aristas[vertice].map((i) => {
+      this.vertices[i.vertice].grado -= 1;
+    });
+
+    this.vertices[vertice].grado = 0;
+
     this.aristas[vertice].map((arista) => {
+      this.numAristas -= 1;
       this.aristas[arista.vertice] = this.aristas[arista.vertice].filter(
         (i) => i.vertice != vertice
       );
     });
+    if (this.lazos[vertice]) {
+      this.numAristas += this.lazos[vertice];
+      delete this.lazos[vertice];
+    }
     this.aristas[vertice] = [];
   }
 
@@ -74,7 +100,14 @@ class Grafica {
   }
 
   copiaGrafica() {
-    return this;
+    graficaCopia = new Grafica();
+    graficaCopia.aristas = this.aristas;
+    graficaCopia.vertices = this.vertices;
+    graficaCopia.lazos = this.lazos;
+    graficaCopia.numAristas = this.numAristas;
+    graficaCopia.numVertices = this.numVertices;
+
+    return graficaCopia;
   }
 
   esBipartita() {
@@ -142,3 +175,23 @@ class Grafica {
     console.log(this.aristas);
   }
 }
+
+const deepCopyFunction = (inObject) => {
+  let outObject, value, key;
+
+  if (typeof inObject !== "object" || inObject === null) {
+    return inObject; // Return the value if inObject is not an object
+  }
+
+  // Create an array or object to hold the values
+  outObject = Array.isArray(inObject) ? [] : {};
+
+  for (key in inObject) {
+    value = inObject[key];
+
+    // Recursively (deep) copy for nested objects, including arrays
+    outObject[key] = deepCopyFunction(value);
+  }
+
+  return outObject;
+};
