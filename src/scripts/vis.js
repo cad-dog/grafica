@@ -24,6 +24,7 @@ let bipartita = document.getElementById("bipartita");
 let numVertices = document.getElementById("numVertices");
 let numAristas = document.getElementById("numAristas");
 let leyenda = document.getElementById("leyenda");
+let btnFleury = document.getElementById("fleury");
 
 const graficar = () => {
   vertices = new vis.DataSet([]);
@@ -105,8 +106,6 @@ const agregaVertice = () => {
 
   grafica.pintarAristas();
   grafica.pintarVertices();
-
-  algoritmoFleury(grafica);
 };
 
 const agregaArista = () => {
@@ -205,7 +204,6 @@ const agregaArista = () => {
 
   grafica.pintarAristas();
   grafica.pintarVertices();
-  algoritmoFleury(grafica);
 };
 
 const eliminaVertice = () => {
@@ -514,7 +512,7 @@ const vaciaGrafica = () => {
 };
 
 const copiarGrafica = () => {
-  graficaCopia = grafica.copiaGrafica();
+  graficaCopia = _.cloneDeep(grafica);
 
   aristasCopia = new vis.DataSet();
   verticesCopia = new vis.DataSet();
@@ -550,4 +548,20 @@ const restauraGrafica = () => {
   // Actualizamos el numero de vertices y aristas
   numVertices.innerHTML = "<p>" + grafica.numVertices + "</p>";
   numAristas.innerHTML = "<p>" + grafica.numAristas + "</p>";
+};
+
+const encuentraPaseo = () => {
+  // Vaciamos el mensaje de salida
+  mensaje.innerHTML = "";
+  mensaje.classList.remove("text-red-500", "text-green-500");
+
+  let salida = algoritmoFleury(grafica);
+
+  if (!salida) {
+    mensaje.classList.add("text-red-500");
+    mensaje.innerHTML = "<p>La gráfica no tiene paseo de Euler</p>";
+  } else {
+    mensaje.classList.add("text-green-500");
+    mensaje.innerHTML = "<p>Paseo de Euler: {" + salida + "}</p>";
+  }
 };

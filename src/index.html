@@ -157,17 +157,12 @@
           <div class="flex border-t border-b p-1 space-x-1">
             <!-- Grado vertice -->
             <div>
-              <div class="font-bold">Grado vértice</div>
-              <div class="text-sm flex space-x-1 mt-1">
-                <div class="mt-1">Etiqueta:</div>
-                <input
-                  id="gradoVertice"
-                  type="text"
-                  class="w-10 rounded-md border"
-                />
+              <div class="font-bold">Paseo de Euler</div>
+              <div class="text-sm flex space-x-1 mt-1 justify-center">
                 <button
+                  id="fleury"
                   class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none"
-                  onclick="gradoVertice()"
+                  onclick="encuentraPaseo()"
                 >
                   Buscar
                 </button>
@@ -227,6 +222,6 @@
   </body>
   <script src="lodash.js"></script>
   <script src="scripts/grafica.js"></script>
-  <script src="scripts/vis.js"></script>
   <script src="scripts/algoritmos.js"></script>
+  <script src="scripts/vis.js"></script>
 </html>

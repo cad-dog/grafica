@@ -171,6 +171,15 @@ class Grafica {
     console.log(this.vertices);
   }
 
+  esConexa() {
+    if (Object.keys(grafica.vertices).length > 1) {
+      for (let i in grafica.vertices) {
+        if (grafica.vertices[i].grado == 0) return false;
+      }
+    }
+    return true;
+  }
+
   pintarAristas() {
     console.log(this.aristas);
   }

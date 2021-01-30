@@ -1,4 +1,6 @@
 const algoritmoFleury = (grafica) => {
+  if (!grafica.esConexa()) return false;
+
   let impares = 0;
   let comienzo;
   let pila = [],
@@ -33,15 +35,17 @@ const algoritmoFleury = (grafica) => {
   let graficaCopia = _.cloneDeep(grafica);
 
   // Inicializamos la pila
-  pila.unshift(comienzo);
+  pila.push(comienzo);
 
   console.log(graficaCopia.aristas);
   console.log(grafica);
 
   while (graficaCopia.numAristas > 0) {
-    console.log("AAASDASD");
-    console.log(graficaCopia.aristas);
     if (graficaCopia.aristas[verticeActual].length > 0) {
+      console.log("Vertice actual: " + verticeActual);
+      console.log("Adyacentes");
+      console.log(graficaCopia.aristas[verticeActual]);
+
       // Asignamos la arista que vamos a eliminar
       aristaEliminada = graficaCopia.aristas[verticeActual][0].etiqueta;
 
@@ -52,20 +56,33 @@ const algoritmoFleury = (grafica) => {
       graficaCopia.eliminarArista(aristaEliminada);
 
       // Metemos el vertice actual a la pila
-      pila.unshift(verticeActual);
-    } else {
-      while (!graficaCopia.aristas[verticeActual].length > 0) {
-        verticeActual = pila.shift();
-        cola.push(verticeActual);
-      }
+      pila.push(verticeActual);
+
       console.log("camino");
-      console.log(cola.concat(pila));
+      console.log(pila);
+    } else {
+      pila.pop();
+      while (!graficaCopia.aristas[verticeActual].length > 0) {
+        console.log("While interno");
+        console.log("Vertice actual: " + verticeActual);
+        console.log("Adyacentes");
+        console.log(graficaCopia.aristas[verticeActual]);
+        cola.unshift(verticeActual);
+        verticeActual = pila.pop();
+      }
+      pila.push(verticeActual);
+
+      console.log("camino");
+      console.log(pila);
     }
   }
-  pila.unshift();
-  while (pila.length > 0) {
-    cola.push(pila.shift());
-  }
-
+  console.log("Final");
+  console.log("pila");
+  console.log(pila);
+  console.log("cola");
   console.log(cola);
+  console.log("camino");
+  console.log(pila.concat(cola));
+
+  return pila.concat(cola);
 };
