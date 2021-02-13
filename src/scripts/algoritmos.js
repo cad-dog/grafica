@@ -37,15 +37,8 @@ const algoritmoFleury = (grafica) => {
   // Inicializamos la pila
   pila.push(comienzo);
 
-  console.log(graficaCopia.aristas);
-  console.log(grafica);
-
   while (graficaCopia.numAristas > 0) {
     if (graficaCopia.aristas[verticeActual].length > 0) {
-      console.log("Vertice actual: " + verticeActual);
-      console.log("Adyacentes");
-      console.log(graficaCopia.aristas[verticeActual]);
-
       // Asignamos la arista que vamos a eliminar
       aristaEliminada = graficaCopia.aristas[verticeActual][0].etiqueta;
 
@@ -57,32 +50,89 @@ const algoritmoFleury = (grafica) => {
 
       // Metemos el vertice actual a la pila
       pila.push(verticeActual);
-
-      console.log("camino");
-      console.log(pila);
     } else {
       pila.pop();
       while (!graficaCopia.aristas[verticeActual].length > 0) {
-        console.log("While interno");
-        console.log("Vertice actual: " + verticeActual);
-        console.log("Adyacentes");
         console.log(graficaCopia.aristas[verticeActual]);
         cola.unshift(verticeActual);
         verticeActual = pila.pop();
       }
       pila.push(verticeActual);
-
-      console.log("camino");
-      console.log(pila);
     }
   }
-  console.log("Final");
-  console.log("pila");
-  console.log(pila);
-  console.log("cola");
-  console.log(cola);
-  console.log("camino");
-  console.log(pila.concat(cola));
 
   return pila.concat(cola);
+};
+
+const busquedaAncho = (grafica) => {
+  let cola = [],
+    aristasMarcadas = [],
+    verticesMarcados = [],
+    verticeActual;
+
+  while (verticesMarcados.length < grafica.numVertices) {
+    for (let i in grafica.vertices) {
+      if (!verticesMarcados.includes(i)) {
+        verticeActual = i;
+        break;
+      }
+    }
+
+    cola.push(verticeActual);
+    verticesMarcados.push(verticeActual);
+    while (cola.length > 0) {
+      verticeActual = cola.shift();
+      grafica.aristas[verticeActual].map((i) => {
+        if (!verticesMarcados.includes(i.vertice)) {
+          aristasMarcadas.push(i.etiqueta);
+          verticesMarcados.push(i.vertice);
+          cola.push(i.vertice);
+        }
+      });
+    }
+  }
+
+  return aristasMarcadas;
+};
+
+const busquedaProfundidad = (grafica) => {
+  let verticesMarcados = [],
+    aristasMarcadas = [],
+    pila = [],
+    verticeActual,
+    arista;
+
+  verticeActual = Object.keys(grafica.vertices)[0];
+
+  while (verticesMarcados.length < grafica.numVertices) {
+    arista = undefined;
+    if (!verticesMarcados.includes(verticeActual))
+      verticesMarcados.push(verticeActual);
+    for (let i = 0; i < grafica.aristas[verticeActual].length; i++) {
+      if (
+        !verticesMarcados.includes(grafica.aristas[verticeActual][i].vertice)
+      ) {
+        arista = grafica.aristas[verticeActual][i];
+        break;
+      }
+    }
+    if (arista) {
+      aristasMarcadas.push(arista.etiqueta);
+      pila.push(verticeActual);
+      verticeActual = arista.vertice;
+    } else {
+      if (pila.length > 0) {
+        verticeActual = pila.pop();
+      } else {
+        for (let i in grafica.vertices) {
+          if (!verticesMarcados.includes(i)) {
+            verticeActual = i;
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  return aristasMarcadas;
 };

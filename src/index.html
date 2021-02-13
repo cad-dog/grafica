@@ -160,7 +160,6 @@
               <div class="font-bold">Paseo de Euler</div>
               <div class="text-sm flex space-x-1 mt-1 justify-center">
                 <button
-                  id="fleury"
                   class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none"
                   onclick="encuentraPaseo()"
                 >
@@ -184,6 +183,37 @@
                   onclick="vaciarVertice()"
                 >
                   Vaciar
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Arboles de expansion  -->
+
+          <!-- Ancho -->
+          <div class="flex border-t border-b p-1 space-x-1">
+            <div>
+              <div class="font-bold">Busqueda a lo ancho</div>
+              <div class="text-sm flex space-x-1 mt-1 justify-center">
+                <button
+                  class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none"
+                  onclick="pintaArbolAncho()"
+                >
+                  Buscar
+                </button>
+              </div>
+            </div>
+
+            <!-- Produndo -->
+            <div class="border-l px-1">
+              <div class="font-bold">Busqueda a lo ancho</div>
+              <div class="text-sm flex space-x-1 mt-1 justify-center">
+                <button
+                  id="fleury"
+                  class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none"
+                  onclick="pintaArbolProfundo()"
+                >
+                  Buscar
                 </button>
               </div>
             </div>

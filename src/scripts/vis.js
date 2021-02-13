@@ -9,9 +9,10 @@ let vertices,
   esBipartita,
   opciones = {
     groups: {
-      a: { color: "#f4b1f7" },
-      b: { color: "#f7f6b1" },
-      c: { color: "#b5f7b1" },
+      a: { color: "#f4b1f7" }, // amarillo
+      b: { color: "#f7f6b1" }, // morado
+      c: { color: "#b5f7b1" }, // verde
+      d: { color: { border: "#ff0000" } }, // borde rojo
     },
   };
 
@@ -24,7 +25,6 @@ let bipartita = document.getElementById("bipartita");
 let numVertices = document.getElementById("numVertices");
 let numAristas = document.getElementById("numAristas");
 let leyenda = document.getElementById("leyenda");
-let btnFleury = document.getElementById("fleury");
 
 const graficar = () => {
   vertices = new vis.DataSet([]);
@@ -104,6 +104,7 @@ const agregaVertice = () => {
   // Actualizamos el numero de vertices en la pagina
   numVertices.innerHTML = grafica.numVertices;
 
+  busquedaAncho(grafica);
   grafica.pintarAristas();
   grafica.pintarVertices();
 };
@@ -202,6 +203,7 @@ const agregaArista = () => {
   // Actualizamos el numero de aristas en la pagina
   numAristas.innerHTML = "<p>" + grafica.numAristas + "</p>";
 
+  busquedaAncho(grafica);
   grafica.pintarAristas();
   grafica.pintarVertices();
 };
@@ -537,7 +539,7 @@ const restauraGrafica = () => {
 
   graficaVis = new vis.Network(contenedor, datos, opciones);
 
-  grafica = graficaCopia.copiaGrafica();
+  grafica = graficaCopia;
 
   grafica.pintarAristas();
 
@@ -564,4 +566,40 @@ const encuentraPaseo = () => {
     mensaje.classList.add("text-green-500");
     mensaje.innerHTML = "<p>Paseo de Euler: {" + salida + "}</p>";
   }
+};
+
+const pintarArbol = (aristasMarcadas) => {
+  /// Pintamos el borde de los vertices
+  vertices.get().map((i) => {
+    i.group = "d";
+  });
+
+  vertices.update(vertices.get());
+
+  // Pintamos el borde de las aristas
+  console.log(aristas.get());
+  aristas.get().map((i) => {
+    if (aristasMarcadas.includes(i.label)) i.color = "#ff0000";
+  });
+
+  aristas.update(aristas.get());
+};
+
+const pintaArbolAncho = () => {
+  // Vaciamos el mensaje de salida
+  mensaje.innerHTML = "";
+  mensaje.classList.remove("text-red-500", "text-green-500");
+
+  let aristasMarcadas;
+  aristasMarcadas = busquedaAncho(grafica);
+  pintarArbol(aristasMarcadas);
+};
+const pintaArbolProfundo = () => {
+  // Vaciamos el mensaje de salida
+  mensaje.innerHTML = "";
+  mensaje.classList.remove("text-red-500", "text-green-500");
+
+  let aristasMarcadas;
+  aristasMarcadas = busquedaProfundidad(grafica);
+  pintarArbol(aristasMarcadas);
 };
