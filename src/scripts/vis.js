@@ -112,6 +112,7 @@ const agregaVertice = () => {
 const agregaArista = () => {
   // Entradas
   let etiqueta = document.getElementById("arista").value;
+  let peso = document.getElementById("peso").value;
   let etiquetaVertice1 = document.getElementById("de").value;
   let etiquetaVertice2 = document.getElementById("a").value;
 
@@ -161,15 +162,16 @@ const agregaArista = () => {
   }
 
   // Agregamos la arista a la estructura grafica
-  grafica.agregarArista(v1.label, v2.label, 0, etiqueta);
+  grafica.agregarArista(v1.label, v2.label, peso, etiqueta);
 
   // Agregamos la arista a la grafica visual
   aristas.add([
     {
       id: idArista,
+      label: peso,
       from: v1.id,
       to: v2.id,
-      label: etiqueta,
+      title: etiqueta,
       color: "#6762cc",
     },
   ]);
@@ -203,7 +205,7 @@ const agregaArista = () => {
   // Actualizamos el numero de aristas en la pagina
   numAristas.innerHTML = "<p>" + grafica.numAristas + "</p>";
 
-  busquedaAncho(grafica);
+  // kruskal(grafica);
   grafica.pintarAristas();
   grafica.pintarVertices();
 };
@@ -300,7 +302,7 @@ const eliminaArista = () => {
   // Obtenemos la arista en la grafica visual
   let arista = aristas.get({
     filter: (item) => {
-      return item.label == etiqueta;
+      return item.title == etiqueta;
     },
   })[0];
 
@@ -324,7 +326,7 @@ const eliminaArista = () => {
   }
 
   // Eliminamos la arista de la estructura grafica
-  grafica.eliminarArista(arista.label);
+  grafica.eliminarArista(arista.title);
 
   // Eliminamos la arista de la grafica visual
   aristas.remove({ id: arista.id });
@@ -442,7 +444,7 @@ const vaciarVertice = () => {
   grafica.aristas[etiqueta].map((arista) => {
     arista = aristas.get({
       filter: (item) => {
-        return item.label == arista.etiqueta;
+        return item.title == arista.etiqueta;
       },
     })[0];
 
@@ -568,7 +570,14 @@ const encuentraPaseo = () => {
   }
 };
 
-const pintarArbol = (aristasMarcadas) => {
+const pintarArbol = (algoritmo) => {
+  // Vaciamos el mensaje de salida
+  mensaje.innerHTML = "";
+  mensaje.classList.remove("text-red-500", "text-green-500");
+
+  let aristasMarcadas;
+  aristasMarcadas = algoritmo(grafica);
+
   /// Pintamos el borde de los vertices
   vertices.get().map((i) => {
     i.group = "d";
@@ -577,29 +586,9 @@ const pintarArbol = (aristasMarcadas) => {
   vertices.update(vertices.get());
 
   // Pintamos el borde de las aristas
-  console.log(aristas.get());
   aristas.get().map((i) => {
-    if (aristasMarcadas.includes(i.label)) i.color = "#ff0000";
+    if (aristasMarcadas.includes(i.title)) i.color = "#ff0000";
   });
 
   aristas.update(aristas.get());
-};
-
-const pintaArbolAncho = () => {
-  // Vaciamos el mensaje de salida
-  mensaje.innerHTML = "";
-  mensaje.classList.remove("text-red-500", "text-green-500");
-
-  let aristasMarcadas;
-  aristasMarcadas = busquedaAncho(grafica);
-  pintarArbol(aristasMarcadas);
-};
-const pintaArbolProfundo = () => {
-  // Vaciamos el mensaje de salida
-  mensaje.innerHTML = "";
-  mensaje.classList.remove("text-red-500", "text-green-500");
-
-  let aristasMarcadas;
-  aristasMarcadas = busquedaProfundidad(grafica);
-  pintarArbol(aristasMarcadas);
 };

@@ -62,6 +62,8 @@
               <input id="de" type="text" class="w-10 rounded-md border" />
               <div class="mt-1">a:</div>
               <input id="a" type="text" class="w-10 rounded-md border" />
+              <div class="mt-1">w:</div>
+              <input id="peso" type="text" class="w-10 rounded-md border" />
               <button
                 class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none"
                 onclick="agregaArista()"
@@ -197,7 +199,7 @@
               <div class="text-sm flex space-x-1 mt-1 justify-center">
                 <button
                   class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none"
-                  onclick="pintaArbolAncho()"
+                  onclick="pintarArbol(busquedaAncho)"
                 >
                   Buscar
                 </button>
@@ -209,9 +211,21 @@
               <div class="font-bold">Búsqueda a lo profundo</div>
               <div class="text-sm flex space-x-1 mt-1 justify-center">
                 <button
-                  id="fleury"
                   class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none"
-                  onclick="pintaArbolProfundo()"
+                  onclick="pintarArbol(busquedaProfundidad)"
+                >
+                  Buscar
+                </button>
+              </div>
+            </div>
+
+            <!-- Kruskal -->
+            <div class="border-l px-1">
+              <div class="font-bold">Kruskal</div>
+              <div class="text-sm flex space-x-1 mt-1 justify-center">
+                <button
+                  class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none"
+                  onclick="pintarArbol(kruskal)"
                 >
                   Buscar
                 </button>
@@ -252,6 +266,7 @@
   </body>
   <script src="lodash.js"></script>
   <script src="scripts/grafica.js"></script>
+  <script src="scripts/util.js"></script>
   <script src="scripts/algoritmos.js"></script>
   <script src="scripts/vis.js"></script>
 </html>

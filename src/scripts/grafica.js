@@ -2,6 +2,8 @@ class Grafica {
   constructor() {
     this.vertices = {};
     this.aristas = {};
+    this.pesos = [];
+    this.listaAristas = [];
     this.numAristas = 0;
     this.numVertices = 0;
     this.lazos = {};
@@ -21,8 +23,23 @@ class Grafica {
       this.vertices[v2].grado += 1;
     }
 
-    this.aristas[v1].push({ etiqueta: etiqueta, vertice: v2, peso: peso });
-    this.aristas[v2].push({ etiqueta: etiqueta, vertice: v1, peso: peso });
+    this.pesos[etiqueta] = parseInt(peso);
+    this.listaAristas.push({
+      etiqueta: etiqueta,
+      v1: v1,
+      v2: v2,
+      peso: parseInt(peso),
+    });
+    this.aristas[v1].push({
+      etiqueta: etiqueta,
+      vertice: v2,
+      peso: parseInt(peso),
+    });
+    this.aristas[v2].push({
+      etiqueta: etiqueta,
+      vertice: v1,
+      peso: parseInt(peso),
+    });
   }
 
   eliminarVertice(vertice) {
@@ -33,6 +50,10 @@ class Grafica {
 
   eliminarArista(arista) {
     this.numAristas -= 1;
+
+    delete this.pesos[arista];
+
+    this.listaAristas = this.listaAristas.filter((i) => i.etiqueta != arista);
 
     Object.keys(this.aristas).map((i) => {
       this.aristas[i]
@@ -79,7 +100,11 @@ class Grafica {
     this.vertices[vertice].grado = 0;
 
     this.aristas[vertice].map((arista) => {
+      delete this.pesos[arista.etiqueta];
       this.numAristas -= 1;
+      this.listaAristas = this.listaAristas.filter((i) => {
+        i.etiqueta != arista.etiqueta;
+      });
       this.aristas[arista.vertice] = this.aristas[arista.vertice].filter(
         (i) => i.vertice != vertice
       );
@@ -88,6 +113,7 @@ class Grafica {
       this.numAristas += this.lazos[vertice];
       delete this.lazos[vertice];
     }
+
     this.aristas[vertice] = [];
   }
 
@@ -97,6 +123,8 @@ class Grafica {
     this.lazos = {};
     this.numAristas = 0;
     this.numVertices = 0;
+    this.pesos = {};
+    this.listaAristas = [];
   }
 
   copiaGrafica() {

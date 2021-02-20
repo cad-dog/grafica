@@ -136,3 +136,44 @@ const busquedaProfundidad = (grafica) => {
 
   return aristasMarcadas;
 };
+
+const kruskal = (grafica) => {
+  let cola = [],
+    contiene,
+    aristasMarcadas = [],
+    padres = {},
+    aristaActual;
+
+  // Guardamos las aristas ordenadas por peso
+  for (let i = 0; i < grafica.listaAristas.length; i++) {
+    contiene = false;
+    for (let j = 0; j < cola.length; j++) {
+      if (cola[j].peso > grafica.listaAristas[i].peso) {
+        cola.splice(j, 0, grafica.listaAristas[i]);
+        contiene = true;
+        break;
+      }
+    }
+
+    if (!contiene) {
+      cola.push(grafica.listaAristas[i]);
+    }
+  }
+
+  // Guardamos los padres de cada vertice
+  for (let i in grafica.vertices) {
+    padres[i] = i;
+  }
+
+  while (aristasMarcadas.length < grafica.numVertices - 1) {
+    aristaActual = cola.shift();
+    if (
+      busqueda(aristaActual.v1, padres) != busqueda(aristaActual.v2, padres)
+    ) {
+      union(aristaActual.v1, aristaActual.v2, padres);
+      aristasMarcadas.push(aristaActual.etiqueta);
+    }
+  }
+
+  return aristasMarcadas;
+};
