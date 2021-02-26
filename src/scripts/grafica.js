@@ -23,7 +23,11 @@ class Grafica {
       this.vertices[v2].grado += 1;
     }
 
-    this.pesos[etiqueta] = parseInt(peso);
+    if (peso) {
+      this.pesos[etiqueta] = parseInt(peso);
+    } else {
+      this.pesos[etiqueta] = 0;
+    }
     this.listaAristas.push({
       etiqueta: etiqueta,
       v1: v1,

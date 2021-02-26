@@ -141,6 +141,7 @@ const kruskal = (grafica) => {
   let cola = [],
     contiene,
     aristasMarcadas = [],
+    verticesMarcados = [],
     padres = {},
     aristaActual;
 
@@ -165,7 +166,7 @@ const kruskal = (grafica) => {
     padres[i] = i;
   }
 
-  while (aristasMarcadas.length < grafica.numVertices - 1) {
+  while (cola.length > 0) {
     aristaActual = cola.shift();
     if (
       busqueda(aristaActual.v1, padres) != busqueda(aristaActual.v2, padres)
