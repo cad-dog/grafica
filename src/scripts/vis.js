@@ -205,7 +205,6 @@ const agregaArista = () => {
   // Actualizamos el numero de aristas en la pagina
   numAristas.innerHTML = "<p>" + grafica.numAristas + "</p>";
 
-  // kruskal(grafica);
   grafica.pintarAristas();
   grafica.pintarVertices();
 };

@@ -138,41 +138,86 @@ const busquedaProfundidad = (grafica) => {
 };
 
 const kruskal = (grafica) => {
-  let cola = [],
-    contiene,
-    aristasMarcadas = [],
-    verticesMarcados = [],
+  let aristasMarcadas = [],
     padres = {},
-    aristaActual;
+    aristaActual,
+    cola = new ColaPrioridad();
 
   // Guardamos las aristas ordenadas por peso
   for (let i = 0; i < grafica.listaAristas.length; i++) {
-    contiene = false;
-    for (let j = 0; j < cola.length; j++) {
-      if (cola[j].peso > grafica.listaAristas[i].peso) {
-        cola.splice(j, 0, grafica.listaAristas[i]);
-        contiene = true;
-        break;
-      }
-    }
-
-    if (!contiene) {
-      cola.push(grafica.listaAristas[i]);
-    }
+    cola.agregar(grafica.listaAristas[i], grafica.listaAristas[i].peso);
   }
+
+  cola.pintar();
 
   // Guardamos los padres de cada vertice
   for (let i in grafica.vertices) {
     padres[i] = i;
   }
 
-  while (cola.length > 0) {
-    aristaActual = cola.shift();
+  while (cola.longitud > 0) {
+    aristaActual = cola.sacar();
     if (
       busqueda(aristaActual.v1, padres) != busqueda(aristaActual.v2, padres)
     ) {
       union(aristaActual.v1, aristaActual.v2, padres);
       aristasMarcadas.push(aristaActual.etiqueta);
+    }
+  }
+
+  return aristasMarcadas;
+};
+
+const prim = (grafica) => {
+  let cola = new ColaPrioridad(),
+    verticesMarcados = [],
+    aristasMarcadas = [],
+    verticeActual,
+    menor,
+    verticesNoMarcados = Object.keys(grafica.vertices);
+
+  while (verticesNoMarcados.length > 0) {
+    verticeActual = verticesNoMarcados[0];
+    verticesMarcados.push(verticeActual);
+    verticesNoMarcados.splice(verticesNoMarcados.indexOf(verticeActual), 1);
+
+    for (let i = 0; i < grafica.aristas[verticeActual].length; i++) {
+      cola.agregar(
+        grafica.aristas[verticeActual][i],
+        grafica.aristas[verticeActual][i].peso
+      );
+    }
+
+    if (cola.longitud > 0) {
+      menor = cola.sacar();
+
+      aristasMarcadas.push(menor.etiqueta);
+      verticesMarcados.push(menor.vertice);
+      verticesNoMarcados.splice(verticesNoMarcados.indexOf(menor.vertice), 1);
+    }
+
+    while (cola.longitud > 0) {
+      for (let i = 0; i < grafica.aristas[menor.vertice].length; i++) {
+        if (
+          !verticesMarcados.includes(grafica.aristas[menor.vertice][i].vertice)
+        ) {
+          // console.log("Entra");
+          cola.agregar(
+            grafica.aristas[menor.vertice][i],
+            grafica.aristas[menor.vertice][i].peso
+          );
+        }
+      }
+
+      while (cola.longitud > 0 && verticesMarcados.includes(menor.vertice)) {
+        menor = cola.sacar();
+      }
+
+      if (!verticesMarcados.includes(menor.vertice)) {
+        verticesMarcados.push(menor.vertice);
+        verticesNoMarcados.splice(verticesNoMarcados.indexOf(menor.vertice), 1);
+        aristasMarcadas.push(menor.etiqueta);
+      }
     }
   }
 
