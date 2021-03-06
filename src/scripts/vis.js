@@ -25,6 +25,7 @@ let bipartita = document.getElementById("bipartita");
 let numVertices = document.getElementById("numVertices");
 let numAristas = document.getElementById("numAristas");
 let leyenda = document.getElementById("leyenda");
+let inputPrufer = document.getElementById("prufer");
 
 const graficar = () => {
   vertices = new vis.DataSet([]);
@@ -590,4 +591,35 @@ const pintarArbol = (algoritmo) => {
   });
 
   aristas.update(aristas.get());
+};
+
+const crearGrafica = (algoritmo) => {
+  let listas = algoritmo(inputPrufer.value);
+  let verticesAlg = listas[0],
+    aristasAlg = listas[1],
+    ids = {};
+
+  for (let i = 0; i < verticesAlg.length; i++) {
+    vertices.add({
+      id: idVertice,
+      label: verticesAlg[i],
+      group: "c",
+    });
+    ids[verticesAlg[i]] = idVertice;
+    idVertice++;
+  }
+
+  for (let i = 0; i < aristasAlg.length; i++) {
+    aristas.add([
+      {
+        id: idArista,
+        label: aristasAlg[i].peso,
+        from: ids[aristasAlg[i].v1],
+        to: ids[aristasAlg[i].v2],
+        title: aristasAlg[i].etiqueta,
+        color: "#6762cc",
+      },
+    ]);
+    idArista++;
+  }
 };

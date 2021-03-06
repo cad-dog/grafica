@@ -201,7 +201,6 @@ const prim = (grafica) => {
         if (
           !verticesMarcados.includes(grafica.aristas[menor.vertice][i].vertice)
         ) {
-          // console.log("Entra");
           cola.agregar(
             grafica.aristas[menor.vertice][i],
             grafica.aristas[menor.vertice][i].peso
@@ -222,4 +221,54 @@ const prim = (grafica) => {
   }
 
   return aristasMarcadas;
+};
+
+const prufer = (secuencia) => {
+  listaSecuencia = secuencia.split(",");
+
+  let l = [],
+    aristas = [],
+    vertices = [],
+    arista = 1,
+    n;
+  for (let i = 1; i <= listaSecuencia.length + 2; i++) {
+    l.push(i.toString());
+  }
+
+  n = l.length;
+
+  for (let i = 0; i < n - 2; i++) {
+    for (let j = 0; j < n; j++) {
+      if (!listaSecuencia.includes(l[j])) {
+        if (!vertices.includes(listaSecuencia[0]))
+          vertices.push(listaSecuencia[0]);
+        if (!vertices.includes(l[j])) vertices.push(l[j]);
+
+        aristas.push({
+          etiqueta: "e" + arista,
+          v1: listaSecuencia[0],
+          v2: l[j],
+          peso: 0,
+        });
+
+        listaSecuencia.splice(0, 1);
+        l.splice(j, 1);
+
+        arista++;
+
+        break;
+      }
+    }
+  }
+
+  if (!vertices.includes(l[0])) vertices.push(l[0]);
+  if (!vertices.includes(l[1])) vertices.push(l[1]);
+  aristas.push({
+    etiqueta: "e" + arista,
+    v1: l[0],
+    v2: l[1],
+    peso: 0,
+  });
+
+  return [vertices, aristas];
 };
