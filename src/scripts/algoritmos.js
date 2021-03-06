@@ -224,14 +224,14 @@ const prim = (grafica) => {
 };
 
 const prufer = (secuencia) => {
-  listaSecuencia = secuencia.split(",");
+  secuencia = secuencia.split(",");
 
   let l = [],
     aristas = [],
     vertices = [],
     arista = 1,
     n;
-  for (let i = 1; i <= listaSecuencia.length + 2; i++) {
+  for (let i = 1; i <= secuencia.length + 2; i++) {
     l.push(i.toString());
   }
 
@@ -239,19 +239,18 @@ const prufer = (secuencia) => {
 
   for (let i = 0; i < n - 2; i++) {
     for (let j = 0; j < n; j++) {
-      if (!listaSecuencia.includes(l[j])) {
-        if (!vertices.includes(listaSecuencia[0]))
-          vertices.push(listaSecuencia[0]);
+      if (!secuencia.includes(l[j])) {
+        if (!vertices.includes(secuencia[0])) vertices.push(secuencia[0]);
         if (!vertices.includes(l[j])) vertices.push(l[j]);
 
         aristas.push({
           etiqueta: "e" + arista,
-          v1: listaSecuencia[0],
+          v1: secuencia[0],
           v2: l[j],
           peso: 0,
         });
 
-        listaSecuencia.splice(0, 1);
+        secuencia.splice(0, 1);
         l.splice(j, 1);
 
         arista++;
