@@ -156,7 +156,7 @@ const kruskal = (grafica) => {
   }
 
   while (cola.longitud > 0) {
-    aristaActual = cola.sacar();
+    aristaActual = cola.sacar().etiqueta;
     if (
       busqueda(aristaActual.v1, padres) != busqueda(aristaActual.v2, padres)
     ) {
@@ -189,7 +189,7 @@ const prim = (grafica) => {
     }
 
     if (cola.longitud > 0) {
-      menor = cola.sacar();
+      menor = cola.sacar().etiqueta;
 
       aristasMarcadas.push(menor.etiqueta);
       verticesMarcados.push(menor.vertice);
@@ -209,7 +209,7 @@ const prim = (grafica) => {
       }
 
       while (cola.longitud > 0 && verticesMarcados.includes(menor.vertice)) {
-        menor = cola.sacar();
+        menor = cola.sacar().etiqueta;
       }
 
       if (!verticesMarcados.includes(menor.vertice)) {
@@ -270,4 +270,38 @@ const prufer = (secuencia) => {
   });
 
   return [vertices, aristas];
+};
+
+const dijkstra = (grafica) => {
+  let camino = {},
+    marcasTemp = new ColaPrioridad(),
+    marcasDef = [],
+    aristas = [],
+    verticeActual,
+    aux;
+  marcasTemp.agregar(Object.keys(grafica.vertices)[0], 0);
+  while (marcasTemp.longitud > 0) {
+    console.log(marcasTemp.elementos);
+    verticeActual = marcasTemp.sacar();
+    marcasDef.push(verticeActual.etiqueta);
+    grafica.aristas[verticeActual.etiqueta].map((a) => {
+      if (a.tipo === "saliente" && !marcasDef.includes(a.vertice)) {
+        aux = marcasTemp.existe(a.vertice);
+        if (aux) {
+          if (a.peso + verticeActual.peso < aux.peso) {
+            marcasTemp.cambiarPeso(a.vertice, a.peso + verticeActual.peso);
+            camino[a.vertice] = a.etiqueta;
+          }
+        } else {
+          marcasTemp.agregar(a.vertice, a.peso + verticeActual.peso);
+          camino[a.vertice] = a.etiqueta;
+        }
+      }
+    });
+  }
+  for (let i in camino) {
+    aristas.push(camino[i]);
+  }
+
+  return aristas;
 };

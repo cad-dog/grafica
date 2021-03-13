@@ -7,6 +7,7 @@ class Grafica {
     this.numAristas = 0;
     this.numVertices = 0;
     this.lazos = {};
+    this.tipo;
   }
 
   agregarVertice(vertice) {
@@ -34,16 +35,31 @@ class Grafica {
       v2: v2,
       peso: parseInt(peso),
     });
-    this.aristas[v1].push({
-      etiqueta: etiqueta,
-      vertice: v2,
-      peso: parseInt(peso),
-    });
-    this.aristas[v2].push({
-      etiqueta: etiqueta,
-      vertice: v1,
-      peso: parseInt(peso),
-    });
+    if (this.tipo == "grafica") {
+      this.aristas[v1].push({
+        etiqueta: etiqueta,
+        vertice: v2,
+        peso: parseInt(peso),
+      });
+      this.aristas[v2].push({
+        etiqueta: etiqueta,
+        vertice: v1,
+        peso: parseInt(peso),
+      });
+    } else {
+      this.aristas[v1].push({
+        etiqueta: etiqueta,
+        vertice: v2,
+        peso: parseInt(peso),
+        tipo: "saliente",
+      });
+      this.aristas[v2].push({
+        etiqueta: etiqueta,
+        vertice: v1,
+        peso: parseInt(peso),
+        tipo: "entrante",
+      });
+    }
   }
 
   eliminarVertice(vertice) {
