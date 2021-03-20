@@ -274,34 +274,125 @@ const prufer = (secuencia) => {
 
 const dijkstra = (grafica) => {
   let camino = {},
-    marcasTemp = new ColaPrioridad(),
+    cola = new ColaPrioridad(),
     marcasDef = [],
     aristas = [],
     verticeActual,
-    aux;
-  marcasTemp.agregar(Object.keys(grafica.vertices)[0], 0);
-  while (marcasTemp.longitud > 0) {
-    console.log(marcasTemp.elementos);
-    verticeActual = marcasTemp.sacar();
+    aristaActual,
+    objetoAristas = {},
+    inicio,
+    destino,
+    aux,
+    ciclo = false,
+    ancestro,
+    inicial;
+
+  for (let i = 0; i < grafica.listaAristas.length; i++) {
+    objetoAristas[grafica.listaAristas[i].etiqueta] = {
+      inicio: grafica.listaAristas[i].v1,
+      destino: grafica.listaAristas[i].v2,
+      peso: grafica.listaAristas[i].peso,
+    };
+  }
+
+  console.log(objetoAristas);
+
+  inicial = Object.keys(grafica.vertices)[0];
+
+  camino[inicial] = { arista: undefined, peso: 0 };
+
+  cola.agregar(inicial, 0);
+  while (cola.longitud > 0) {
+    verticeActual = cola.sacar();
     marcasDef.push(verticeActual.etiqueta);
     grafica.aristas[verticeActual.etiqueta].map((a) => {
       if (a.tipo === "saliente" && !marcasDef.includes(a.vertice)) {
-        aux = marcasTemp.existe(a.vertice);
+        aux = cola.existe(a.vertice);
         if (aux) {
           if (a.peso + verticeActual.peso < aux.peso) {
-            marcasTemp.cambiarPeso(a.vertice, a.peso + verticeActual.peso);
-            camino[a.vertice] = a.etiqueta;
+            cola.cambiarPeso(a.vertice, a.peso + verticeActual.peso);
+            camino[a.vertice] = {
+              arista: a.etiqueta,
+              peso: a.peso + verticeActual.peso,
+            };
           }
         } else {
-          marcasTemp.agregar(a.vertice, a.peso + verticeActual.peso);
-          camino[a.vertice] = a.etiqueta;
+          cola.agregar(a.vertice, a.peso + verticeActual.peso);
+          camino[a.vertice] = {
+            arista: a.etiqueta,
+            peso: a.peso + verticeActual.peso,
+          };
         }
       }
     });
   }
+
   for (let i in camino) {
-    aristas.push(camino[i]);
+    if (camino[i].arista) aristas.push(camino[i].arista);
   }
+
+  for (i in objetoAristas) {
+    if (!aristas.includes(i)) {
+      cola.agregar(i, objetoAristas[i].peso);
+    }
+  }
+
+  while (cola.longitud > 0) {
+    aristaActual = cola.sacar().etiqueta;
+    inicio = objetoAristas[aristaActual].inicio;
+    destino = objetoAristas[aristaActual].destino;
+    if (
+      camino[inicio].peso + objetoAristas[aristaActual].peso <
+      camino[destino].peso
+    ) {
+      ancestro = inicio;
+
+      while (!ciclo) {
+        ancestro = objetoAristas[camino[ancestro].arista].inicio;
+        if (ancestro == destino) ciclo = true;
+
+        if (ancestro == inicial) break;
+      }
+
+      if (!ciclo) {
+        if (camino[destino].arista)
+          cola.agregar(
+            camino[destino].arista,
+            objetoAristas[camino[destino].arista].peso
+          );
+
+        camino[destino] = {
+          arista: aristaActual,
+          peso: camino[inicio].peso + objetoAristas[aristaActual].peso,
+        };
+
+        for (i = 0; i < grafica.aristas[destino].length; i++) {
+          if (grafica.aristas[destino][i].tipo === "saliente") {
+            if (camino[grafica.aristas[destino][i].vertice].arista)
+              cola.agregar(
+                camino[grafica.aristas[destino][i].vertice].arista,
+                objetoAristas[
+                  camino[grafica.aristas[destino][i].vertice].arista
+                ].peso
+              );
+
+            camino[grafica.aristas[destino][i].vertice] = {
+              arista: grafica.aristas[destino][i].etiqueta,
+              peso: camino[destino].peso + grafica.aristas[destino][i].peso,
+            };
+          }
+        }
+      }
+    }
+  }
+
+  aristas = [];
+
+  for (let i in camino) {
+    if (camino[i].arista) aristas.push(camino[i].arista);
+  }
+
+  // console.log(aristas)
 
   return aristas;
 };
