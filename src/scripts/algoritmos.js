@@ -92,7 +92,7 @@ const busquedaAncho = (grafica) => {
     }
   }
 
-  return aristasMarcadas;
+  return { aristas: aristasMarcadas, vertices: Object.keys(grafica.vertices) };
 };
 
 const busquedaProfundidad = (grafica) => {
@@ -133,8 +133,7 @@ const busquedaProfundidad = (grafica) => {
       }
     }
   }
-
-  return aristasMarcadas;
+  return { aristas: aristasMarcadas, vertices: Object.keys(grafica.vertices) };
 };
 
 const kruskal = (grafica) => {
@@ -165,7 +164,7 @@ const kruskal = (grafica) => {
     }
   }
 
-  return aristasMarcadas;
+  return { aristas: aristasMarcadas, vertices: Object.keys(grafica.vertices) };
 };
 
 const prim = (grafica) => {
@@ -220,7 +219,7 @@ const prim = (grafica) => {
     }
   }
 
-  return aristasMarcadas;
+  return { aristas: aristasMarcadas, vertices: Object.keys(grafica.vertices) };
 };
 
 const prufer = (secuencia) => {
@@ -283,9 +282,10 @@ const dijkstra = (grafica) => {
     inicio,
     destino,
     aux,
-    ciclo = false,
+    hayCiclo = false,
+    ciclo = [],
     ancestro,
-    inicial;
+    vertices = [];
 
   for (let i = 0; i < grafica.listaAristas.length; i++) {
     objetoAristas[grafica.listaAristas[i].etiqueta] = {
@@ -295,9 +295,7 @@ const dijkstra = (grafica) => {
     };
   }
 
-  console.log(objetoAristas);
-
-  inicial = Object.keys(grafica.vertices)[0];
+  let inicial = document.getElementById("dijkstra").value;
 
   camino[inicial] = { arista: undefined, peso: 0 };
 
@@ -346,15 +344,35 @@ const dijkstra = (grafica) => {
       camino[destino].peso
     ) {
       ancestro = inicio;
+      ciclo = [aristaActual];
+      vertices = [destino];
+      while (!hayCiclo) {
+        if (ancestro == destino) {
+          hayCiclo = true;
 
-      while (!ciclo) {
-        ancestro = objetoAristas[camino[ancestro].arista].inicio;
-        if (ancestro == destino) ciclo = true;
+          let mensaje = document.getElementById("mensaje");
+
+          // Vaciamos el mensaje de salida
+          mensaje.innerHTML = "";
+          mensaje.classList.remove("text-red-500", "text-green-500");
+
+          mensaje.classList.add("text-red-500");
+          mensaje.innerHTML =
+            "<p>La longitud del ciclo negativo es: " +
+            ciclo.length +
+            " unidades";
+
+          return { aristas: ciclo, vertices: vertices };
+        }
 
         if (ancestro == inicial) break;
+        ciclo.push(camino[ancestro].arista);
+        vertices.push(ancestro);
+
+        ancestro = objetoAristas[camino[ancestro].arista].inicio;
       }
 
-      if (!ciclo) {
+      if (!hayCiclo) {
         if (camino[destino].arista)
           cola.agregar(
             camino[destino].arista,
@@ -392,7 +410,5 @@ const dijkstra = (grafica) => {
     if (camino[i].arista) aristas.push(camino[i].arista);
   }
 
-  // console.log(aristas)
-
-  return aristas;
+  return { aristas: aristas, vertices: Object.keys(grafica.vertices) };
 };
