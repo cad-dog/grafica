@@ -284,6 +284,7 @@ const dijkstra = (grafica) => {
     aux,
     hayCiclo = false,
     ciclo = [],
+    pesoCiclo,
     ancestro,
     vertices = [];
 
@@ -346,6 +347,7 @@ const dijkstra = (grafica) => {
       ancestro = inicio;
       ciclo = [aristaActual];
       vertices = [destino];
+      pesoCiclo = objetoAristas[aristaActual].peso;
       while (!hayCiclo) {
         if (ancestro == destino) {
           hayCiclo = true;
@@ -358,15 +360,14 @@ const dijkstra = (grafica) => {
 
           mensaje.classList.add("text-red-500");
           mensaje.innerHTML =
-            "<p>La longitud del ciclo negativo es: " +
-            ciclo.length +
-            " unidades";
+            "<p>La longitud del ciclo negativo es: " + pesoCiclo + " unidades";
 
           return { aristas: ciclo, vertices: vertices };
         }
 
         if (ancestro == inicial) break;
         ciclo.push(camino[ancestro].arista);
+        pesoCiclo += objetoAristas[camino[ancestro].arista].peso;
         vertices.push(ancestro);
 
         ancestro = objetoAristas[camino[ancestro].arista].inicio;
