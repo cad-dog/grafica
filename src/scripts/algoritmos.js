@@ -413,3 +413,83 @@ const dijkstra = (grafica) => {
 
   return { aristas: aristas, vertices: Object.keys(grafica.vertices) };
 };
+
+const floyd = (grafica) => {
+  let dist = {},
+    antecesor,
+    vertices = [],
+    aristas = [],
+    hayCiclo = false;
+
+  let inicio = document.getElementById("inicioFloyd").value,
+    destino = document.getElementById("destinoFloyd").value;
+
+  for (let i in grafica.vertices) {
+    dist[i] = {};
+
+    grafica.aristas[i].forEach((arista) => {
+      if (arista.tipo === "saliente")
+        dist[i][arista.vertice] = {
+          antecesor: i,
+          peso: arista.peso,
+          arista: arista.etiqueta,
+        };
+    });
+
+    for (j in grafica.vertices) {
+      if (dist[i][j] == undefined)
+        dist[i][j] = { antecesor: i, peso: Infinity };
+
+      if (i === j) dist[i][j] = { antecesor: i, peso: 0 };
+    }
+  }
+
+  /*loop1:*/ for (let i in grafica.vertices) {
+    /* loop2:*/ for (let j in grafica.vertices) {
+      /*loop3:*/ for (let k in grafica.vertices) {
+        if (dist[i][k].peso + dist[k][j].peso < dist[i][j].peso) {
+          dist[i][j] = {
+            antecesor: k,
+            peso: dist[i][k].peso + dist[k][j].peso,
+            arista: dist[k][j].arista,
+          };
+          // if (i == j && dist[i][k].peso + dist[k][j].peso < 0) {
+          //   hayCiclo = true;
+          //   break loop1;
+          // }
+        }
+      }
+    }
+  }
+
+  // if (hayCiclo) {
+  //   vertices = [];
+  //   aristas = [];
+  //   for (let i in grafica.vertices) {
+  //     if (dist[i][i].peso != 0) {
+  //       vertices.push(i);
+  //       aristas.push(dist[i][i].arista);
+  //     }
+  //   }
+  //   console.log(dist);
+
+  //   return { aristas: aristas, vertices: vertices };
+  // }
+
+  antecesor = dist[inicio][destino];
+
+  vertices.push(destino);
+
+  while (antecesor.antecesor != inicio) {
+    vertices.push(antecesor.antecesor);
+    aristas.push(antecesor.arista);
+    antecesor = dist[inicio][antecesor.antecesor];
+  }
+
+  aristas.push(antecesor.arista);
+  vertices.push(inicio);
+
+  dist[inicio][destino].antecesor;
+
+  return { aristas: aristas, vertices: vertices };
+};
