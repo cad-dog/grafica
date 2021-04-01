@@ -419,7 +419,8 @@ const floyd = (grafica) => {
     antecesor,
     vertices = [],
     aristas = [],
-    hayCiclo = false;
+    hayCiclo = false,
+    longitud = 0;
 
   let inicio = document.getElementById("inicioFloyd").value,
     destino = document.getElementById("destinoFloyd").value;
@@ -444,37 +445,44 @@ const floyd = (grafica) => {
     }
   }
 
-  /*loop1:*/ for (let i in grafica.vertices) {
-    /* loop2:*/ for (let j in grafica.vertices) {
-      /*loop3:*/ for (let k in grafica.vertices) {
+  for (let i in grafica.vertices) {
+    for (let j in grafica.vertices) {
+      for (let k in grafica.vertices) {
         if (dist[i][k].peso + dist[k][j].peso < dist[i][j].peso) {
           dist[i][j] = {
             antecesor: k,
             peso: dist[i][k].peso + dist[k][j].peso,
             arista: dist[k][j].arista,
           };
-          // if (i == j && dist[i][k].peso + dist[k][j].peso < 0) {
-          //   hayCiclo = true;
-          //   break loop1;
-          // }
+          if (i == j && dist[i][k].peso + dist[k][j].peso < 0) {
+            hayCiclo = true;
+            break;
+          }
         }
       }
     }
   }
 
-  // if (hayCiclo) {
-  //   vertices = [];
-  //   aristas = [];
-  //   for (let i in grafica.vertices) {
-  //     if (dist[i][i].peso != 0) {
-  //       vertices.push(i);
-  //       aristas.push(dist[i][i].arista);
-  //     }
-  //   }
-  //   console.log(dist);
+  if (hayCiclo) {
+    for (let i in grafica.vertices) {
+      if (dist[i][i].peso != 0) {
+        longitud = dist[i][i].peso;
+        break;
+      }
+    }
 
-  //   return { aristas: aristas, vertices: vertices };
-  // }
+    let mensaje = document.getElementById("mensaje");
+
+    // Vaciamos el mensaje de salida
+    mensaje.innerHTML = "";
+    mensaje.classList.remove("text-red-500", "text-green-500");
+
+    mensaje.classList.add("text-red-500");
+    mensaje.innerHTML =
+      "<p>La longitud del ciclo negativo es: " + longitud + " unidades";
+
+    return { aristas: [], vertices: [] };
+  }
 
   antecesor = dist[inicio][destino];
 
