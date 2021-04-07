@@ -420,15 +420,18 @@ const floyd = (grafica) => {
     vertices = [],
     aristas = [],
     hayCiclo = false,
-    longitud = 0;
+    longitud = 0,
+    etiquetaAntecesor;
 
   let inicio = document.getElementById("inicioFloyd").value,
     destino = document.getElementById("destinoFloyd").value;
+  let caca = {};
 
   for (let i in grafica.vertices) {
     dist[i] = {};
+    caca[i] = {};
 
-    grafica.aristas[i].forEach((arista) => {
+    grafica.aristas[i].map((arista) => {
       if (arista.tipo === "saliente")
         dist[i][arista.vertice] = {
           antecesor: i,
@@ -440,7 +443,6 @@ const floyd = (grafica) => {
     for (j in grafica.vertices) {
       if (dist[i][j] == undefined)
         dist[i][j] = { antecesor: i, peso: Infinity };
-
       if (i === j) dist[i][j] = { antecesor: i, peso: 0 };
     }
   }
@@ -450,11 +452,13 @@ const floyd = (grafica) => {
       for (let k in grafica.vertices) {
         if (dist[i][k].peso + dist[k][j].peso < dist[i][j].peso) {
           dist[i][j] = {
-            antecesor: k,
+            antecesor: dist[k][j].antecesor,
             peso: dist[i][k].peso + dist[k][j].peso,
             arista: dist[k][j].arista,
           };
           if (i == j && dist[i][k].peso + dist[k][j].peso < 0) {
+            etiquetaAntecesor = i;
+            antecesor = dist[i][i];
             hayCiclo = true;
             break;
           }
@@ -464,11 +468,17 @@ const floyd = (grafica) => {
   }
 
   if (hayCiclo) {
-    for (let i in grafica.vertices) {
-      if (dist[i][i].peso != 0) {
-        longitud = dist[i][i].peso;
-        break;
-      }
+    (vertices = []), (aristas = []);
+
+    console.log("hola");
+    console.log(antecesor);
+
+    longitud = antecesor.peso;
+    while (true) {
+      if (vertices.includes(antecesor.antecesor)) break;
+      vertices.push(antecesor.antecesor);
+      aristas.push(antecesor.arista);
+      antecesor = dist[etiquetaAntecesor][antecesor.antecesor];
     }
 
     let mensaje = document.getElementById("mensaje");
@@ -481,7 +491,7 @@ const floyd = (grafica) => {
     mensaje.innerHTML =
       "<p>La longitud del ciclo negativo es: " + longitud + " unidades";
 
-    return { aristas: [], vertices: [] };
+    return { aristas: aristas, vertices: vertices };
   }
 
   antecesor = dist[inicio][destino];
