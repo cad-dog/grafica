@@ -457,8 +457,6 @@ const floyd = (grafica) => {
             arista: dist[k][j].arista,
           };
           if (i == j && dist[i][k].peso + dist[k][j].peso < 0) {
-            etiquetaAntecesor = i;
-            antecesor = dist[i][i];
             hayCiclo = true;
             break;
           }
@@ -467,11 +465,18 @@ const floyd = (grafica) => {
     }
   }
 
+  for (let i in grafica.vertices) {
+    if (dist[i][i].peso < 0) {
+      etiquetaAntecesor = i;
+      antecesor = dist[i][i];
+      break;
+    }
+  }
+
+  console.log(dist);
+
   if (hayCiclo) {
     (vertices = []), (aristas = []);
-
-    console.log("hola");
-    console.log(antecesor);
 
     longitud = antecesor.peso;
     while (true) {
