@@ -425,11 +425,9 @@ const floyd = (grafica) => {
 
   let inicio = document.getElementById("inicioFloyd").value,
     destino = document.getElementById("destinoFloyd").value;
-  let caca = {};
 
   for (let i in grafica.vertices) {
     dist[i] = {};
-    caca[i] = {};
 
     grafica.aristas[i].map((arista) => {
       if (arista.tipo === "saliente")
@@ -473,8 +471,6 @@ const floyd = (grafica) => {
     }
   }
 
-  console.log(dist);
-
   if (hayCiclo) {
     (vertices = []), (aristas = []);
 
@@ -515,4 +511,112 @@ const floyd = (grafica) => {
   dist[inicio][destino].antecesor;
 
   return { aristas: aristas, vertices: vertices };
+};
+
+const fordFulkerson = (grafica) => {
+  let verticeActual,
+    arista,
+    flujo,
+    objetoAristas = {};
+
+  let fuente = document.getElementById("ford1").value,
+    sumidero = document.getElementById("ford2").value;
+
+  for (let i = 0; i < grafica.listaAristas.length; i++) {
+    objetoAristas[grafica.listaAristas[i].etiqueta] = {
+      fuente: grafica.listaAristas[i].v1,
+      sumidero: grafica.listaAristas[i].v2,
+      flujoMax: grafica.listaAristas[i].flujoMax,
+      flujo: 0,
+    };
+  }
+
+  while (true) {
+    let etiquetasVertices = {},
+      cola = [];
+
+    verticeActual = {
+      etiqueta: fuente,
+      adyacente: fuente,
+      flujo: Infinity,
+      signo: "+",
+    };
+    etiquetasVertices[verticeActual.etiqueta] = verticeActual;
+
+    cola.push(verticeActual.etiqueta);
+
+    while (etiquetasVertices[sumidero] == undefined && cola.length > 0) {
+      verticeActual = etiquetasVertices[cola.shift()];
+
+      for (let j in grafica.aristas[verticeActual.etiqueta]) {
+        arista = grafica.aristas[verticeActual.etiqueta][j];
+
+        if (!Object.keys(etiquetasVertices).includes(arista.vertice)) {
+          if (
+            arista.tipo == "saliente" &&
+            objetoAristas[arista.etiqueta].flujo <
+              objetoAristas[arista.etiqueta].flujoMax
+          ) {
+            flujo = Math.min(
+              verticeActual.flujo,
+              objetoAristas[arista.etiqueta].flujoMax -
+                objetoAristas[arista.etiqueta].flujo
+            );
+          } else if (
+            arista.tipo == "entrante" &&
+            objetoAristas[arista.etiqueta].flujo > 0
+          ) {
+            flujo = Math.min(
+              verticeActual.flujo,
+              objetoAristas[arista.etiqueta].flujo
+            );
+          } else {
+            continue;
+          }
+
+          etiquetasVertices[arista.vertice] = {
+            etiqueta: arista.vertice,
+            adyacente: verticeActual.etiqueta,
+            flujo: flujo,
+            signo: arista.tipo == "saliente" ? "+" : "-",
+          };
+
+          cola.push(arista.vertice);
+        }
+      }
+    }
+
+    if (etiquetasVertices[sumidero] != undefined) {
+      verticeActual = etiquetasVertices[sumidero];
+
+      flujo = verticeActual.flujo;
+
+      while (verticeActual.etiqueta != fuente) {
+        for (let i in grafica.aristas[verticeActual.etiqueta]) {
+          if (
+            grafica.aristas[verticeActual.etiqueta][i].vertice ==
+            verticeActual.adyacente
+          ) {
+            objetoAristas[
+              grafica.aristas[verticeActual.etiqueta][i].etiqueta
+            ].flujo += flujo;
+            verticeActual =
+              etiquetasVertices[
+                grafica.aristas[verticeActual.etiqueta][i].vertice
+              ];
+            break;
+          }
+        }
+      }
+    } else break;
+  }
+
+  flujo = 0;
+  for (i in grafica.aristas[sumidero]) {
+    flujo += objetoAristas[grafica.aristas[sumidero][i].etiqueta].flujo;
+  }
+
+  console.log(flujo);
+
+  return { objetoAristas: objetoAristas, flujoMax: flujo };
 };

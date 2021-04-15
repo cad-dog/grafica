@@ -15,7 +15,8 @@ class Grafica {
     this.aristas[vertice] = [];
   }
 
-  agregarArista(v1, v2, peso, etiqueta) {
+  agregarArista(v1, v2, peso, etiqueta, flujo) {
+    flujo = flujo || 0;
     this.numAristas += 1;
     if (v1 == v2) {
       this.vertices[v1].grado += 2;
@@ -29,12 +30,22 @@ class Grafica {
     } else {
       this.pesos[etiqueta] = 0;
     }
-    this.listaAristas.push({
-      etiqueta: etiqueta,
-      v1: v1,
-      v2: v2,
-      peso: parseInt(peso),
-    });
+    if (this.tipo != "red") {
+      this.listaAristas.push({
+        etiqueta: etiqueta,
+        v1: v1,
+        v2: v2,
+        peso: parseInt(peso),
+      });
+    } else {
+      this.listaAristas.push({
+        etiqueta: etiqueta,
+        v1: v1,
+        v2: v2,
+        flujoMax: parseInt(peso),
+        flujo: 0,
+      });
+    }
     if (this.tipo == "grafica") {
       this.aristas[v1].push({
         etiqueta: etiqueta,
@@ -46,7 +57,7 @@ class Grafica {
         vertice: v1,
         peso: parseInt(peso),
       });
-    } else {
+    } else if (tipo == "digrafica") {
       this.aristas[v1].push({
         etiqueta: etiqueta,
         vertice: v2,
@@ -57,6 +68,21 @@ class Grafica {
         etiqueta: etiqueta,
         vertice: v1,
         peso: parseInt(peso),
+        tipo: "entrante",
+      });
+    } else if (tipo == "red") {
+      this.aristas[v1].push({
+        etiqueta: etiqueta,
+        vertice: v2,
+        flujoMax: parseInt(peso),
+        flujo: flujo,
+        tipo: "saliente",
+      });
+      this.aristas[v2].push({
+        etiqueta: etiqueta,
+        vertice: v1,
+        flujoMax: parseInt(peso),
+        flujo: flujo,
         tipo: "entrante",
       });
     }

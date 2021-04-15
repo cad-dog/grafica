@@ -42,9 +42,12 @@ const graficar = () => {
     tipo = document.getElementById("tipo2").value;
     menu.innerHTML =
       '<div class="border-t border-b p-1"> <div class="font-bold">Agregar vértice</div> <div class="text-sm flex space-x-1 mt-1"> <div class="mt-1">Etiqueta:</div> <input id="etiqueta" type="text" class="w-10 rounded-md border" /> <button class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none" onclick="agregaVertice()" > Agregar </button> </div> </div> <!-- Agregar arista input --> <div class="border-t border-b p-1"> <div class="font-bold">Agregar arista</div> <div class="text-sm flex space-x-1 mt-1"> <div class="mt-1">Etiqueta:</div> <input id="arista" type="text" class="w-10 rounded-md border" /> <div class="mt-1">de:</div> <input id="de" type="text" class="w-10 rounded-md border" /> <div class="mt-1">a:</div> <input id="a" type="text" class="w-10 rounded-md border" /> <div class="mt-1">w:</div> <input id="peso" type="text" class="w-10 rounded-md border" /> <button class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none" onclick="agregaArista()" > Agregar </button> </div> </div> <div class="border-t border-b p-1 flex space-x-1"> <!-- Eliminar vertice --> <div> <div class="font-bold">Eliminar vértice</div> <div class="text-sm flex space-x-1 mt-1"> <div class="mt-1">Etiqueta:</div> <input id="eliminar" type="text" class="w-10 rounded-md border" /> <button class="bg-red-500 rounded-md px-2 py-1 text-white hover:bg-red-600 focus:outline-none" onclick="eliminaVertice()" > Eliminar </button> </div> </div> <!-- Eliminar arista --> <div class="border-l px-1"> <div class="font-bold">Eliminar arista</div> <div class="text-sm flex space-x-1 mt-1"> <div class="mt-1">Etiqueta:</div> <input id="eliminarArista" type="text" class="w-10 rounded-md border" /> <button class="bg-red-500 rounded-md px-2 py-1 text-white hover:bg-red-600 focus:outline-none" onclick="eliminaArista()" > Eliminar </button> </div> </div> </div> <div class="flex border-t border-b p-1 space-x-1"> <!-- Vaciar vertice --> <div class="border-l px-1"> <div class="font-bold">Vaciar vértice</div> <div class="text-sm flex space-x-1 mt-1"> <div class="mt-1">Etiqueta:</div> <input id="vaciarVertice" type="text" class="w-10 rounded-md border" /> <button class="bg-red-500 rounded-md px-2 py-1 text-white hover:bg-red-600 focus:outline-none" onclick="vaciarVertice()" > Vaciar </button> </div> </div> </div> <!-- Dijkstra --> <div class="border-t border-b p-1"> <div class="font-bold">Dijkstra</div> <div class="text-sm flex space-x-1 mt-1"> <div class="mt-1">Vértice inicial:</div> <input id="dijkstra" type="text" class="w-10 rounded-md border" /> <button class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none" onclick="pintarArbol(dijkstra)" > Buscar </button> </div> </div> <!-- Floyd --> <div class="border-t border-b p-1"> <div class="font-bold">Floyd</div> <div class="text-sm flex space-x-1 mt-1"> <div class="mt-1">Vértice inicial:</div> <input id="inicioFloyd" type="text" class="w-10 rounded-md border" /> <input id="destinoFloyd" type="text" class="w-10 rounded-md border" /> <button class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none" onclick="pintarArbol(floyd)" > Buscar </button> </div> </div> <div> <button class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none" onclick="copiarGrafica()" > Copiar gráfica </button> <button class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none" onclick="restauraGrafica()" > Restaurar gráfica </button> <button class="bg-red-500 rounded-md px-2 py-1 text-white hover:bg-red-600 focus:outline-none" onclick="vaciaGrafica()" > Vaciar gráfica </button> </div>';
+  } else if (document.getElementById("tipo3").checked) {
+    tipo = document.getElementById("tipo3").value;
+    menu.innerHTML =
+      '<div class="border-t border-b p-1"> <div class="font-bold">Agregar vértice</div> <div class="text-sm flex space-x-1 mt-1"> <div class="mt-1">Etiqueta:</div> <input id="etiqueta" type="text" class="w-10 rounded-md border" /> <button class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none" onclick="agregaVertice()" > Agregar </button> </div> </div> <!-- Agregar arista input --> <div class="border-t border-b p-1"> <div class="font-bold">Agregar arista</div> <div class="text-sm flex space-x-1 mt-1"> <div class="mt-1">Etiqueta:</div> <input id="arista" type="text" class="w-10 rounded-md border" /> <div class="mt-1">de:</div> <input id="de" type="text" class="w-10 rounded-md border" /> <div class="mt-1">a:</div> <input id="a" type="text" class="w-10 rounded-md border" /> <div class="mt-1">w:</div> <input id="peso" type="text" class="w-10 rounded-md border" /> <button class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none" onclick="agregaArista()" > Agregar </button> </div> </div> <div class="border-t border-b p-1 flex space-x-1"> <!-- Eliminar vertice --> <div> <div class="font-bold">Eliminar vértice</div> <div class="text-sm flex space-x-1 mt-1"> <div class="mt-1">Etiqueta:</div> <input id="eliminar" type="text" class="w-10 rounded-md border" /> <button class="bg-red-500 rounded-md px-2 py-1 text-white hover:bg-red-600 focus:outline-none" onclick="eliminaVertice()" > Eliminar </button> </div> </div> <!-- Eliminar arista --> <div class="border-l px-1"> <div class="font-bold">Eliminar arista</div> <div class="text-sm flex space-x-1 mt-1"> <div class="mt-1">Etiqueta:</div> <input id="eliminarArista" type="text" class="w-10 rounded-md border" /> <button class="bg-red-500 rounded-md px-2 py-1 text-white hover:bg-red-600 focus:outline-none" onclick="eliminaArista()" > Eliminar </button> </div> </div> </div> <div class="flex border-t border-b p-1 space-x-1"> <!-- Vaciar vertice --> <div class="border-l px-1"> <div class="font-bold">Vaciar vértice</div> <div class="text-sm flex space-x-1 mt-1"> <div class="mt-1">Etiqueta:</div> <input id="vaciarVertice" type="text" class="w-10 rounded-md border" /> <button class="bg-red-500 rounded-md px-2 py-1 text-white hover:bg-red-600 focus:outline-none" onclick="vaciarVertice()" > Vaciar </button> </div> </div> </div> <!-- Floyd Fulkerson --> <div class="border-t border-b p-1"> <div class="font-bold">Floyd Fulkerson</div> <div class="text-sm flex mt-1"> <div class="mt-1">Vértice fuente:</div> <input id="ford1" type="text" class="w-10 rounded-md border" /> <div class="mt-1 ml-2">Vértice sumidero:</div> <input id="ford2" type="text" class="w-10 rounded-md border" /> <button class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none ml-1" onclick="actualizarGrafica(fordFulkerson)" > Buscar </button> </div> </div> <div> <button class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none" onclick="copiarGrafica()" > Copiar gráfica </button> <button class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none" onclick="restauraGrafica()" > Restaurar gráfica </button> <button class="bg-red-500 rounded-md px-2 py-1 text-white hover:bg-red-600 focus:outline-none" onclick="vaciaGrafica()" > Vaciar gráfica </button> </div>';
   }
-
-  grafica.tipo = tipo == "grafica" ? "grafica" : "digrafica";
+  grafica.tipo = tipo;
 
   esBipartita = grafica.esBipartita();
 
@@ -52,17 +55,22 @@ const graficar = () => {
     nodes: vertices,
     edges: aristas,
   };
+  let titulo;
 
   graficaVis = new vis.Network(contenedor, datos, opciones);
 
-  header.innerHTML = tipo == "grafica" ? "Gráfica" : "Digráfica";
+  if (tipo === "grafica") {
+    titulo = "Gráfica";
+  } else if (tipo === "digrafica") {
+    titulo = "Digráfica";
+  } else if (tipo === "red") {
+    titulo = "Red de transporte";
+  }
+
+  header.innerHTML = titulo;
 
   bipartita.innerHTML =
-    "<p>" +
-    (tipo == "grafica" ? "Gráfica" : "Digráfica") +
-    " " +
-    (esBipartita ? "" : "no ") +
-    "bipartita</p>";
+    "<p>" + titulo + " " + (esBipartita ? "" : "no ") + "bipartita</p>";
 };
 
 const agregaVertice = () => {
@@ -187,22 +195,42 @@ const agregaArista = () => {
   grafica.agregarArista(v1.label, v2.label, peso, etiqueta);
 
   // Agregamos la arista a la grafica visual
-  aristas.add([
-    {
-      id: idArista,
-      label: peso,
-      from: v1.id,
-      to: v2.id,
-      arrows: {
-        to: {
-          enabled: tipo == "grafica" ? false : true,
-        },
-      },
 
-      title: etiqueta,
-      color: "#6762cc",
-    },
-  ]);
+  if (tipo != "red") {
+    aristas.add([
+      {
+        id: idArista,
+        label: peso,
+        from: v1.id,
+        to: v2.id,
+        arrows: {
+          to: {
+            enabled: tipo == "grafica" ? false : true,
+          },
+        },
+
+        title: etiqueta,
+        color: "#6762cc",
+      },
+    ]);
+  } else {
+    aristas.add([
+      {
+        id: idArista,
+        label: "[0, " + peso + "]",
+        from: v1.id,
+        to: v2.id,
+        arrows: {
+          to: {
+            enabled: tipo == "grafica" ? false : true,
+          },
+        },
+
+        title: etiqueta,
+        color: "#6762cc",
+      },
+    ]);
+  }
 
   // Actualizamos el conjunto al que pertenece cada vertice
   esBipartita = grafica.esBipartita();
@@ -653,4 +681,46 @@ const crearGrafica = (algoritmo) => {
     ]);
     idArista++;
   }
+};
+
+actualizarGrafica = (algoritmo) => {
+  let datos = algoritmo(grafica);
+
+  for (i in datos.objetoAristas) {
+    // Si es un lazo disminuimos el numero de lazos
+    if (datos.objetoAristas[i].fuente == datos.objetoAristas[i].sumidero) {
+      grafica.lazos[datos.objetoAristas[i].fuente] -= 1;
+      if (!grafica.lazos[datos.objetoAristas[i].fuente] == 0)
+        delete grafica.lazos[datos.objetoAristas[i].fuente];
+    }
+
+    // Eliminamos la arista de la estructura grafica
+    grafica.eliminarArista(datos.objetoAristas[i].etiqueta);
+    grafica.agregarArista(
+      datos.objetoAristas[i].fuente,
+      datos.objetoAristas[i].sumidero,
+      datos.objetoAristas[i].flujoMax,
+      datos.objetoAristas[i].etiqueta,
+      datos.objetoAristas[i].flujo
+    );
+  }
+  aristas.get().map((i) => {
+    i.label =
+      "[" +
+      datos.objetoAristas[i.title].flujo +
+      ", " +
+      datos.objetoAristas[i.title].flujoMax +
+      "]";
+  });
+
+  aristas.update(aristas.get());
+
+  let mensaje = document.getElementById("mensaje");
+
+  // Vaciamos el mensaje de salida
+  mensaje.innerHTML = "";
+  mensaje.classList.remove("text-red-500", "text-green-500");
+
+  mensaje.classList.add("text-green-500");
+  mensaje.innerHTML = "<p>Flujo maximo: " + datos.flujoMax;
 };
