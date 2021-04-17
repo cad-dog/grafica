@@ -517,16 +517,78 @@ const fordFulkerson = (grafica) => {
   let verticeActual,
     arista,
     flujo,
-    objetoAristas = {};
+    objetoAristas = {},
+    fuente = [],
+    sumidero = [],
+    esFuente,
+    esSumidero;
 
-  let fuente = document.getElementById("ford1").value,
-    sumidero = document.getElementById("ford2").value;
+  let graficaCopia = _.cloneDeep(grafica);
 
-  for (let i = 0; i < grafica.listaAristas.length; i++) {
-    objetoAristas[grafica.listaAristas[i].etiqueta] = {
-      fuente: grafica.listaAristas[i].v1,
-      sumidero: grafica.listaAristas[i].v2,
-      flujoMax: grafica.listaAristas[i].flujoMax,
+  for (let i in graficaCopia.aristas) {
+    esFuente = true;
+    esSumidero = true;
+
+    for (let j in graficaCopia.aristas[i])
+      if (graficaCopia.aristas[i][j].tipo == "entrante") esFuente = false;
+
+    if (esFuente) fuente.push(i);
+
+    for (let j in graficaCopia.aristas[i])
+      if (graficaCopia.aristas[i][j].tipo == "saliente") esSumidero = false;
+
+    if (esSumidero) sumidero.push(i);
+  }
+
+  if (fuente.length > 1) {
+    graficaCopia.agregarVertice("superfuente");
+
+    for (let i in fuente) {
+      objetoAristas["e" + (parseInt(i) + 1) + "'"] = {
+        fuente: "superfuente",
+        sumidero: fuente[i],
+        flujoMax: Infinity,
+        flujo: 0,
+      };
+
+      graficaCopia.agregarArista(
+        "superfuente",
+        fuente[i],
+        Infinity,
+        "e" + (parseInt(i) + 1) + "'"
+      );
+    }
+
+    fuente = "superfuente";
+  } else fuente = fuente[0];
+
+  if (sumidero.length > 1) {
+    graficaCopia.agregarVertice("supersumidero");
+
+    for (let i in sumidero) {
+      objetoAristas["e" + (parseInt(i) + 1) + "''"] = {
+        fuente: sumidero[i],
+        sumidero: "supersumidero",
+        flujoMax: Infinity,
+        flujo: 0,
+      };
+
+      graficaCopia.agregarArista(
+        sumidero[i],
+        "supersumidero",
+        Infinity,
+        "e" + (parseInt(i) + 1) + "''"
+      );
+    }
+
+    sumidero = "supersumidero";
+  } else sumidero = [0];
+
+  for (let i = 0; i < graficaCopia.listaAristas.length; i++) {
+    objetoAristas[graficaCopia.listaAristas[i].etiqueta] = {
+      fuente: graficaCopia.listaAristas[i].v1,
+      sumidero: graficaCopia.listaAristas[i].v2,
+      flujoMax: graficaCopia.listaAristas[i].flujoMax,
       flujo: 0,
     };
   }
@@ -548,8 +610,8 @@ const fordFulkerson = (grafica) => {
     while (etiquetasVertices[sumidero] == undefined && cola.length > 0) {
       verticeActual = etiquetasVertices[cola.shift()];
 
-      for (let j in grafica.aristas[verticeActual.etiqueta]) {
-        arista = grafica.aristas[verticeActual.etiqueta][j];
+      for (let j in graficaCopia.aristas[verticeActual.etiqueta]) {
+        arista = graficaCopia.aristas[verticeActual.etiqueta][j];
 
         if (!Object.keys(etiquetasVertices).includes(arista.vertice)) {
           if (
@@ -592,17 +654,17 @@ const fordFulkerson = (grafica) => {
       flujo = verticeActual.flujo;
 
       while (verticeActual.etiqueta != fuente) {
-        for (let i in grafica.aristas[verticeActual.etiqueta]) {
+        for (let i in graficaCopia.aristas[verticeActual.etiqueta]) {
           if (
-            grafica.aristas[verticeActual.etiqueta][i].vertice ==
+            graficaCopia.aristas[verticeActual.etiqueta][i].vertice ==
             verticeActual.adyacente
           ) {
             objetoAristas[
-              grafica.aristas[verticeActual.etiqueta][i].etiqueta
+              graficaCopia.aristas[verticeActual.etiqueta][i].etiqueta
             ].flujo += flujo;
             verticeActual =
               etiquetasVertices[
-                grafica.aristas[verticeActual.etiqueta][i].vertice
+                graficaCopia.aristas[verticeActual.etiqueta][i].vertice
               ];
             break;
           }
@@ -612,11 +674,14 @@ const fordFulkerson = (grafica) => {
   }
 
   flujo = 0;
-  for (i in grafica.aristas[sumidero]) {
-    flujo += objetoAristas[grafica.aristas[sumidero][i].etiqueta].flujo;
+  for (i in graficaCopia.aristas[sumidero]) {
+    flujo += objetoAristas[graficaCopia.aristas[sumidero][i].etiqueta].flujo;
   }
 
-  console.log(flujo);
+  console.log(graficaCopia.aristas);
+  console.log(objetoAristas);
+
+  for (let i in objetoAristas) if (i.includes("'")) delete objetoAristas[i];
 
   return { objetoAristas: objetoAristas, flujoMax: flujo };
 };
