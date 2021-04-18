@@ -15,8 +15,9 @@ class Grafica {
     this.aristas[vertice] = [];
   }
 
-  agregarArista(v1, v2, peso, etiqueta, flujo) {
-    flujo = parseInt(flujo) || 0;
+  agregarArista(v1, v2, peso, etiqueta, flujoMin, flujo) {
+    flujoMin = parseInt(flujoMin) || 0;
+    flujo = parseInt(flujoMin) || 0;
     this.numAristas += 1;
     if (v1 == v2) {
       this.vertices[v1].grado += 2;
@@ -43,7 +44,8 @@ class Grafica {
         v1: v1,
         v2: v2,
         flujoMax: peso == Infinity ? Infinity : parseInt(peso),
-        flujo: flujo,
+        flujo: 0,
+        flujoMin: flujoMin,
       });
     }
     if (this.tipo == "grafica") {
@@ -74,15 +76,17 @@ class Grafica {
       this.aristas[v1].push({
         etiqueta: etiqueta,
         vertice: v2,
+        flujoMin: flujoMin,
+        flujo: 0,
         flujoMax: peso == Infinity ? Infinity : parseInt(peso),
-        flujo: flujo,
         tipo: "saliente",
       });
       this.aristas[v2].push({
         etiqueta: etiqueta,
         vertice: v1,
+        flujoMin: flujoMin,
+        flujo: 0,
         flujoMax: peso == Infinity ? Infinity : parseInt(peso),
-        flujo: flujo,
         tipo: "entrante",
       });
     }
@@ -91,6 +95,7 @@ class Grafica {
   eliminarVertice(vertice) {
     this.vaciaVertice(vertice);
     delete this.vertices[vertice];
+
     delete this.aristas[vertice];
   }
 
@@ -112,6 +117,36 @@ class Grafica {
     });
   }
 
+  eliminarArista2(v1, v2) {
+    for (let i in this.listaAristas)
+      if (this.listaAristas[i].v1 == v1 && this.listaAristas[i].v2 == v2) {
+        this.eliminarArista(this.listaAristas.etiqueta);
+        break;
+      }
+  }
+
+  editarArista(etiqueta, flujoMin, flujo, flujoMax) {
+    for (let i in this.listaAristas) {
+      if (this.listaAristas[i].etiqueta == etiqueta) {
+        this.listaAristas[i].flujoMin = flujoMin;
+        this.listaAristas[i].flujo = flujo;
+        this.listaAristas[i].flujoMax = flujoMax;
+        break;
+      }
+    }
+
+    for (let i in this.aristas) {
+      for (let j in this.aristas[i]) {
+        if (this.aristas[i][j].etiqueta == etiqueta) {
+          this.aristas[i][j].flujoMin = flujoMin;
+          this.aristas[i][j].flujo = flujo;
+          this.aristas[i][j].flujoMax = flujoMax;
+          break;
+        }
+      }
+    }
+  }
+
   buscaVertice(vertice) {
     return Object.keys(this.vertices).includes(vertice);
   }
@@ -124,6 +159,14 @@ class Grafica {
       }
     });
     return encontrado;
+  }
+
+  buscaArista2(v1, v2) {
+    for (let i in this.listaAristas) {
+      if (this.listaAristas[i].v1 == v1 && this.listaAristas[i].v2 == v2)
+        return this.listaAristas[i];
+    }
+    return false;
   }
 
   gradoVertice(vertice) {

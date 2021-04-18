@@ -521,10 +521,12 @@ const fordFulkerson = (grafica) => {
     fuente = [],
     sumidero = [],
     esFuente,
-    esSumidero;
+    esSumidero,
+    arcosRestriccion = [];
 
   let graficaCopia = _.cloneDeep(grafica);
 
+  // Variante 1
   for (let i in graficaCopia.aristas) {
     esFuente = true;
     esSumidero = true;
@@ -582,15 +584,232 @@ const fordFulkerson = (grafica) => {
     }
 
     sumidero = "supersumidero";
-  } else sumidero = [0];
+  } else sumidero = sumidero[0];
 
   for (let i = 0; i < graficaCopia.listaAristas.length; i++) {
     objetoAristas[graficaCopia.listaAristas[i].etiqueta] = {
       fuente: graficaCopia.listaAristas[i].v1,
       sumidero: graficaCopia.listaAristas[i].v2,
+      flujoMin: graficaCopia.listaAristas[i].flujoMin,
+      flujo: graficaCopia.listaAristas[i].flujo,
       flujoMax: graficaCopia.listaAristas[i].flujoMax,
-      flujo: 0,
     };
+
+    if (graficaCopia.listaAristas[i].flujo > 0)
+      arcosRestriccion.push({
+        v1: graficaCopia.listaAristas[i].v1,
+        v2: graficaCopia.listaAristas[i].v2,
+        etiqueta: graficaCopia.listaAristas[i].etiqueta,
+        flujoMin: graficaCopia.listaAristas[i].flujoMin,
+        flujo: graficaCopia.listaAristas[i].flujo,
+        flujoMax: graficaCopia.listaAristas[i].flujoMax,
+      });
+  }
+
+  // Variante 2
+  if (arcosRestriccion.length > 0) {
+    graficaCopia.agregarVertice("a'");
+    graficaCopia.agregarVertice("z'");
+
+    for (let i in arcosRestriccion) {
+      let arco = graficaCopia.buscaArista2("a'", arcosRestriccion[i].v2);
+      if (!arco) {
+        graficaCopia.agregarArista(
+          "a'",
+          arcosRestriccion[i].v2,
+          arcosRestriccion[i].flujoMin,
+          arcosRestriccion[i].etiqueta + "*"
+        );
+
+        objetoAristas[arcosRestriccion[i].etiqueta + "*"] = {
+          fuente: "a'",
+          sumidero: arcosRestriccion[i].v2,
+          flujoMin: 0,
+          flujo: 0,
+          flujoMax: arcosRestriccion[i].flujoMin,
+        };
+      } else {
+        graficaCopia.editarArista(
+          arco.etiqueta,
+          arco.flujoMin,
+          arco.flujo,
+          arco.flujoMax + arcosRestriccion[i].flujoMin
+        );
+      }
+
+      arco = graficaCopia.buscaArista2(arcosRestriccion[i].v1, "z'");
+      if (!arco) {
+        graficaCopia.agregarArista(
+          arcosRestriccion[i].v1,
+          "z'",
+          arcosRestriccion[i].flujoMin,
+          arcosRestriccion[i].etiqueta + "**"
+        );
+
+        objetoAristas[arcosRestriccion[i].etiqueta + "**"] = {
+          fuente: arcosRestriccion[i].v1,
+          sumidero: "z'",
+          flujoMin: 0,
+          flujo: 0,
+          flujoMax: arcosRestriccion[i].flujoMin,
+        };
+      } else {
+        graficaCopia.editarArista(
+          arco.etiqueta,
+          arco.flujoMin,
+          arco.flujo,
+          arco.flujoMax + arcosRestriccion[i].flujoMin
+        );
+      }
+
+      graficaCopia.eliminarArista(arcosRestriccion[i].etiqueta);
+      graficaCopia.agregarArista(
+        arcosRestriccion[i].v1,
+        arcosRestriccion[i].v2,
+        arcosRestriccion[i].flujoMax - arcosRestriccion[i].flujoMin,
+        arcosRestriccion[i].etiqueta
+      );
+
+      objetoAristas[arcosRestriccion[i].etiqueta] = {
+        fuente: arcosRestriccion[i].v1,
+        sumidero: arcosRestriccion[i].v2,
+        flujoMin: 0,
+        flujo: 0,
+        flujoMax: arcosRestriccion[i].flujoMax - arcosRestriccion[i].flujoMin,
+      };
+    }
+
+    graficaCopia.agregarArista(fuente, sumidero, Infinity, "e*");
+
+    objetoAristas["e*"] = {
+      fuente: fuente,
+      sumidero: sumidero,
+      flujoMin: 0,
+      flujo: 0,
+      flujoMax: Infinity,
+    };
+
+    graficaCopia.agregarArista(sumidero, fuente, Infinity, "e**");
+
+    objetoAristas["e**"] = {
+      fuente: sumidero,
+      sumidero: fuente,
+      flujoMin: 0,
+      flujo: 0,
+      flujoMax: Infinity,
+    };
+
+    let fuente2 = "a'";
+    let sumidero2 = "z'";
+
+    while (true) {
+      let etiquetasVertices = {},
+        cola = [];
+
+      verticeActual = {
+        etiqueta: fuente2,
+        adyacente: fuente2,
+        flujo: Infinity,
+        signo: "+",
+      };
+      etiquetasVertices[verticeActual.etiqueta] = verticeActual;
+
+      cola.push(verticeActual.etiqueta);
+
+      while (etiquetasVertices[sumidero2] == undefined && cola.length > 0) {
+        verticeActual = etiquetasVertices[cola.shift()];
+
+        for (let j in graficaCopia.aristas[verticeActual.etiqueta]) {
+          arista = graficaCopia.aristas[verticeActual.etiqueta][j];
+
+          if (!Object.keys(etiquetasVertices).includes(arista.vertice)) {
+            if (
+              arista.tipo == "saliente" &&
+              objetoAristas[arista.etiqueta].flujo <
+                objetoAristas[arista.etiqueta].flujoMax
+            ) {
+              flujo = Math.min(
+                verticeActual.flujo,
+                objetoAristas[arista.etiqueta].flujoMax -
+                  objetoAristas[arista.etiqueta].flujo
+              );
+            } else if (
+              arista.tipo == "entrante" &&
+              objetoAristas[arista.etiqueta].flujo > 0
+            ) {
+              flujo = Math.min(
+                verticeActual.flujo,
+                objetoAristas[arista.etiqueta].flujo
+              );
+            } else continue;
+
+            etiquetasVertices[arista.vertice] = {
+              etiqueta: arista.vertice,
+              adyacente: verticeActual.etiqueta,
+              flujo: flujo,
+              signo: arista.tipo == "saliente" ? "+" : "-",
+            };
+
+            cola.push(arista.vertice);
+          }
+        }
+      }
+
+      if (etiquetasVertices[sumidero2] != undefined) {
+        verticeActual = etiquetasVertices[sumidero2];
+
+        flujo = verticeActual.flujo;
+
+        while (verticeActual.etiqueta != fuente2) {
+          for (let i in graficaCopia.aristas[verticeActual.etiqueta]) {
+            if (
+              graficaCopia.aristas[verticeActual.etiqueta][i].vertice ==
+              verticeActual.adyacente
+            ) {
+              objetoAristas[
+                graficaCopia.aristas[verticeActual.etiqueta][i].etiqueta
+              ].flujo += flujo;
+              verticeActual =
+                etiquetasVertices[
+                  graficaCopia.aristas[verticeActual.etiqueta][i].vertice
+                ];
+              break;
+            }
+          }
+        }
+      } else break;
+    }
+
+    // Reparticiones
+    for (let i in arcosRestriccion) {
+      graficaCopia.eliminarArista(arcosRestriccion[i].etiqueta);
+      graficaCopia.agregarArista(
+        arcosRestriccion[i].v1,
+        arcosRestriccion[i].v2,
+        arcosRestriccion[i].flujoMax,
+        arcosRestriccion[i].etiqueta,
+        objetoAristas[arcosRestriccion[i].etiqueta + "**"].flujoMin,
+        objetoAristas[arcosRestriccion[i].etiqueta + "**"].flujoMin
+      );
+
+      objetoAristas[arcosRestriccion[i].etiqueta] = {
+        fuente: arcosRestriccion[i].v1,
+        sumidero: arcosRestriccion[i].v2,
+        flujoMin: objetoAristas[arcosRestriccion[i].etiqueta + "**"].flujoMin,
+        flujo: objetoAristas[arcosRestriccion[i].etiqueta + "**"].flujoMin,
+        flujoMax: arcosRestriccion[i].flujoMax,
+      };
+    }
+
+    graficaCopia.eliminarArista("e*");
+    graficaCopia.eliminarArista("e**");
+
+    console.log(graficaCopia.aristas);
+
+    for (let i in objetoAristas) if (i.includes("*")) delete objetoAristas[i];
+
+    graficaCopia.eliminarVertice("a'");
+    graficaCopia.eliminarVertice("z'");
   }
 
   while (true) {
@@ -678,10 +897,11 @@ const fordFulkerson = (grafica) => {
     flujo += objetoAristas[graficaCopia.aristas[sumidero][i].etiqueta].flujo;
   }
 
-  console.log(graficaCopia.aristas);
-  console.log(objetoAristas);
+  // console.log(objetoAristas);
 
   for (let i in objetoAristas) if (i.includes("'")) delete objetoAristas[i];
+
+  console.log(objetoAristas);
 
   return { objetoAristas: objetoAristas, flujoMax: flujo };
 };

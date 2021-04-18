@@ -143,9 +143,11 @@ const agregaArista = () => {
   // Entradas
   let etiqueta = document.getElementById("arista").value;
   let peso = document.getElementById("peso").value;
-  let flujoMin = document.getElementById("arista4").value == "" ? 0 : flujoMin;
+  let flujoMin = document.getElementById("arista4").value;
   let etiquetaVertice1 = document.getElementById("de").value;
   let etiquetaVertice2 = document.getElementById("a").value;
+
+  flujoMin = flujoMin == "" ? 0 : flujoMin;
 
   // Vaciamos el mensaje de salida
   mensaje.innerHTML = "";
@@ -217,7 +219,7 @@ const agregaArista = () => {
     aristas.add([
       {
         id: idArista,
-        label: "[" + flujoMin + ", " + peso + "]",
+        label: "[" + flujoMin + ", 0, " + peso + "]",
         from: v1.id,
         to: v2.id,
         arrows: {
@@ -707,6 +709,8 @@ actualizarGrafica = (algoritmo) => {
   aristas.get().map((i) => {
     i.label =
       "[" +
+      datos.objetoAristas[i.title].flujoMin +
+      ", " +
       datos.objetoAristas[i.title].flujo +
       ", " +
       datos.objetoAristas[i.title].flujoMax +
