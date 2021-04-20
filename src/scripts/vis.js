@@ -752,6 +752,7 @@ actualizarGrafica = (algoritmo) => {
 
     // Eliminamos la arista de la estructura grafica
     grafica.eliminarArista(datos.objetoAristas[i].etiqueta);
+
     grafica.agregarArista(
       datos.objetoAristas[i].fuente,
       datos.objetoAristas[i].sumidero,
