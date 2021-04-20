@@ -10,8 +10,17 @@ class Grafica {
     this.tipo;
   }
 
-  agregarVertice(vertice) {
-    this.vertices[vertice] = { etiqueta: vertice, grado: 0 };
+  agregarVertice(vertice, flujoMin, flujoMax) {
+    flujoMin = parseInt(flujoMin) || 0;
+    flujoMax = parseInt(flujoMax) || 0;
+
+    this.vertices[vertice] = {
+      etiqueta: vertice,
+      grado: 0,
+      flujoMin: flujoMin,
+      flujoMax: flujoMax,
+    };
+
     this.aristas[vertice] = [];
   }
 
