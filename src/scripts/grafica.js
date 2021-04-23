@@ -11,8 +11,8 @@ class Grafica {
   }
 
   agregarVertice(vertice, flujoMin, flujoMax) {
-    flujoMin = parseInt(flujoMin) || 0;
-    flujoMax = parseInt(flujoMax) || 0;
+    flujoMin = parseInt(flujoMin) || undefined;
+    flujoMax = parseInt(flujoMax) || undefined;
 
     this.vertices[vertice] = {
       etiqueta: vertice,
@@ -53,7 +53,7 @@ class Grafica {
         v1: v1,
         v2: v2,
         flujoMax: peso == Infinity ? Infinity : parseInt(peso),
-        flujo: 0,
+        flujo: flujo,
         flujoMin: flujoMin,
       });
     }
@@ -246,7 +246,6 @@ class Grafica {
     }
 
     if (this.numAristas < 1) {
-      console.log("hola");
       Object.keys(this.vertices).map((i) => {
         this.vertices[i].conjunto = 1;
       });
