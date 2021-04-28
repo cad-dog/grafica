@@ -99,7 +99,9 @@ const graficarArchivo2 = () => {
           datos.aristas[i].v2,
           datos.aristas[i].flujoMax,
           datos.aristas[i].etiqueta,
-          datos.aristas[i].flujoMin
+          datos.aristas[i].flujoMin,
+          "0",
+          datos.aristas[i].costo
         );
 
         aristas.add([
@@ -110,7 +112,10 @@ const graficarArchivo2 = () => {
               (datos.aristas[i].flujoMin ? datos.aristas[i].flujoMin : "0") +
               ", 0, " +
               datos.aristas[i].flujoMax +
-              "]",
+              "]" +
+              (datos.aristas[i].costo != undefined
+                ? "\n$" + datos.aristas[i].costo
+                : ""),
             from: v1.id,
             to: v2.id,
             arrows: {
@@ -158,6 +163,8 @@ const graficarArchivo2 = () => {
 
       // Actualizamos el numero de vertices en la pagina
       numVertices.innerHTML = grafica.numVertices;
+      // Actualizamos el numero de vertices en la pagina
+      numAristas.innerHTML = grafica.numAristas;
     }
   };
 };
