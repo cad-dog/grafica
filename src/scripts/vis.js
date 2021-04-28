@@ -718,8 +718,6 @@ const actualizarGrafica = (algoritmo) => {
     );
   }
   aristas.get().map((i) => {
-    // console.log(i);
-
     i.label =
       "[" +
       (datos.objetoAristas[i.title].flujoMin == undefined
@@ -740,5 +738,5 @@ const actualizarGrafica = (algoritmo) => {
   mensaje.classList.remove("text-red-500", "text-green-500");
 
   mensaje.classList.add("text-green-500");
-  mensaje.innerHTML = "<p>Flujo maximo: " + datos.flujoMax;
+  mensaje.innerHTML = datos.msj;
 };
