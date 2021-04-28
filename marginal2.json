@@ -1,0 +1,165 @@
+{
+  "vertices": [
+    { "etiqueta": "a" },
+    { "etiqueta": "b" },
+    { "etiqueta": "c" },
+    { "etiqueta": "d" },
+    { "etiqueta": "e" },
+    { "etiqueta": "f" },
+    { "etiqueta": "g" }
+  ],
+  "aristas": [
+    {
+      "etiqueta": "e1+",
+      "v1": "a",
+      "v2": "b",
+      "flujoMax": "33",
+      "flujo": "0",
+      "peso": "15"
+    },
+    {
+      "etiqueta": "e2-",
+      "v1": "c",
+      "v2": "a",
+      "flujoMax": "10",
+      "flujo": "0",
+      "peso": "-9"
+    },
+    {
+      "etiqueta": "e2+",
+      "v1": "a",
+      "v2": "c",
+      "flujoMax": "62",
+      "flujo": "0",
+      "peso": "9"
+    },
+    {
+      "etiqueta": "e3-",
+      "v1": "d",
+      "v2": "a",
+      "flujoMax": "5",
+      "flujo": "0",
+      "peso": "-7"
+    },
+    {
+      "etiqueta": "e3+",
+      "v1": "a",
+      "v2": "d",
+      "flujoMax": "36",
+      "flujo": "0",
+      "peso": "7"
+    },
+    {
+      "etiqueta": "e4-",
+      "v1": "e",
+      "v2": "b",
+      "flujoMax": "10",
+      "flujo": "0",
+      "peso": "-7"
+    },
+    {
+      "etiqueta": "e4+",
+      "v1": "b",
+      "v2": "e",
+      "flujoMax": "0",
+      "flujo": "0",
+      "peso": "7"
+    },
+    {
+      "etiqueta": "e5-",
+      "v1": "b",
+      "v2": "c",
+      "flujoMax": "10",
+      "flujo": "0",
+      "peso": "-3"
+    },
+    {
+      "etiqueta": "e5+",
+      "v1": "c",
+      "v2": "b",
+      "flujoMax": "9",
+      "flujo": "0",
+      "peso": "3"
+    },
+    {
+      "etiqueta": "e6+",
+      "v1": "c",
+      "v2": "d",
+      "flujoMax": "10",
+      "flujo": "0",
+      "peso": "8"
+    },
+    {
+      "etiqueta": "e7+",
+      "v1": "c",
+      "v2": "f",
+      "flujoMax": "25",
+      "flujo": "0",
+      "peso": "20"
+    },
+    {
+      "etiqueta": "e8-",
+      "v1": "f",
+      "v2": "d",
+      "flujoMax": "5",
+      "flujo": "0",
+      "peso": "-3"
+    },
+    {
+      "etiqueta": "e8+",
+      "v1": "d",
+      "v2": "f",
+      "flujoMax": "7",
+      "flujo": "0",
+      "peso": "3"
+    },
+    {
+      "etiqueta": "e9+",
+      "v1": "e",
+      "v2": "c",
+      "flujoMax": "18",
+      "flujo": "0",
+      "peso": "2"
+    },
+    {
+      "etiqueta": "e10-",
+      "v1": "g",
+      "v2": "e",
+      "flujoMax": "10",
+      "flujo": "0",
+      "peso": "-20"
+    },
+    {
+      "etiqueta": "e10+",
+      "v1": "e",
+      "v2": "g",
+      "flujoMax": "13",
+      "flujo": "0",
+      "peso": "20"
+    },
+    {
+      "etiqueta": "e11+",
+      "v1": "f",
+      "v2": "e",
+      "flujoMax": "20",
+      "flujo": "0",
+      "peso": "7"
+    },
+    {
+      "etiqueta": "e12-",
+      "v1": "g",
+      "v2": "f",
+      "flujoMax": "5",
+      "flujo": "0",
+      "peso": "-13"
+    },
+    {
+      "etiqueta": "e12+",
+      "v1": "f",
+      "v2": "g",
+      "flujoMax": "35",
+      "flujo": "0",
+      "peso": "13"
+    }
+  ]
+}

@@ -95,13 +95,33 @@
     </div>
   </div>
 </div>
-<!-- Floyd Fulkerson -->
+<!-- Ford Fulkerson -->
 <div class="border-t border-b p-1">
-  <div class="font-bold">Floyd Fulkerson</div>
+  <div class="font-bold">Ford Fulkerson</div>
   <div class="text-sm flex mt-1">
+    <div class="mt-1">Fuente(s):</div>
+    <input id="ford1" type="text" class="w-10 rounded-md border" />
+    <div class="mt-1">Sumidero(s):</div>
+    <input id="ford2" type="text" class="w-10 rounded-md border" />
     <button
       class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none ml-1"
       onclick="actualizarGrafica(fordFulkerson)"
+    >
+      Buscar
+    </button>
+  </div>
+</div>
+<!-- primal -->
+<div class="border-t border-b p-1">
+  <div class="font-bold">Ford Fulkerson</div>
+  <div class="text-sm flex mt-1">
+    <div class="mt-1">Fuente(s):</div>
+    <input id="primal1" type="text" class="w-10 rounded-md border" />
+    <div class="mt-1">Sumidero(s):</div>
+    <input id="primal2" type="text" class="w-10 rounded-md border" />
+    <button
+      class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none ml-1"
+      onclick="actualizarGrafica(primal)"
     >
       Buscar
     </button>

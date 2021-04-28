@@ -24,7 +24,8 @@ class Grafica {
     this.aristas[vertice] = [];
   }
 
-  agregarArista(v1, v2, peso, etiqueta, flujoMin, flujo) {
+  agregarArista(v1, v2, peso, etiqueta, flujoMin, flujo, costo) {
+    costo = parseInt(costo) || 0;
     flujoMin = parseInt(flujoMin) || 0;
     flujo = parseInt(flujoMin) || 0;
     this.numAristas += 1;
@@ -55,6 +56,8 @@ class Grafica {
         flujoMax: peso == Infinity ? Infinity : parseInt(peso),
         flujo: flujo,
         flujoMin: flujoMin,
+        costo: costo,
+        peso: costo,
       });
     }
     if (this.tipo == "grafica") {
@@ -89,6 +92,8 @@ class Grafica {
         flujo: 0,
         flujoMax: peso == Infinity ? Infinity : parseInt(peso),
         tipo: "saliente",
+        costo: costo,
+        peso: costo,
       });
       this.aristas[v2].push({
         etiqueta: etiqueta,
@@ -97,6 +102,8 @@ class Grafica {
         flujo: 0,
         flujoMax: peso == Infinity ? Infinity : parseInt(peso),
         tipo: "entrante",
+        costo: costo,
+        peso: costo,
       });
     }
   }
@@ -161,13 +168,10 @@ class Grafica {
   }
 
   buscaArista(arista) {
-    let encontrado = false;
-    Object.keys(this.aristas).map((i) => {
-      if (this.aristas[i].filter((j) => j.etiqueta == arista).length > 0) {
-        encontrado = true;
-      }
-    });
-    return encontrado;
+    for (let i in this.listaAristas)
+      if (this.listaAristas[i].etiqueta == arista) return this.listaAristas[i];
+
+    return false;
   }
 
   buscaArista2(v1, v2) {
