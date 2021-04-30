@@ -420,9 +420,7 @@ const floyd = (grafica, a, b) => {
     antecesor,
     vertices = [],
     aristas = [],
-    hayCiclo = false,
-    longitud = 0,
-    etiquetaAntecesor;
+    longitud = 0;
 
   a = "a";
   b = "g";
@@ -1149,7 +1147,7 @@ const fordFulkerson = (grafica) => {
 //   }
 // };
 
-const fordFulkerson2 = (grafica) => {
+const fordFulkerson2 = (red, a, b, ff) => {
   let verticeActual,
     arista,
     flujo,
@@ -1160,16 +1158,16 @@ const fordFulkerson2 = (grafica) => {
   //   sumidero = document.getElementById("primal2").value,
   //   flujoFactible = document.getElementById("primal3").value;
 
-  let fuente = "a",
-    sumidero = "g",
-    flujoFactible = 15;
+  let fuente = "a" || a,
+    sumidero = "g" || b,
+    flujoFactible = 15 || ff;
 
   // Objeto aristas
-  for (let i = 0; i < grafica.listaAristas.length; i++) {
-    objetoAristas[grafica.listaAristas[i].etiqueta] = {
-      fuente: grafica.listaAristas[i].v1,
-      sumidero: grafica.listaAristas[i].v2,
-      flujoMax: grafica.listaAristas[i].flujoMax,
+  for (let i = 0; i < red.listaAristas.length; i++) {
+    objetoAristas[red.listaAristas[i].etiqueta] = {
+      fuente: red.listaAristas[i].v1,
+      sumidero: red.listaAristas[i].v2,
+      flujoMax: red.listaAristas[i].flujoMax,
       flujo: 0,
     };
   }
@@ -1191,8 +1189,8 @@ const fordFulkerson2 = (grafica) => {
     while (etiquetasVertices[sumidero] == undefined && cola.length > 0) {
       verticeActual = etiquetasVertices[cola.shift()];
 
-      for (let j in grafica.aristas[verticeActual.etiqueta]) {
-        arista = grafica.aristas[verticeActual.etiqueta][j];
+      for (let j in red.aristas[verticeActual.etiqueta]) {
+        arista = red.aristas[verticeActual.etiqueta][j];
 
         if (!Object.keys(etiquetasVertices).includes(arista.vertice)) {
           // Sentido propio
@@ -1239,8 +1237,8 @@ const fordFulkerson2 = (grafica) => {
       flujo = verticeActual.flujo;
 
       while (verticeActual.etiqueta != fuente) {
-        let aristas = grafica.aristas[verticeActual.etiqueta];
-        for (let i in grafica.aristas[verticeActual.etiqueta]) {
+        let aristas = red.aristas[verticeActual.etiqueta];
+        for (let i in red.aristas[verticeActual.etiqueta]) {
           if (aristas[i].vertice == verticeActual.adyacente) {
             objetoAristas[aristas[i].etiqueta].flujo += flujo;
             verticeActual = etiquetasVertices[aristas[i].vertice];
@@ -1252,9 +1250,8 @@ const fordFulkerson2 = (grafica) => {
 
     flujoAumentado = 0;
 
-    for (i in grafica.aristas[sumidero])
-      flujoAumentado +=
-        objetoAristas[grafica.aristas[sumidero][i].etiqueta].flujo;
+    for (i in red.aristas[sumidero])
+      flujoAumentado += objetoAristas[red.aristas[sumidero][i].etiqueta].flujo;
 
     if (flujoAumentado == flujoFactible) break;
   }
@@ -1262,15 +1259,15 @@ const fordFulkerson2 = (grafica) => {
   return { objetoAristas: objetoAristas, flujoMax: flujoAumentado };
 };
 
-const primal = (grafica) => {
+const primal = (red) => {
   // aplicamos Ford Fulkerson
   let costo;
-  let { objetoAristas, flujoMax } = fordFulkerson2(grafica);
+  let { objetoAristas, flujoMax } = fordFulkerson2(red);
 
-  for (let i in grafica.listaAristas) {
-    let arista = objetoAristas[grafica.listaAristas[i].etiqueta];
-    grafica.editarArista(
-      grafica.listaAristas[i].etiqueta,
+  for (let i in red.listaAristas) {
+    let arista = objetoAristas[red.listaAristas[i].etiqueta];
+    red.editarArista(
+      red.listaAristas[i].etiqueta,
       arista.flujoMin,
       arista.flujo,
       arista.flujoMax
@@ -1278,50 +1275,26 @@ const primal = (grafica) => {
   }
 
   while (true) {
-    let graficaCopia = _.cloneDeep(grafica);
+    let redCopia = _.cloneDeep(red);
 
-    // Creamos la grafica marginal
-    for (let i in objetoAristas) {
-      graficaCopia.eliminarArista(i);
+    // Creamos la red marginal
+    creaRedMarginal(red, redCopia, objetoAristas);
 
-      if (objetoAristas[i].flujo > 0)
-        graficaCopia.agregarArista(
-          objetoAristas[i].sumidero,
-          objetoAristas[i].fuente,
-          objetoAristas[i].flujo,
-          i + "-",
-          "0",
-          "0",
-          -grafica.buscaArista(i).costo
-        );
-
-      if (objetoAristas[i].flujo < objetoAristas[i].flujoMax)
-        graficaCopia.agregarArista(
-          objetoAristas[i].fuente,
-          objetoAristas[i].sumidero,
-          objetoAristas[i].flujoMax - objetoAristas[i].flujo,
-          i + "+",
-          "0",
-          "0",
-          grafica.buscaArista(i).costo
-        );
-    }
-
-    let datos = floyd(graficaCopia);
+    let datos = floyd(redCopia);
 
     if (!datos.longitud) break;
 
     let delta = Infinity;
 
     for (let i in datos.aristas) {
-      let valor = graficaCopia.buscaArista(datos.aristas[i]).flujoMax;
+      let valor = redCopia.buscaArista(datos.aristas[i]).flujoMax;
       if (valor < delta) delta = valor;
     }
 
     for (let i in datos.aristas) {
       if (datos.aristas[i].includes("+")) {
         let arista = objetoAristas[datos.aristas[i].split("+")[0]];
-        grafica.editarArista(
+        red.editarArista(
           datos.aristas[i].split("+")[0],
           arista.flujoMin,
           arista.flujo + delta,
@@ -1331,7 +1304,7 @@ const primal = (grafica) => {
         arista.flujo += delta;
       } else {
         let arista = objetoAristas[datos.aristas[i].split("-")[0]];
-        grafica.editarArista(
+        red.editarArista(
           datos.aristas[i].split("-")[0],
           arista.flujoMin,
           arista.flujo - delta,
@@ -1343,11 +1316,99 @@ const primal = (grafica) => {
 
     costo = 0;
 
-    for (let i in grafica.listaAristas)
-      costo += grafica.listaAristas[i].costo * grafica.listaAristas[i].flujo;
+    for (let i in red.listaAristas)
+      costo += red.listaAristas[i].costo * red.listaAristas[i].flujo;
   }
 
   let msj = "El costo minimo es de " + costo + " unidades";
 
   return { objetoAristas: objetoAristas, flujoMax: flujoMax, msj: msj };
+};
+
+const dual = (red) => {
+  let costo;
+
+  let fuente = "a",
+    sumidero = "g",
+    delta,
+    flujoFactible = 15,
+    flujoTotal = 0,
+    objetoAristas2;
+
+  let iteracion = 0;
+
+  // satisfacemos restricciones en arcos
+  red = satisfacerRestriccionesArcos(red, fuente, sumidero);
+
+  while (flujoTotal < flujoFactible) {
+    if (iteracion == 3) break;
+    console.log(red);
+
+    // creamos red marginal
+    let { redMarginal, objetoAristas } = creaRedMarginal(red);
+
+    // aplicamos floyd
+    let { aristas } = floyd(redMarginal, "a", "g");
+
+    delta = Infinity;
+
+    // calculamos delta
+    for (let i in aristas) {
+      let etiqueta;
+      if (aristas[i].includes("+")) etiqueta = aristas[i].split("+")[0];
+      else etiqueta = aristas[i].split("-")[0];
+
+      delta = Math.min(
+        delta,
+        objetoAristas[etiqueta].flujoMax - objetoAristas[etiqueta].flujo
+      );
+    }
+
+    // checamos que no se sobrepase el flujo factible
+    if (delta + flujoTotal > flujoFactible) delta = flujoFactible - flujoTotal;
+
+    // actualizamos la red
+    for (let i in aristas) {
+      let etiqueta;
+
+      if (aristas[i].includes("+")) etiqueta = aristas[i].split("+")[0];
+      else etiqueta = aristas[i].split("-")[0];
+
+      red.editarArista(
+        etiqueta,
+        objetoAristas[etiqueta].flujoMin,
+        objetoAristas[etiqueta].flujo + delta,
+        objetoAristas[etiqueta].flujo
+      );
+
+      objetoAristas[etiqueta].flujo += delta;
+    }
+
+    // calculamos el flujo total
+    flujoTotal = 0;
+    for (let i in red.aristas[sumidero]) {
+      let arco = red.aristas[sumidero][i];
+      if (arco.tipo == "entrante") flujoTotal += arco.flujo;
+    }
+
+    costo = 0;
+    // calculamos el costo
+    for (let i in objetoAristas)
+      costo += objetoAristas[i].flujo * objetoAristas[i].costo;
+
+    objetoAristas2 = objetoAristas;
+
+    console.log(costo);
+
+    console.log(flujoTotal);
+
+    console.log(delta);
+
+    console.log(objetoAristas);
+
+    iteracion++;
+  }
+
+  let msj = "El costo minimo es de " + costo + " unidades";
+  return { objetoAristas: objetoAristas2, msj: msj };
 };
