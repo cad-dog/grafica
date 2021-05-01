@@ -70,6 +70,7 @@ const creaObjetoAristas = (grafica) => {
   let objetoAristas = {},
     arcosRestriccion = [];
   // Objeto de aristas
+
   for (let i = 0; i < grafica.listaAristas.length; i++) {
     let arista = grafica.listaAristas[i];
     objetoAristas[arista.etiqueta] = {
@@ -82,7 +83,7 @@ const creaObjetoAristas = (grafica) => {
     };
 
     // Si hay aristas con restriccion los agregamos a un arreglo
-    if (arista.flujo > 0)
+    if (arista.flujoMin > 0)
       arcosRestriccion.push({
         v1: arista.v1,
         v2: arista.v2,
@@ -97,13 +98,55 @@ const creaObjetoAristas = (grafica) => {
   return { objetoAristas: objetoAristas, arcosRestriccion: arcosRestriccion };
 };
 
+const creaSuperVertices = (red, fuente, sumidero) => {
+  // Si hay mas de un vertice fuente
+  if (fuente.length > 1) {
+    // Se agrega un vertice superfuente
+    red.agregarVertice("superfuente");
+
+    // Se conectan los vertices fuente con el superfuente
+    for (let i in fuente) {
+      red.agregarArista(
+        "superfuente",
+        fuente[i],
+        Infinity,
+        "e" + (parseInt(i) + 1) + "'"
+      );
+    }
+
+    fuente = "superfuente";
+  } else fuente = fuente[0];
+
+  // Si hay mas de un vertice sumidero
+  if (sumidero.length > 1) {
+    // Se agrega un vertice supersumidero
+    red.agregarVertice("supersumidero");
+
+    // Se conectan los vertices fuente con el supersumidero
+    for (let i in sumidero) {
+      red.agregarArista(
+        sumidero[i],
+        "supersumidero",
+        Infinity,
+        "e" + (parseInt(i) + 1) + "''"
+      );
+    }
+    sumidero = "supersumidero";
+  } else sumidero = sumidero[0];
+
+  return { fuente: fuente, sumidero: sumidero };
+};
+
 const satisfacerRestriccionesArcos = (red, fuente, sumidero) => {
   let redCopia = _.cloneDeep(red);
 
   // Objeto de aristas
   let { objetoAristas, arcosRestriccion } = creaObjetoAristas(red);
 
+  console.log(arcosRestriccion.length);
+
   // Si hay arcos con restriccion
+
   if (arcosRestriccion.length > 0) {
     // Creamos un vertice fuente y sumidero ficticios
     redCopia.agregarVertice("A'");
@@ -233,7 +276,12 @@ const satisfacerRestriccionesArcos = (red, fuente, sumidero) => {
     let fuente2 = "A'";
     let sumidero2 = "Z'";
 
-    fordFulkerson2(redCopia, fuente2, sumidero2);
+    ({ redCopia, objetoAristas } = fordFulkerson2(
+      redCopia,
+      fuente2,
+      sumidero2,
+      Infinity
+    ));
 
     // Reparticiones
     for (let i in arcosRestriccion) {
@@ -261,19 +309,25 @@ const satisfacerRestriccionesArcos = (red, fuente, sumidero) => {
     redCopia.eliminarArista("e*");
     redCopia.eliminarArista("e**");
 
-    for (let i in objetoAristas) if (i.includes("*")) delete objetoAristas[i];
+    for (let i in objetoAristas) {
+      if (i.includes("*")) {
+        delete objetoAristas[i];
+        redCopia.eliminarArista(i);
+      }
+    }
 
     // Eliminamos los vertices ficticios
     redCopia.eliminarVertice("A'");
     redCopia.eliminarVertice("Z'");
 
-    for (let i in objetoAristas) {
-      let arco = objetoAristas[i];
-      red.editarArista(i, arco.flujoMin, arco.flujo, arco.flujoMax);
-    }
+    console.log(redCopia);
+    // for (let i in objetoAristas) {
+    //   let arco = objetoAristas[i];
+    //   red.editarArista(i, arco.flujoMin, arco.flujo, arco.flujoMax);
+    // }
   }
 
-  return red;
+  return { red: redCopia, objetoAristas: objetoAristas };
 };
 
 const creaRedMarginal = (red) => {
