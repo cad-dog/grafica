@@ -27,7 +27,7 @@ class Grafica {
   agregarArista(v1, v2, peso, etiqueta, flujoMin, flujo, costo) {
     costo = parseInt(costo) || 0;
     flujoMin = parseInt(flujoMin) || 0;
-    flujo = parseInt(flujoMin) || 0;
+    flujo = parseInt(flujo) || 0;
     this.numAristas += 1;
     if (v1 == v2) {
       this.vertices[v1].grado += 2;

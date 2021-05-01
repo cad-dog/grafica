@@ -3,7 +3,7 @@
     { "etiqueta": "a" },
     { "etiqueta": "b" },
     { "etiqueta": "c" },
-    { "etiqueta": "d", "flujoMin": "10", "flujoMax": "20" },
+    { "etiqueta": "d" },
     { "etiqueta": "e" },
     { "etiqueta": "f" }
   ],
