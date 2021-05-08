@@ -1,0 +1,143 @@
+{
+  "vertices": [
+    { "etiqueta": "a" },
+    { "etiqueta": "b" },
+    { "etiqueta": "c" },
+    { "etiqueta": "d" },
+    { "etiqueta": "e" },
+    { "etiqueta": "f" },
+    { "etiqueta": "g" },
+    { "etiqueta": "A'" },
+    { "etiqueta": "Z'" }
+  ],
+  "aristas": [
+    {
+      "etiqueta": "e1",
+      "v1": "a",
+      "v2": "b",
+      "flujoMin": "0",
+      "flujo": "0",
+      "flujoMax": "33"
+    },
+    {
+      "etiqueta": "e2",
+      "v1": "a",
+      "v2": "c",
+      "flujoMin": "0",
+      "flujo": "0",
+      "flujoMax": "72"
+    },
+    {
+      "etiqueta": "e3",
+      "v1": "a",
+      "v2": "d",
+      "flujoMin": "0",
+      "flujo": "0",
+      "flujoMax": "41"
+    },
+    {
+      "etiqueta": "e4",
+      "v1": "b",
+      "v2": "e",
+      "flujoMin": "0",
+      "flujo": "0",
+      "flujoMax": "6"
+    },
+    {
+      "etiqueta": "e4*",
+      "v1": "A'",
+      "v2": "e",
+      "flujoMin": "0",
+      "flujo": "0",
+      "flujoMax": "4"
+    },
+    {
+      "etiqueta": "e4**",
+      "v1": "b",
+      "v2": "Z'",
+      "flujoMin": "0",
+      "flujo": "0",
+      "flujoMax": "4"
+    },
+    {
+      "etiqueta": "e5",
+      "v1": "c",
+      "v2": "b",
+      "flujoMin": "0",
+      "flujo": "0",
+      "flujoMax": "19"
+    },
+    {
+      "etiqueta": "e6",
+      "v1": "c",
+      "v2": "d",
+      "flujoMin": "0",
+      "flujo": "0",
+      "flujoMax": "10"
+    },
+    {
+      "etiqueta": "e7",
+      "v1": "c",
+      "v2": "f",
+      "flujoMin": "0",
+      "flujo": "0",
+      "flujoMax": "25"
+    },
+    {
+      "etiqueta": "e8",
+      "v1": "d",
+      "v2": "f",
+      "flujoMin": "0",
+      "flujo": "0",
+      "flujoMax": "12"
+    },
+    {
+      "etiqueta": "e9",
+      "v1": "e",
+      "v2": "c",
+      "flujoMin": "0",
+      "flujo": "0",
+      "flujoMax": "18"
+    },
+    {
+      "etiqueta": "e10",
+      "v1": "e",
+      "v2": "g",
+      "flujoMin": "0",
+      "flujo": "0",
+      "flujoMax": "23"
+    },
+    {
+      "etiqueta": "e11",
+      "v1": "f",
+      "v2": "e",
+      "flujoMin": "0",
+      "flujo": "0",
+      "flujoMax": "20"
+    },
+    {
+      "etiqueta": "e12",
+      "v1": "f",
+      "v2": "g",
+      "flujoMin": "0",
+      "flujo": "0",
+      "flujoMax": "40"
+    },
+    {
+      "etiqueta": "e*",
+      "v1": "a",
+      "v2": "g",
+      "flujoMin": "0",
+      "flujo": "0",
+      "flujoMax": "Infinity"
+    },
+    {
+      "etiqueta": "e**",
+      "v1": "g",
+      "v2": "a",
+      "flujoMin": "0",
+      "flujo": "0",
+      "flujoMax": "Infinity"
+    }
+  ]
+}

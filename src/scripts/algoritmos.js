@@ -422,8 +422,8 @@ const floyd = (grafica, a, b) => {
     aristas = [],
     longitud = 0;
 
-  a = "a";
-  b = "g";
+  a = a;
+  b = b;
 
   let inicio = document.getElementById("inicioFloyd")
       ? document.getElementById("inicioFloyd").value
@@ -501,20 +501,44 @@ const floyd = (grafica, a, b) => {
     }
   }
 
-  antecesor = dist[inicio][destino];
+  if (destino != "" && inicio != "") {
+    console.log(inicio);
+    console.log(destino);
 
-  vertices.push(destino);
+    antecesor = dist[inicio][destino];
 
-  while (antecesor.antecesor != inicio) {
-    vertices.push(antecesor.antecesor);
+    vertices.push(destino);
+
+    while (antecesor.antecesor != inicio) {
+      vertices.push(antecesor.antecesor);
+      aristas.push(antecesor.arista);
+      antecesor = dist[inicio][antecesor.antecesor];
+    }
+
     aristas.push(antecesor.arista);
-    antecesor = dist[inicio][antecesor.antecesor];
+    vertices.push(inicio);
+
+    dist[inicio][destino].antecesor;
+  } else {
+    inicio = "a";
+    for (let i in grafica.vertices) {
+      destino = i;
+      antecesor = dist[inicio][destino];
+
+      vertices.push(destino);
+
+      while (antecesor.antecesor != inicio) {
+        vertices.push(antecesor.antecesor);
+        aristas.push(antecesor.arista);
+        antecesor = dist[inicio][antecesor.antecesor];
+      }
+
+      aristas.push(antecesor.arista);
+      vertices.push(inicio);
+
+      dist[inicio][destino].antecesor;
+    }
   }
-
-  aristas.push(antecesor.arista);
-  vertices.push(inicio);
-
-  dist[inicio][destino].antecesor;
 
   return { aristas: aristas, vertices: vertices, longitud: undefined };
 };
@@ -526,16 +550,18 @@ const fordFulkerson = (grafica) => {
 
   let graficaCopia = _.cloneDeep(grafica);
 
-  // ***Variante 1 (varios vertices fuente y sumidero)***
+  // // ***Variante 1 (varios vertices fuente y sumidero)***
   let { fuente, sumidero } = creaSuperVertices(
     graficaCopia,
     document.getElementById("ford1").value.split(","),
     document.getElementById("ford2").value.split(",")
   );
 
-  // ***Variante 3 (restricciones en vertices)***
+  // // ***Variante 3 (restricciones en vertices)***
 
-  // Ciclo para encontrar los vertices con restricciones
+  // // Ciclo para encontrar los vertices con restricciones
+  // // creaClones(red)
+
   for (let i in graficaCopia.vertices) {
     // Si el vertice tiene restricciones
     let vertice = graficaCopia.vertices[i];
@@ -578,9 +604,7 @@ const fordFulkerson = (grafica) => {
   }
 
   // ***Variante 2 (restricciones en los arcos)***
-
-  let objetoAristas;
-  ({ graficaCopia: red, objetoAristas } = satisfacerRestriccionesArcos(
+  ({ red: graficaCopia, objetoAristas } = satisfacerRestriccionesArcos(
     graficaCopia,
     fuente,
     sumidero
@@ -616,6 +640,8 @@ const fordFulkerson = (grafica) => {
           flujo: objetoAristas[arista.etiqueta].flujo,
           flujoMax: objetoAristas[arista.etiqueta].flujoMax,
         };
+
+        delete objetoAristas[arista.etiqueta];
       }
     }
 
@@ -626,11 +652,14 @@ const fordFulkerson = (grafica) => {
   // Obtenemos el flujo total
   flujo = 0;
 
-  for (i in graficaCopia.aristas[sumidero]) {
+  for (i in graficaCopia.aristas[sumidero])
     flujo += objetoAristas[graficaCopia.aristas[sumidero][i].etiqueta].flujo;
-  }
 
-  console.log(objetoAristas);
+  if (fuente == "superfuente") {
+    graficaCopia.eliminarVertice(fuente);
+  }
+  if (sumidero == "supersumidero") graficaCopia.eliminarVertice(sumidero);
+
   // Terminamos de eliminar arcos y vertices ficticios
   for (let i in objetoAristas)
     if (i.includes("'") || i.includes("#")) delete objetoAristas[i];
@@ -648,12 +677,16 @@ const fordFulkerson2 = (red, a, b, ff) => {
 
   let fuente = a || "a",
     sumidero = b || "b",
-    flujoFactible = ff || 15;
+    flujoFactible = ff;
+
+  console.log(flujoFactible);
 
   // Objeto aristas
   let { objetoAristas } = creaObjetoAristas(red);
 
+  // let iteracion = 0;
   while (true) {
+    // if (iteracion == 1) console.log("AAAA");
     let etiquetasVertices = {},
       cola = [];
 
@@ -689,15 +722,17 @@ const fordFulkerson2 = (red, a, b, ff) => {
           // Sentido impropio
           else if (
             arista.tipo == "entrante" &&
-            objetoAristas[arista.etiqueta].flujo > 0
+            objetoAristas[arista.etiqueta].flujo >
+              objetoAristas[arista.etiqueta].flujoMin
           ) {
             flujo = Math.min(
               verticeActual.flujo,
-              objetoAristas[arista.etiqueta].flujo
+              objetoAristas[arista.etiqueta].flujo -
+                objetoAristas[arista.etiqueta].flujoMin
             );
           } else continue;
 
-          flujo = Math.min(flujo, flujoFactible - flujoAumentado);
+          // flujo = Math.min(flujo, flujoFactible - flujoAumentado);
 
           etiquetasVertices[arista.vertice] = {
             etiqueta: arista.vertice,
@@ -711,13 +746,13 @@ const fordFulkerson2 = (red, a, b, ff) => {
       }
     }
 
-    console.log(etiquetasVertices);
-
     // Aumentamos
     if (etiquetasVertices[sumidero] != undefined) {
+      console.log("cadena");
       verticeActual = etiquetasVertices[sumidero];
-
-      flujo = verticeActual.flujo;
+      console.log(verticeActual);
+      if (verticeActual.signo == "+") flujo = verticeActual.flujo;
+      else flujo = -verticeActual.flujo;
 
       while (verticeActual.etiqueta != fuente) {
         let aristas = red.aristas[verticeActual.etiqueta];
@@ -728,6 +763,7 @@ const fordFulkerson2 = (red, a, b, ff) => {
             break;
           }
         }
+        console.log(verticeActual);
       }
     } else break;
 
@@ -736,7 +772,8 @@ const fordFulkerson2 = (red, a, b, ff) => {
     for (i in red.aristas[sumidero])
       flujoAumentado += objetoAristas[red.aristas[sumidero][i].etiqueta].flujo;
 
-    if (flujoAumentado == flujoFactible) break;
+    // if (flujoAumentado == flujoFactible) break;
+    //iteracion++;
   }
 
   for (i in red.aristas[sumidero])
@@ -760,36 +797,59 @@ const fordFulkerson2 = (red, a, b, ff) => {
 };
 
 const primal = (red) => {
-  // aplicamos Ford Fulkerson
   let costo;
-  let { objetoAristas, flujoMax } = fordFulkerson2(red);
+  let objetoAristas, flujoMax, flujoTotal;
 
-  for (let i in red.listaAristas) {
-    let arista = objetoAristas[red.listaAristas[i].etiqueta];
-    red.editarArista(
-      red.listaAristas[i].etiqueta,
-      arista.flujoMin,
-      arista.flujo,
-      arista.flujoMax
-    );
-  }
+  let fuente = document.getElementById("primal1").value,
+    sumidero = document.getElementById("primal2").value,
+    flujoFactible = parseInt(document.getElementById("primal3").value);
+
+  // Satisfacemos las restricciones
+  ({ red, objetoAristas } = satisfacerRestriccionesArcos(
+    red,
+    fuente,
+    sumidero
+  ));
+
+  // Aplicamos Ford Fulkerson
+  ({ objetoAristas, redCopia: red } = fordFulkerson2(
+    red,
+    fuente,
+    sumidero,
+    flujoFactible
+  ));
 
   while (true) {
-    let redCopia = _.cloneDeep(red);
-
     // Creamos la red marginal
-    creaRedMarginal(red, redCopia, objetoAristas);
+    let { redMarginal } = creaRedMarginal(red);
 
-    let datos = floyd(redCopia);
+    let datos = floyd(redMarginal, fuente, sumidero);
 
     if (!datos.longitud) break;
 
     let delta = Infinity;
 
     for (let i in datos.aristas) {
-      let valor = redCopia.buscaArista(datos.aristas[i]).flujoMax;
-      if (valor < delta) delta = valor;
+      let valor = redMarginal.buscaArista(datos.aristas[i]).flujoMax;
+      delta = Math.min(delta, valor);
     }
+
+    for (let i in datos.aristas) {
+      let etiqueta;
+      console.log(datos.aristas[i]);
+
+      if (datos.aristas[i].includes("+"))
+        etiqueta = datos.aristas[i].split("+")[0];
+      else etiqueta = datos.aristas[i].split("-")[0];
+
+      let arista = red.buscaArista(etiqueta);
+
+      if (arista.flujo - delta < arista.flujoMin && arista.flujoMin > 0)
+        delta = arista.flujo - arista.flujoMin;
+    }
+
+    console.log(delta);
+    console.log(datos);
 
     for (let i in datos.aristas) {
       if (datos.aristas[i].includes("+")) {
@@ -804,12 +864,14 @@ const primal = (red) => {
         arista.flujo += delta;
       } else {
         let arista = objetoAristas[datos.aristas[i].split("-")[0]];
-        red.editarArista(
-          datos.aristas[i].split("-")[0],
-          arista.flujoMin,
-          arista.flujo - delta,
-          arista.flujoMax
-        );
+
+        if (arista.flujo - delta < arista.flujo)
+          red.editarArista(
+            datos.aristas[i].split("-")[0],
+            arista.flujoMin,
+            arista.flujo - delta,
+            arista.flujoMax
+          );
         arista.flujo -= delta;
       }
     }
@@ -818,37 +880,57 @@ const primal = (red) => {
 
     for (let i in red.listaAristas)
       costo += red.listaAristas[i].costo * red.listaAristas[i].flujo;
+
+    flujoTotal = 0;
+    for (let i in red.aristas[sumidero]) {
+      if (red.aristas[sumidero][i].tipo == "entrante")
+        flujoTotal += red.aristas[sumidero][i].flujo;
+    }
+    console.log(flujoTotal);
+    console.log(red);
+    console.log(objetoAristas);
+    console.log(costo);
+
+    console.log("a");
   }
 
   let msj = "El costo minimo es de " + costo + " unidades";
 
+  console.log(objetoAristas);
   return { objetoAristas: objetoAristas, flujoMax: flujoMax, msj: msj };
 };
 
 const dual = (red) => {
   let costo;
 
-  let fuente = "a",
-    sumidero = "g",
-    delta,
-    flujoFactible = 15,
+  let delta,
     flujoTotal = 0,
     objetoAristas2;
 
-  let iteracion = 0;
+  // let iteracion = 0;
 
-  // satisfacemos restricciones en arcos
-  red = satisfacerRestriccionesArcos(red, fuente, sumidero);
+  let objetoAristas, flujoMax, redMarginal;
+
+  let fuente = document.getElementById("dual1").value,
+    sumidero = document.getElementById("dual2").value,
+    flujoFactible = parseInt(document.getElementById("dual3").value);
+
+  // Satisfacemos las restricciones
+  ({ red, objetoAristas } = satisfacerRestriccionesArcos(
+    red,
+    fuente,
+    sumidero
+  ));
 
   while (flujoTotal < flujoFactible) {
-    if (iteracion == 3) break;
-    console.log(red);
+    // if (iteracion == 3) break;
+    // console.log(red);
 
     // creamos red marginal
-    let { redMarginal, objetoAristas } = creaRedMarginal(red);
+    ({ redMarginal, objetoAristas } = creaRedMarginal(red));
 
     // aplicamos floyd
-    let { aristas } = floyd(redMarginal, "a", "g");
+    let { aristas } = floyd(redMarginal, fuente, sumidero);
 
     delta = Infinity;
 
@@ -906,7 +988,7 @@ const dual = (red) => {
 
     console.log(objetoAristas);
 
-    iteracion++;
+    // iteracion++;
   }
 
   let msj = "El costo minimo es de " + costo + " unidades";

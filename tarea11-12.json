@@ -56,6 +56,7 @@
       "etiqueta": "e7",
       "v1": "c",
       "v2": "f",
+      "flujoMin": "5",
       "flujoMax": "25",
       "costo": "20"
     },
@@ -77,6 +78,7 @@
       "etiqueta": "e10",
       "v1": "e",
       "v2": "g",
+      "flujoMin": "4",
       "flujoMax": "23",
       "costo": "20"
     },
