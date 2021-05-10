@@ -679,8 +679,6 @@ const fordFulkerson2 = (red, a, b, ff) => {
     sumidero = b || "b",
     flujoFactible = ff;
 
-  console.log(flujoFactible);
-
   // Objeto aristas
   let { objetoAristas } = creaObjetoAristas(red);
 
@@ -748,22 +746,53 @@ const fordFulkerson2 = (red, a, b, ff) => {
 
     // Aumentamos
     if (etiquetasVertices[sumidero] != undefined) {
-      console.log("cadena");
+      console.log("Cadena");
+
       verticeActual = etiquetasVertices[sumidero];
-      console.log(verticeActual);
-      if (verticeActual.signo == "+") flujo = verticeActual.flujo;
-      else flujo = -verticeActual.flujo;
+
+      flujo = verticeActual.flujo;
 
       while (verticeActual.etiqueta != fuente) {
+        console.log("delta:", verticeActual.signo + flujo);
+
         let aristas = red.aristas[verticeActual.etiqueta];
         for (let i in red.aristas[verticeActual.etiqueta]) {
           if (aristas[i].vertice == verticeActual.adyacente) {
-            objetoAristas[aristas[i].etiqueta].flujo += flujo;
+            console.log(
+              "Arco:",
+              aristas[i].etiqueta +
+                "(" +
+                objetoAristas[aristas[i].etiqueta].fuente,
+              verticeActual.signo == "+" ? "->" : "<-",
+              objetoAristas[aristas[i].etiqueta].sumidero + ")",
+              "flujo:",
+              objetoAristas[aristas[i].etiqueta].flujo,
+              "flujoMax:",
+              objetoAristas[aristas[i].etiqueta].flujoMax
+            );
+
+            if (verticeActual.signo == "+")
+              objetoAristas[aristas[i].etiqueta].flujo += flujo;
+            else objetoAristas[aristas[i].etiqueta].flujo -= flujo;
+
+            console.log(
+              "Arco:",
+              aristas[i].etiqueta +
+                "(" +
+                objetoAristas[aristas[i].etiqueta].fuente,
+              verticeActual.signo == "+" ? "->" : "<-",
+              objetoAristas[aristas[i].etiqueta].sumidero + ")",
+              "flujo:",
+              objetoAristas[aristas[i].etiqueta].flujo,
+              "flujoMax:",
+              objetoAristas[aristas[i].etiqueta].flujoMax
+            );
+
             verticeActual = etiquetasVertices[aristas[i].vertice];
+
             break;
           }
         }
-        console.log(verticeActual);
       }
     } else break;
 
@@ -776,6 +805,7 @@ const fordFulkerson2 = (red, a, b, ff) => {
     //iteracion++;
   }
 
+  flujoAumentado = 0;
   for (i in red.aristas[sumidero])
     flujoAumentado += objetoAristas[red.aristas[sumidero][i].etiqueta].flujo;
 
