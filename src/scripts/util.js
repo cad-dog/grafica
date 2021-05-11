@@ -170,6 +170,7 @@ const satisfacerRestriccionesArcos = (red, fuente, sumidero) => {
           flujoMin: 0,
           flujo: 0,
           flujoMax: arcosRestriccion[i].flujoMin,
+          costo: arcosRestriccion[i].costo,
         };
       }
       // Si se encuentra un arco
@@ -188,6 +189,7 @@ const satisfacerRestriccionesArcos = (red, fuente, sumidero) => {
           flujoMin: arco.flujoMin,
           flujo: arco.flujo,
           flujoMax: arco.flujoMax,
+          costo: arco.costo,
         };
       }
 
@@ -210,6 +212,7 @@ const satisfacerRestriccionesArcos = (red, fuente, sumidero) => {
           flujoMin: 0,
           flujo: 0,
           flujoMax: arcosRestriccion[i].flujoMin,
+          costo: arcosRestriccion[i].costo,
         };
       }
       // Si se encuentra un arco
@@ -228,6 +231,7 @@ const satisfacerRestriccionesArcos = (red, fuente, sumidero) => {
           flujoMin: arco.flujoMin,
           flujo: arco.flujo,
           flujoMax: arco.flujoMax,
+          arco: arco.costo,
         };
       }
 
@@ -246,6 +250,7 @@ const satisfacerRestriccionesArcos = (red, fuente, sumidero) => {
         flujoMin: 0,
         flujo: 0,
         flujoMax: arcosRestriccion[i].flujoMax - arcosRestriccion[i].flujoMin,
+        costo: arcosRestriccion[i].costo,
       };
     }
 
@@ -297,7 +302,6 @@ const satisfacerRestriccionesArcos = (red, fuente, sumidero) => {
         flujoMin: arco.flujoMin,
         flujo: arco.flujoMin + objetoAristas[arco.etiqueta].flujo,
         flujoMax: arco.flujoMax,
-        costo: arco.costo,
       };
     }
 
@@ -320,39 +324,49 @@ const satisfacerRestriccionesArcos = (red, fuente, sumidero) => {
   return { red: redCopia, objetoAristas: objetoAristas };
 };
 
-const creaRedMarginal = (red) => {
+const creaRedMarginal = (red, arcos) => {
   let redCopia = _.cloneDeep(red),
     { objetoAristas } = creaObjetoAristas(red);
 
+  arcos = arcos || Object.keys(red.listaAristas);
+
   for (let i in objetoAristas) {
     redCopia.eliminarArista(i);
+    if (arcos.includes(i)) {
+      if (objetoAristas[i].flujo > objetoAristas[i].flujoMin)
+        redCopia.agregarArista(
+          objetoAristas[i].sumidero,
+          objetoAristas[i].fuente,
+          objetoAristas[i].flujo - objetoAristas[i].flujoMin,
+          i + "-",
+          "0",
+          "0",
+          -red.buscaArista(i).costo
+        );
 
-    if (objetoAristas[i].flujo > objetoAristas[i].flujoMin)
-      redCopia.agregarArista(
-        objetoAristas[i].sumidero,
-        objetoAristas[i].fuente,
-        objetoAristas[i].flujo,
-        i + "-",
-        "0",
-        "0",
-        -red.buscaArista(i).costo
-      );
-
-    if (objetoAristas[i].flujo < objetoAristas[i].flujoMax)
-      redCopia.agregarArista(
-        objetoAristas[i].fuente,
-        objetoAristas[i].sumidero,
-        objetoAristas[i].flujoMax - objetoAristas[i].flujo,
-        i + "+",
-        "0",
-        "0",
-        red.buscaArista(i).costo
-      );
+      if (
+        objetoAristas[i].flujo <
+        objetoAristas[i].flujoMax - objetoAristas[i].flujoMin
+      )
+        redCopia.agregarArista(
+          objetoAristas[i].fuente,
+          objetoAristas[i].sumidero,
+          objetoAristas[i].flujoMax -
+            objetoAristas[i].flujo -
+            objetoAristas[i].flujoMin,
+          i + "+",
+          "0",
+          "0",
+          red.buscaArista(i).costo
+        );
+    }
   }
   return { redMarginal: redCopia, objetoAristas: objetoAristas };
 };
 
 const creaClones = (red, verticesDuplicados) => {
+  verticesDuplicados = [];
+
   for (let i in red.vertices) {
     // Si el vertice tiene restricciones
     let vertice = red.vertices[i];
@@ -372,7 +386,9 @@ const creaClones = (red, verticesDuplicados) => {
             red.aristas[i][j].vertice,
             red.aristas[i][j].flujoMax,
             red.aristas[i][j].etiqueta + "#",
-            red.aristas[i][j].flujoMin
+            red.aristas[i][j].flujoMin,
+            "0",
+            red.aristas[i][j].costo
           );
 
           eliminar.push(red.aristas[i][j].etiqueta);
@@ -393,6 +409,7 @@ const creaClones = (red, verticesDuplicados) => {
       );
     }
   }
+  return { verticesDuplicados };
 };
 
 const eliminarClones = (red, verticesDuplicados, objetoAristas) => {
@@ -408,7 +425,8 @@ const eliminarClones = (red, verticesDuplicados, objetoAristas) => {
           objetoAristas[arista.etiqueta].flujoMax,
           arista.etiqueta,
           objetoAristas[arista.etiqueta].flujoMin,
-          objetoAristas[arista.etiqueta].flujo
+          objetoAristas[arista.etiqueta].flujo,
+          arista.costo
         );
 
         objetoAristas[arista.etiqueta.split("#")[0]] = {
@@ -417,6 +435,7 @@ const eliminarClones = (red, verticesDuplicados, objetoAristas) => {
           flujoMin: objetoAristas[arista.etiqueta].flujoMin,
           flujo: objetoAristas[arista.etiqueta].flujo,
           flujoMax: objetoAristas[arista.etiqueta].flujoMax,
+          costo: arista.costo,
         };
       }
     }

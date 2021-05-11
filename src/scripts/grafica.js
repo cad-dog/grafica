@@ -41,6 +41,8 @@ class Grafica {
     } else {
       this.pesos[etiqueta] = 0;
     }
+
+    // Red
     if (this.tipo != "red") {
       this.listaAristas.push({
         etiqueta: etiqueta,
@@ -48,7 +50,9 @@ class Grafica {
         v2: v2,
         peso: parseInt(peso),
       });
-    } else {
+    }
+    // Grafica
+    else {
       this.listaAristas.push({
         etiqueta: etiqueta,
         v1: v1,
@@ -57,9 +61,10 @@ class Grafica {
         flujo: flujo,
         flujoMin: flujoMin,
         costo: costo,
-        peso: costo,
+        peso: peso,
       });
     }
+    // Grafica
     if (this.tipo == "grafica") {
       this.aristas[v1].push({
         etiqueta: etiqueta,
@@ -71,7 +76,9 @@ class Grafica {
         vertice: v1,
         peso: parseInt(peso),
       });
-    } else if (tipo == "digrafica") {
+    }
+    // Digrafica
+    else if (tipo == "digrafica") {
       this.aristas[v1].push({
         etiqueta: etiqueta,
         vertice: v2,
@@ -84,7 +91,9 @@ class Grafica {
         peso: parseInt(peso),
         tipo: "entrante",
       });
-    } else if (tipo == "red") {
+    }
+    // Red
+    else if (tipo == "red") {
       this.aristas[v1].push({
         etiqueta: etiqueta,
         vertice: v2,

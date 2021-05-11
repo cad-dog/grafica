@@ -696,24 +696,16 @@ const actualizarGrafica = (algoritmo) => {
   if (datos.objetoAristas == undefined) return;
 
   for (i in datos.objetoAristas) {
+    let arista = datos.objetoAristas[i];
     // Si es un lazo disminuimos el numero de lazos
-    if (datos.objetoAristas[i].fuente == datos.objetoAristas[i].sumidero) {
-      grafica.lazos[datos.objetoAristas[i].fuente] -= 1;
-      if (!grafica.lazos[datos.objetoAristas[i].fuente] == 0)
-        delete grafica.lazos[datos.objetoAristas[i].fuente];
+    if (arista.fuente == arista.sumidero) {
+      grafica.lazos[arista.fuente] -= 1;
+      if (!grafica.lazos[arista.fuente] == 0)
+        delete grafica.lazos[arista.fuente];
     }
-
-    // Eliminamos la arista de la estructura grafica
-    grafica.eliminarArista(datos.objetoAristas[i].etiqueta);
-
-    grafica.agregarArista(
-      datos.objetoAristas[i].fuente,
-      datos.objetoAristas[i].sumidero,
-      datos.objetoAristas[i].flujoMax,
-      datos.objetoAristas[i].etiqueta,
-      datos.objetoAristas[i].flujo
-    );
+    grafica.editarArista(i, arista.flujoMin, arista.flujo, arista.flujoMax);
   }
+
   aristas.get().map((i) => {
     i.label =
       "[" +
@@ -724,9 +716,7 @@ const actualizarGrafica = (algoritmo) => {
       ", " +
       datos.objetoAristas[i.title].flujoMax +
       "]" +
-      (datos.objetoAristas[i.title].costo != undefined
-        ? "\n$" + datos.objetoAristas[i.title].costo
-        : "");
+      (datos.costo ? "\n$" + datos.objetoAristas[i.title].costo : "");
   });
 
   aristas.update(aristas.get());

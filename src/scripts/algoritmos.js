@@ -543,122 +543,42 @@ const floyd = (grafica, a, b) => {
   return { aristas: aristas, vertices: vertices, longitud: undefined };
 };
 
-const fordFulkerson = (grafica) => {
-  let arista,
-    flujo,
-    verticesDuplicados = [];
+const fordFulkerson = (red) => {
+  let flujo = 0,
+    redCopia = _.cloneDeep(red);
 
-  let graficaCopia = _.cloneDeep(grafica);
+  // ***Variante 1 (varios vertices fuente y sumidero)***
 
-  // // ***Variante 1 (varios vertices fuente y sumidero)***
+  // Se crean los vertices superfuente y supersumidero y se conectan con los fuentes y sumideros
   let { fuente, sumidero } = creaSuperVertices(
-    graficaCopia,
+    redCopia,
     document.getElementById("ford1").value.split(","),
     document.getElementById("ford2").value.split(",")
   );
 
   // // ***Variante 3 (restricciones en vertices)***
 
-  // // Ciclo para encontrar los vertices con restricciones
-  // // creaClones(red)
-
-  for (let i in graficaCopia.vertices) {
-    // Si el vertice tiene restricciones
-    let vertice = graficaCopia.vertices[i];
-
-    if (vertice.flujoMin != undefined || vertice.flujoMax != undefined) {
-      // Creamos un vertice clon
-      verticesDuplicados.push(i.toUpperCase());
-      graficaCopia.agregarVertice(i.toUpperCase());
-
-      // Ciclo para agregar los arcos salientes del vertice original al vertice clon
-      let eliminar = [];
-
-      for (let j in graficaCopia.aristas[i]) {
-        if (graficaCopia.aristas[i][j].tipo == "saliente") {
-          graficaCopia.agregarArista(
-            i.toUpperCase(),
-            graficaCopia.aristas[i][j].vertice,
-            graficaCopia.aristas[i][j].flujoMax,
-            graficaCopia.aristas[i][j].etiqueta + "#",
-            graficaCopia.aristas[i][j].flujoMin
-          );
-
-          eliminar.push(graficaCopia.aristas[i][j].etiqueta);
-        }
-      }
-
-      // Ciclo para eliminar los arcos que agregamos al vertice clon
-      for (let j in eliminar) graficaCopia.eliminarArista(eliminar[j]);
-
-      // Conectamos el vertice original con el vertice clon
-      graficaCopia.agregarArista(
-        i,
-        i.toUpperCase(),
-        vertice.flujoMax,
-        i + "#",
-        vertice.flujoMin,
-        "0"
-      );
-    }
-  }
+  // Se crea un clon por cada vertice con restriccion y se cambian los arcos
+  let { verticesDuplicados } = creaClones(redCopia);
 
   // ***Variante 2 (restricciones en los arcos)***
-  ({ red: graficaCopia, objetoAristas } = satisfacerRestriccionesArcos(
-    graficaCopia,
+
+  // Se satisfacen las restricciones en los arcos
+  ({ red: redCopia, objetoAristas } = satisfacerRestriccionesArcos(
+    redCopia,
     fuente,
     sumidero
   ));
 
-  // Aplicamos Ford Fulkerson normal
-  ({ objetoAristas } = fordFulkerson2(
-    graficaCopia,
-    fuente,
-    sumidero,
-    Infinity
-  ));
+  // Aplicamos Ford Fulkerson
+  ({ objetoAristas } = fordFulkerson2(redCopia, fuente, sumidero, Infinity));
 
-  // Cambiamos los arcos de los vertices clon a los vertices originales
-  for (let i in verticesDuplicados) {
-    let duplicado = verticesDuplicados[i];
-    for (let j in graficaCopia.aristas[duplicado]) {
-      arista = graficaCopia.aristas[duplicado][j];
-      if (arista.tipo == "saliente") {
-        graficaCopia.agregarArista(
-          duplicado.toLocaleLowerCase(),
-          arista.vertice,
-          objetoAristas[arista.etiqueta].flujoMax,
-          arista.etiqueta,
-          objetoAristas[arista.etiqueta].flujoMin,
-          objetoAristas[arista.etiqueta].flujo
-        );
-
-        objetoAristas[arista.etiqueta.split("#")[0]] = {
-          fuente: duplicado.toLowerCase(),
-          sumidero: arista.vertice,
-          flujoMin: objetoAristas[arista.etiqueta].flujoMin,
-          flujo: objetoAristas[arista.etiqueta].flujo,
-          flujoMax: objetoAristas[arista.etiqueta].flujoMax,
-        };
-
-        delete objetoAristas[arista.etiqueta];
-      }
-    }
-
-    // Eliminamos los vertices clon
-    graficaCopia.eliminarVertice(duplicado);
-  }
+  // Cambiamos los arcos de los vertices clon a los vertices originales y eliminamos los clones
+  eliminarClones(redCopia, verticesDuplicados, objetoAristas);
 
   // Obtenemos el flujo total
-  flujo = 0;
-
-  for (i in graficaCopia.aristas[sumidero])
-    flujo += objetoAristas[graficaCopia.aristas[sumidero][i].etiqueta].flujo;
-
-  if (fuente == "superfuente") {
-    graficaCopia.eliminarVertice(fuente);
-  }
-  if (sumidero == "supersumidero") graficaCopia.eliminarVertice(sumidero);
+  for (i in redCopia.aristas[sumidero])
+    flujo += objetoAristas[redCopia.aristas[sumidero][i].etiqueta].flujo;
 
   // Terminamos de eliminar arcos y vertices ficticios
   for (let i in objetoAristas)
@@ -666,7 +586,12 @@ const fordFulkerson = (grafica) => {
 
   let msj = "El flujo maximo es de: " + flujo + " unidades";
 
-  return { objetoAristas: objetoAristas, flujoMax: flujo, msj: msj };
+  return {
+    objetoAristas: objetoAristas,
+    flujoMax: flujo,
+    msj: msj,
+    costo: false,
+  };
 };
 
 const fordFulkerson2 = (red, a, b, ff) => {
@@ -675,8 +600,8 @@ const fordFulkerson2 = (red, a, b, ff) => {
     flujo,
     flujoAumentado = 0;
 
-  let fuente = a || "a",
-    sumidero = b || "b",
+  let fuente = a,
+    sumidero = b,
     flujoFactible = ff;
 
   // Objeto aristas
@@ -684,7 +609,6 @@ const fordFulkerson2 = (red, a, b, ff) => {
 
   // let iteracion = 0;
   while (true) {
-    // if (iteracion == 1) console.log("AAAA");
     let etiquetasVertices = {},
       cola = [];
 
@@ -730,7 +654,7 @@ const fordFulkerson2 = (red, a, b, ff) => {
             );
           } else continue;
 
-          // flujo = Math.min(flujo, flujoFactible - flujoAumentado);
+          flujo = Math.min(flujo, flujoFactible - flujoAumentado);
 
           etiquetasVertices[arista.vertice] = {
             etiqueta: arista.vertice,
@@ -746,50 +670,17 @@ const fordFulkerson2 = (red, a, b, ff) => {
 
     // Aumentamos
     if (etiquetasVertices[sumidero] != undefined) {
-      console.log("Cadena");
-
       verticeActual = etiquetasVertices[sumidero];
-
       flujo = verticeActual.flujo;
 
       while (verticeActual.etiqueta != fuente) {
-        console.log("delta:", verticeActual.signo + flujo);
-
         let aristas = red.aristas[verticeActual.etiqueta];
         for (let i in red.aristas[verticeActual.etiqueta]) {
           if (aristas[i].vertice == verticeActual.adyacente) {
-            console.log(
-              "Arco:",
-              aristas[i].etiqueta +
-                "(" +
-                objetoAristas[aristas[i].etiqueta].fuente,
-              verticeActual.signo == "+" ? "->" : "<-",
-              objetoAristas[aristas[i].etiqueta].sumidero + ")",
-              "flujo:",
-              objetoAristas[aristas[i].etiqueta].flujo,
-              "flujoMax:",
-              objetoAristas[aristas[i].etiqueta].flujoMax
-            );
-
             if (verticeActual.signo == "+")
               objetoAristas[aristas[i].etiqueta].flujo += flujo;
             else objetoAristas[aristas[i].etiqueta].flujo -= flujo;
-
-            console.log(
-              "Arco:",
-              aristas[i].etiqueta +
-                "(" +
-                objetoAristas[aristas[i].etiqueta].fuente,
-              verticeActual.signo == "+" ? "->" : "<-",
-              objetoAristas[aristas[i].etiqueta].sumidero + ")",
-              "flujo:",
-              objetoAristas[aristas[i].etiqueta].flujo,
-              "flujoMax:",
-              objetoAristas[aristas[i].etiqueta].flujoMax
-            );
-
             verticeActual = etiquetasVertices[aristas[i].vertice];
-
             break;
           }
         }
@@ -801,8 +692,7 @@ const fordFulkerson2 = (red, a, b, ff) => {
     for (i in red.aristas[sumidero])
       flujoAumentado += objetoAristas[red.aristas[sumidero][i].etiqueta].flujo;
 
-    // if (flujoAumentado == flujoFactible) break;
-    //iteracion++;
+    if (flujoAumentado == flujoFactible) break;
   }
 
   flujoAumentado = 0;
@@ -827,31 +717,42 @@ const fordFulkerson2 = (red, a, b, ff) => {
 };
 
 const primal = (red) => {
-  let costo;
-  let objetoAristas, flujoMax, flujoTotal;
+  let costo,
+    objetoAristas,
+    flujoMax,
+    redCopia = _.cloneDeep(red);
 
-  let fuente = document.getElementById("primal1").value,
-    sumidero = document.getElementById("primal2").value,
-    flujoFactible = parseInt(document.getElementById("primal3").value);
+  let flujoFactible = parseInt(document.getElementById("primal3").value);
+
+  // Se crean los vertices superfuente y supersumidero y se conectan con los fuentes y sumideros
+  let { fuente, sumidero } = creaSuperVertices(
+    redCopia,
+    document.getElementById("primal1").value.split(","),
+    document.getElementById("primal2").value.split(",")
+  );
+
+  // Se crea un clon por cada vertice con restriccion y se cambian los arcos
+  let { verticesDuplicados } = creaClones(redCopia);
 
   // Satisfacemos las restricciones
-  ({ red, objetoAristas } = satisfacerRestriccionesArcos(
-    red,
+  ({ red: redCopia, objetoAristas } = satisfacerRestriccionesArcos(
+    redCopia,
     fuente,
     sumidero
   ));
 
   // Aplicamos Ford Fulkerson
-  ({ objetoAristas, redCopia: red } = fordFulkerson2(
-    red,
+  ({ objetoAristas, redCopia } = fordFulkerson2(
+    redCopia,
     fuente,
     sumidero,
     flujoFactible
   ));
 
+  // return;
   while (true) {
     // Creamos la red marginal
-    let { redMarginal } = creaRedMarginal(red);
+    let { redMarginal } = creaRedMarginal(redCopia);
 
     let datos = floyd(redMarginal, fuente, sumidero);
 
@@ -865,26 +766,9 @@ const primal = (red) => {
     }
 
     for (let i in datos.aristas) {
-      let etiqueta;
-      console.log(datos.aristas[i]);
-
-      if (datos.aristas[i].includes("+"))
-        etiqueta = datos.aristas[i].split("+")[0];
-      else etiqueta = datos.aristas[i].split("-")[0];
-
-      let arista = red.buscaArista(etiqueta);
-
-      if (arista.flujo - delta < arista.flujoMin && arista.flujoMin > 0)
-        delta = arista.flujo - arista.flujoMin;
-    }
-
-    console.log(delta);
-    console.log(datos);
-
-    for (let i in datos.aristas) {
       if (datos.aristas[i].includes("+")) {
         let arista = objetoAristas[datos.aristas[i].split("+")[0]];
-        red.editarArista(
+        redCopia.editarArista(
           datos.aristas[i].split("+")[0],
           arista.flujoMin,
           arista.flujo + delta,
@@ -896,7 +780,7 @@ const primal = (red) => {
         let arista = objetoAristas[datos.aristas[i].split("-")[0]];
 
         if (arista.flujo - delta < arista.flujo)
-          red.editarArista(
+          redCopia.editarArista(
             datos.aristas[i].split("-")[0],
             arista.flujoMin,
             arista.flujo - delta,
@@ -908,26 +792,32 @@ const primal = (red) => {
 
     costo = 0;
 
-    for (let i in red.listaAristas)
-      costo += red.listaAristas[i].costo * red.listaAristas[i].flujo;
+    for (let i in redCopia.listaAristas)
+      costo += redCopia.listaAristas[i].costo * redCopia.listaAristas[i].flujo;
 
     flujoTotal = 0;
-    for (let i in red.aristas[sumidero]) {
-      if (red.aristas[sumidero][i].tipo == "entrante")
-        flujoTotal += red.aristas[sumidero][i].flujo;
+    for (let i in redCopia.aristas[sumidero]) {
+      if (redCopia.aristas[sumidero][i].tipo == "entrante")
+        flujoTotal += redCopia.aristas[sumidero][i].flujo;
     }
-    console.log(flujoTotal);
-    console.log(red);
-    console.log(objetoAristas);
-    console.log(costo);
-
-    console.log("a");
   }
+
+  // Cambiamos los arcos de los vertices clon a los vertices originales y eliminamos los clones
+  eliminarClones(redCopia, verticesDuplicados, objetoAristas);
+
+  // Terminamos de eliminar arcos y vertices ficticios
+  for (let i in objetoAristas)
+    if (i.includes("'") || i.includes("#")) delete objetoAristas[i];
 
   let msj = "El costo minimo es de " + costo + " unidades";
 
   console.log(objetoAristas);
-  return { objetoAristas: objetoAristas, flujoMax: flujoMax, msj: msj };
+  return {
+    objetoAristas: objetoAristas,
+    flujoMax: flujoMax,
+    msj: msj,
+    costo: true,
+  };
 };
 
 const dual = (red) => {
@@ -935,7 +825,7 @@ const dual = (red) => {
 
   let delta,
     flujoTotal = 0,
-    objetoAristas2;
+    redCopia = _.cloneDeep(red);
 
   // let iteracion = 0;
 
@@ -946,30 +836,86 @@ const dual = (red) => {
     flujoFactible = parseInt(document.getElementById("dual3").value);
 
   // Satisfacemos las restricciones
-  ({ red, objetoAristas } = satisfacerRestriccionesArcos(
-    red,
+  ({ red: redCopia, objetoAristas } = satisfacerRestriccionesArcos(
+    redCopia,
     fuente,
     sumidero
   ));
 
+  // aplicamos floyd
+  let { aristas } = floyd(redCopia, fuente, sumidero);
+
+  delta = Infinity;
+
+  // calculamos delta
+  for (let i in aristas) {
+    let etiqueta = aristas[i];
+    delta = Math.min(
+      delta,
+      objetoAristas[etiqueta].flujoMax - objetoAristas[etiqueta].flujo
+    );
+  }
+
+  // actualizamos la red
+  for (let i in aristas) {
+    let etiqueta = aristas[i];
+
+    redCopia.editarArista(
+      etiqueta,
+      objetoAristas[etiqueta].flujoMin,
+      objetoAristas[etiqueta].flujo + delta,
+      objetoAristas[etiqueta].flujoMax
+    );
+
+    objetoAristas[etiqueta] = {
+      fuente: objetoAristas[etiqueta].fuente,
+      sumidero: objetoAristas[etiqueta].sumidero,
+      flujoMin: objetoAristas[etiqueta].flujoMin,
+      flujo: objetoAristas[etiqueta].flujo + delta,
+      flujoMax: objetoAristas[etiqueta].flujoMax,
+      costo: objetoAristas[etiqueta].costo,
+      peso: objetoAristas[etiqueta].costo,
+    };
+
+    // objetoAristas[etiqueta].flujo += delta;
+  }
+
+  for (let i in redCopia.aristas[sumidero]) {
+    let arco = redCopia.aristas[sumidero][i];
+    if (arco.tipo == "entrante") flujoTotal += arco.flujo;
+  }
+
   while (flujoTotal < flujoFactible) {
+    console.log(objetoAristas["e11"].flujo);
     // if (iteracion == 3) break;
     // console.log(red);
 
     // creamos red marginal
-    ({ redMarginal, objetoAristas } = creaRedMarginal(red));
+    ({ redMarginal, objetoAristas } = creaRedMarginal(redCopia, aristas));
 
     // aplicamos floyd
     let { aristas } = floyd(redMarginal, fuente, sumidero);
+
+    console.log("camino");
+    for (let i in aristas) {
+      console.log(aristas[i]);
+    }
 
     delta = Infinity;
 
     // calculamos delta
     for (let i in aristas) {
       let etiqueta;
-      if (aristas[i].includes("+")) etiqueta = aristas[i].split("+")[0];
-      else etiqueta = aristas[i].split("-")[0];
-
+      if (aristas[i].includes("+")) {
+        etiqueta = aristas[i].split("+")[0];
+        // delta = Math.min(
+        //   delta,
+        //   objetoAristas[etiqueta].flujoMax - objetoAristas[etiqueta].flujo
+        // );
+      } else {
+        etiqueta = aristas[i].split("-")[0];
+        // delta = Math.min(delta, objetoAristas[etiqueta].flujo);
+      }
       delta = Math.min(
         delta,
         objetoAristas[etiqueta].flujoMax - objetoAristas[etiqueta].flujo
@@ -979,6 +925,8 @@ const dual = (red) => {
     // checamos que no se sobrepase el flujo factible
     if (delta + flujoTotal > flujoFactible) delta = flujoFactible - flujoTotal;
 
+    console.log("delta: " + delta);
+
     // actualizamos la red
     for (let i in aristas) {
       let etiqueta;
@@ -986,20 +934,30 @@ const dual = (red) => {
       if (aristas[i].includes("+")) etiqueta = aristas[i].split("+")[0];
       else etiqueta = aristas[i].split("-")[0];
 
-      red.editarArista(
+      redCopia.editarArista(
         etiqueta,
         objetoAristas[etiqueta].flujoMin,
         objetoAristas[etiqueta].flujo + delta,
-        objetoAristas[etiqueta].flujo
+        objetoAristas[etiqueta].flujoMax
       );
 
-      objetoAristas[etiqueta].flujo += delta;
+      objetoAristas[etiqueta] = {
+        fuente: objetoAristas[etiqueta].fuente,
+        sumidero: objetoAristas[etiqueta].sumidero,
+        flujoMin: objetoAristas[etiqueta].flujoMin,
+        flujo: objetoAristas[etiqueta].flujo + delta,
+        flujoMax: objetoAristas[etiqueta].flujoMax,
+        costo: objetoAristas[etiqueta].costo,
+        peso: objetoAristas[etiqueta].costo,
+      };
+
+      // objetoAristas[etiqueta].flujo += delta;
     }
 
     // calculamos el flujo total
     flujoTotal = 0;
-    for (let i in red.aristas[sumidero]) {
-      let arco = red.aristas[sumidero][i];
+    for (let i in redCopia.aristas[sumidero]) {
+      let arco = redCopia.aristas[sumidero][i];
       if (arco.tipo == "entrante") flujoTotal += arco.flujo;
     }
 
@@ -1007,8 +965,6 @@ const dual = (red) => {
     // calculamos el costo
     for (let i in objetoAristas)
       costo += objetoAristas[i].flujo * objetoAristas[i].costo;
-
-    objetoAristas2 = objetoAristas;
 
     console.log(costo);
 
@@ -1022,5 +978,7 @@ const dual = (red) => {
   }
 
   let msj = "El costo minimo es de " + costo + " unidades";
-  return { objetoAristas: objetoAristas2, msj: msj };
+  return { objetoAristas: objetoAristas, msj: msj };
 };
+
+const simplex = (red) => {};
