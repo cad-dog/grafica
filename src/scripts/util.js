@@ -143,10 +143,7 @@ const satisfacerRestriccionesArcos = (red, fuente, sumidero) => {
   // Objeto de aristas
   let { objetoAristas, arcosRestriccion } = creaObjetoAristas(red);
 
-  console.log(arcosRestriccion.length);
-
   // Si hay arcos con restriccion
-
   if (arcosRestriccion.length > 0) {
     // Creamos un vertice fuente y sumidero ficticios
     redCopia.agregarVertice("A'");
@@ -173,6 +170,7 @@ const satisfacerRestriccionesArcos = (red, fuente, sumidero) => {
           flujoMin: 0,
           flujo: 0,
           flujoMax: arcosRestriccion[i].flujoMin,
+          costo: arcosRestriccion[i].costo,
         };
       }
       // Si se encuentra un arco
@@ -191,6 +189,7 @@ const satisfacerRestriccionesArcos = (red, fuente, sumidero) => {
           flujoMin: arco.flujoMin,
           flujo: arco.flujo,
           flujoMax: arco.flujoMax,
+          costo: arco.costo,
         };
       }
 
@@ -213,6 +212,7 @@ const satisfacerRestriccionesArcos = (red, fuente, sumidero) => {
           flujoMin: 0,
           flujo: 0,
           flujoMax: arcosRestriccion[i].flujoMin,
+          costo: arcosRestriccion[i].costo,
         };
       }
       // Si se encuentra un arco
@@ -231,16 +231,17 @@ const satisfacerRestriccionesArcos = (red, fuente, sumidero) => {
           flujoMin: arco.flujoMin,
           flujo: arco.flujo,
           flujoMax: arco.flujoMax,
+          arco: arco.costo,
         };
       }
 
       // Quitamos la restriccion del arco
-      redCopia.eliminarArista(arcosRestriccion[i].etiqueta);
-      redCopia.agregarArista(
-        arcosRestriccion[i].v1,
-        arcosRestriccion[i].v2,
-        arcosRestriccion[i].flujoMax - arcosRestriccion[i].flujoMin,
-        arcosRestriccion[i].etiqueta
+
+      redCopia.editarArista(
+        arcosRestriccion[i].etiqueta,
+        0,
+        arcosRestriccion[i].flujo,
+        arcosRestriccion[i].flujoMax - arcosRestriccion[i].flujoMin
       );
 
       objetoAristas[arcosRestriccion[i].etiqueta] = {
@@ -249,10 +250,11 @@ const satisfacerRestriccionesArcos = (red, fuente, sumidero) => {
         flujoMin: 0,
         flujo: 0,
         flujoMax: arcosRestriccion[i].flujoMax - arcosRestriccion[i].flujoMin,
+        costo: arcosRestriccion[i].costo,
       };
     }
 
-    // Conectamos los vertices fuente y sumidero ficticios
+    // Conectamos los vertices fuente y sumidero
     redCopia.agregarArista(fuente, sumidero, Infinity, "e*");
 
     objetoAristas["e*"] = {
@@ -286,14 +288,12 @@ const satisfacerRestriccionesArcos = (red, fuente, sumidero) => {
     // Reparticiones
     for (let i in arcosRestriccion) {
       let arco = arcosRestriccion[i];
-      redCopia.eliminarArista(arco.etiqueta);
-      redCopia.agregarArista(
-        arco.v1,
-        arco.v2,
-        arco.flujoMax,
+
+      redCopia.editarArista(
         arco.etiqueta,
         arco.flujoMin,
-        arco.flujoMin + objetoAristas[arco.etiqueta].flujo
+        arco.flujoMin + objetoAristas[arco.etiqueta].flujo,
+        arco.flujoMax
       );
 
       objetoAristas[arco.etiqueta] = {
@@ -319,45 +319,128 @@ const satisfacerRestriccionesArcos = (red, fuente, sumidero) => {
     // Eliminamos los vertices ficticios
     redCopia.eliminarVertice("A'");
     redCopia.eliminarVertice("Z'");
-
-    console.log(redCopia);
-    // for (let i in objetoAristas) {
-    //   let arco = objetoAristas[i];
-    //   red.editarArista(i, arco.flujoMin, arco.flujo, arco.flujoMax);
-    // }
   }
 
   return { red: redCopia, objetoAristas: objetoAristas };
 };
 
-const creaRedMarginal = (red) => {
+const creaRedMarginal = (red, arcos) => {
   let redCopia = _.cloneDeep(red),
     { objetoAristas } = creaObjetoAristas(red);
 
+  arcos = arcos || Object.keys(red.listaAristas);
+
   for (let i in objetoAristas) {
     redCopia.eliminarArista(i);
+    if (arcos.includes(i)) {
+      if (objetoAristas[i].flujo > objetoAristas[i].flujoMin)
+        redCopia.agregarArista(
+          objetoAristas[i].sumidero,
+          objetoAristas[i].fuente,
+          objetoAristas[i].flujo - objetoAristas[i].flujoMin,
+          i + "-",
+          "0",
+          "0",
+          -red.buscaArista(i).costo
+        );
 
-    if (objetoAristas[i].flujo > 0)
-      redCopia.agregarArista(
-        objetoAristas[i].sumidero,
-        objetoAristas[i].fuente,
-        objetoAristas[i].flujo,
-        i + "-",
-        "0",
-        "0",
-        -red.buscaArista(i).costo
-      );
-
-    if (objetoAristas[i].flujo < objetoAristas[i].flujoMax)
-      redCopia.agregarArista(
-        objetoAristas[i].fuente,
-        objetoAristas[i].sumidero,
-        objetoAristas[i].flujoMax - objetoAristas[i].flujo,
-        i + "+",
-        "0",
-        "0",
-        red.buscaArista(i).costo
-      );
+      if (
+        objetoAristas[i].flujo <
+        objetoAristas[i].flujoMax - objetoAristas[i].flujoMin
+      )
+        redCopia.agregarArista(
+          objetoAristas[i].fuente,
+          objetoAristas[i].sumidero,
+          objetoAristas[i].flujoMax -
+            objetoAristas[i].flujo -
+            objetoAristas[i].flujoMin,
+          i + "+",
+          "0",
+          "0",
+          red.buscaArista(i).costo
+        );
+    }
   }
   return { redMarginal: redCopia, objetoAristas: objetoAristas };
+};
+
+const creaClones = (red, verticesDuplicados) => {
+  verticesDuplicados = [];
+
+  for (let i in red.vertices) {
+    // Si el vertice tiene restricciones
+    let vertice = red.vertices[i];
+
+    if (vertice.flujoMin != undefined || vertice.flujoMax != undefined) {
+      // Creamos un vertice clon
+      verticesDuplicados.push(i.toUpperCase());
+      red.agregarVertice(i.toUpperCase());
+
+      // Ciclo para agregar los arcos salientes del vertice original al vertice clon
+      let eliminar = [];
+
+      for (let j in red.aristas[i]) {
+        if (red.aristas[i][j].tipo == "saliente") {
+          red.agregarArista(
+            i.toUpperCase(),
+            red.aristas[i][j].vertice,
+            red.aristas[i][j].flujoMax,
+            red.aristas[i][j].etiqueta + "#",
+            red.aristas[i][j].flujoMin,
+            "0",
+            red.aristas[i][j].costo
+          );
+
+          eliminar.push(red.aristas[i][j].etiqueta);
+        }
+      }
+
+      // Ciclo para eliminar los arcos que agregamos al vertice clon
+      for (let j in eliminar) red.eliminarArista(eliminar[j]);
+
+      // Conectamos el vertice original con el vertice clon
+      red.agregarArista(
+        i,
+        i.toUpperCase(),
+        vertice.flujoMax,
+        i + "#",
+        vertice.flujoMin,
+        "0"
+      );
+    }
+  }
+  return { verticesDuplicados };
+};
+
+const eliminarClones = (red, verticesDuplicados, objetoAristas) => {
+  // Cambiamos los arcos de los vertices clon a los vertices originales
+  for (let i in verticesDuplicados) {
+    let duplicado = verticesDuplicados[i];
+    for (let j in red.aristas[duplicado]) {
+      arista = red.aristas[duplicado][j];
+      if (arista.tipo == "saliente") {
+        red.agregarArista(
+          duplicado.toLocaleLowerCase(),
+          arista.vertice,
+          objetoAristas[arista.etiqueta].flujoMax,
+          arista.etiqueta,
+          objetoAristas[arista.etiqueta].flujoMin,
+          objetoAristas[arista.etiqueta].flujo,
+          arista.costo
+        );
+
+        objetoAristas[arista.etiqueta.split("#")[0]] = {
+          fuente: duplicado.toLowerCase(),
+          sumidero: arista.vertice,
+          flujoMin: objetoAristas[arista.etiqueta].flujoMin,
+          flujo: objetoAristas[arista.etiqueta].flujo,
+          flujoMax: objetoAristas[arista.etiqueta].flujoMax,
+          costo: arista.costo,
+        };
+      }
+    }
+
+    // Eliminamos los vertices clon
+    red.eliminarVertice(duplicado);
+  }
 };

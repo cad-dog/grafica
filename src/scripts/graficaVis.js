@@ -124,6 +124,8 @@ const graficarArchivo1 = () => {
 
       // Actualizamos el numero de vertices en la pagina
       numVertices.innerHTML = grafica.numVertices;
+      // Actualizamos el numero de aristas en la pagina
+      numAristas.innerHTML = grafica.numAristas;
     }
   };
 };

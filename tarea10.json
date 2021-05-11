@@ -57,6 +57,13 @@
     },
     { "etiqueta": "e16", "v1": "g", "v2": "i", "flujoMax": "40" },
     { "etiqueta": "e17", "v1": "h", "v2": "f", "flujoMax": "17" },
+    {
+      "etiqueta": "e30",
+      "v1": "h",
+      "v2": "k",
+      "flujoMin": "2",
+      "flujoMax": "14"
+    },
     { "etiqueta": "e18", "v1": "h", "v2": "i", "flujoMax": "10" },
     { "etiqueta": "e19", "v1": "i", "v2": "k", "flujoMax": "19" },
     { "etiqueta": "e20", "v1": "i", "v2": "l", "flujoMax": "25" },
