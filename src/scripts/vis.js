@@ -45,7 +45,7 @@ const graficar = () => {
   } else if (document.getElementById("tipo3").checked) {
     tipo = document.getElementById("tipo3").value;
     menu.innerHTML =
-      '<div class="border-t border-b p-1"> <div class="font-bold">Graficar Archivo</div> <div class="text-sm flex space-x-1 mt-1"> <input id="archivo2" type="file" /> <button class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none" onclick="graficarArchivo2()" > Graficar </button> </div> </div> <div class="border-t border-b p-1"> <div class="font-bold">Agregar vértice</div> <div class="text-sm flex space-x-2 mt-1"> <div class="mt-1">Etiqueta:</div> <input id="agregaVR1" type="text" class="w-10 rounded-md border" /> <div class="mt-1">Flujo Minimo:</div> <input id="agregaVR2" type="text" class="w-10 rounded-md border" /> <div class="mt-1">Flujo Maximo:</div> <input id="agregaVR3" type="text" class="w-10 rounded-md border" /> <button class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none" onclick="agregaVertice2()" > Agregar </button> </div> </div> <!-- Agregar arista input --> <div class="border-t border-b p-1"> <div class="font-bold">Agregar arista</div> <div class="text-sm flex space-x-1 mt-1"> <div class="mt-1">Etiqueta:</div> <input id="agregaAR1" type="text" class="w-10 rounded-md border" /> <div class="mt-1">de:</div> <input id="agregaAR2" type="text" class="w-10 rounded-md border" /> <div class="mt-1">a:</div> <input id="agregaAR3" type="text" class="w-10 rounded-md border" /> <div class="mt-1">Flujo minimo:</div> <input id="agregaAR4" type="text" class="w-10 rounded-md border" /> <div class="mt-1">Capacidad:</div> <input id="agregaAR5" type="text" class="w-10 rounded-md border" /> <button class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none" onclick="agregaArista2()" > Agregar </button> </div> </div> <div class="border-t border-b p-1 flex space-x-1"> <!-- Eliminar vertice --> <div> <div class="font-bold">Eliminar vértice</div> <div class="text-sm flex space-x-1 mt-1"> <div class="mt-1">Etiqueta:</div> <input id="eliminaVR1" type="text" class="w-10 rounded-md border" /> <button class="bg-red-500 rounded-md px-2 py-1 text-white hover:bg-red-600 focus:outline-none" onclick="eliminaVertice2()" > Eliminar </button> </div> </div> <!-- Eliminar arista --> <div class="border-l px-1"> <div class="font-bold">Eliminar arista</div> <div class="text-sm flex space-x-1 mt-1"> <div class="mt-1">Etiqueta:</div> <input id="eliminaAR1" type="text" class="w-10 rounded-md border" /> <button class="bg-red-500 rounded-md px-2 py-1 text-white hover:bg-red-600 focus:outline-none" onclick="eliminaArista2()" > Eliminar </button> </div> </div> </div> <div class="flex border-t border-b p-1 space-x-1"> <!-- Vaciar vertice --> <div class="border-l px-1"> <div class="font-bold">Vaciar vértice</div> <div class="text-sm flex space-x-1 mt-1"> <div class="mt-1">Etiqueta:</div> <input id="vaciarVertice" type="text" class="w-10 rounded-md border" /> <button class="bg-red-500 rounded-md px-2 py-1 text-white hover:bg-red-600 focus:outline-none" onclick="vaciarVertice1()" > Vaciar </button> </div> </div> </div> <!-- Ford Fulkerson --> <div class="border-t border-b p-1"> <div class="font-bold">Ford Fulkerson</div> <div class="text-sm flex mt-1"> <div class="mt-1">Fuente(s):</div> <input id="ford1" type="text" class="w-10 rounded-md border" /> <div class="mt-1">Sumidero(s):</div> <input id="ford2" type="text" class="w-10 rounded-md border" /> <button class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none ml-1" onclick="actualizarGrafica(fordFulkerson)" > Buscar </button> </div> </div> <!-- primal --> <div class="border-t border-b p-1"> <div class="font-bold">Primal</div> <div class="text-sm flex mt-1"> <div class="mt-1">Fuente(s):</div> <input id="primal1" type="text" class="w-10 rounded-md border" /> <div class="mt-1">Sumidero(s):</div> <input id="primal2" type="text" class="w-10 rounded-md border" /> <div class="mt-1">Flujo deseado:</div> <input id="primal3" type="text" class="w-10 rounded-md border" /> <button class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none ml-1" onclick="actualizarGrafica(primal)" > Buscar </button> </div> </div> <!-- dual --> <div class="border-t border-b p-1"> <div class="font-bold">Dual</div> <div class="text-sm flex mt-1"> <div class="mt-1">Fuente(s):</div> <input id="dual1" type="text" class="w-10 rounded-md border" /> <div class="mt-1">Sumidero(s):</div> <input id="dual2" type="text" class="w-10 rounded-md border" /> <div class="mt-1">Flujo deseado:</div> <input id="dual3" type="text" class="w-10 rounded-md border" /> <button class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none ml-1" onclick="actualizarGrafica(dual)" > Buscar </button> </div> </div> <div> <button class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none" onclick="copiarGrafica()" > Copiar gráfica </button> <button class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none" onclick="restauraGrafica()" > Restaurar gráfica </button> <button class="bg-red-500 rounded-md px-2 py-1 text-white hover:bg-red-600 focus:outline-none" onclick="vaciaGrafica()" > Vaciar gráfica </button> </div>';
+      '<div class="border-t border-b p-1"> <div class="font-bold">Graficar Archivo</div> <div class="text-sm flex space-x-1 mt-1"> <input id="archivo2" type="file" /> <button class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none" onclick="graficarArchivo2()" > Graficar </button> </div> </div> <div class="border-t border-b p-1"> <div class="font-bold">Agregar vértice</div> <div class="text-sm flex space-x-2 mt-1"> <div class="mt-1">Etiqueta:</div> <input id="agregaVR1" type="text" class="w-10 rounded-md border" /> <div class="mt-1">Flujo Minimo:</div> <input id="agregaVR2" type="text" class="w-10 rounded-md border" /> <div class="mt-1">Flujo Maximo:</div> <input id="agregaVR3" type="text" class="w-10 rounded-md border" /> <button class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none" onclick="agregaVertice2()" > Agregar </button> </div> </div> <!-- Agregar arista input --> <div class="border-t border-b p-1"> <div class="font-bold">Agregar arista</div> <div class="text-sm flex space-x-1 mt-1"> <div class="mt-1">Etiqueta:</div> <input id="agregaAR1" type="text" class="w-10 rounded-md border" /> <div class="mt-1">de:</div> <input id="agregaAR2" type="text" class="w-10 rounded-md border" /> <div class="mt-1">a:</div> <input id="agregaAR3" type="text" class="w-10 rounded-md border" /> <div class="mt-1">Flujo minimo:</div> <input id="agregaAR4" type="text" class="w-10 rounded-md border" /> <div class="mt-1">Capacidad:</div> <input id="agregaAR5" type="text" class="w-10 rounded-md border" /> <button class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none" onclick="agregaArista2()" > Agregar </button> </div> </div> <div class="border-t border-b p-1 flex space-x-1"> <!-- Eliminar vertice --> <div> <div class="font-bold">Eliminar vértice</div> <div class="text-sm flex space-x-1 mt-1"> <div class="mt-1">Etiqueta:</div> <input id="eliminaVR1" type="text" class="w-10 rounded-md border" /> <button class="bg-red-500 rounded-md px-2 py-1 text-white hover:bg-red-600 focus:outline-none" onclick="eliminaVertice2()" > Eliminar </button> </div> </div> <!-- Eliminar arista --> <div class="border-l px-1"> <div class="font-bold">Eliminar arista</div> <div class="text-sm flex space-x-1 mt-1"> <div class="mt-1">Etiqueta:</div> <input id="eliminaAR1" type="text" class="w-10 rounded-md border" /> <button class="bg-red-500 rounded-md px-2 py-1 text-white hover:bg-red-600 focus:outline-none" onclick="eliminaArista2()" > Eliminar </button> </div> </div> </div> <div class="flex border-t border-b p-1 space-x-1"> <!-- Vaciar vertice --> <div class="border-l px-1"> <div class="font-bold">Vaciar vértice</div> <div class="text-sm flex space-x-1 mt-1"> <div class="mt-1">Etiqueta:</div> <input id="vaciarVertice" type="text" class="w-10 rounded-md border" /> <button class="bg-red-500 rounded-md px-2 py-1 text-white hover:bg-red-600 focus:outline-none" onclick="vaciarVertice1()" > Vaciar </button> </div> </div> </div> <!-- Ford Fulkerson --> <div class="border-t border-b p-1"> <div class="font-bold">Ford Fulkerson</div> <div class="text-sm flex mt-1"> <div class="mt-1">Fuente(s):</div> <input id="ford1" type="text" class="w-10 rounded-md border" /> <div class="mt-1">Sumidero(s):</div> <input id="ford2" type="text" class="w-10 rounded-md border" /> <button class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none ml-1" onclick="actualizarGrafica(fordFulkerson)" > Buscar </button> </div> </div> <!-- primal --> <div class="border-t border-b p-1"> <div class="font-bold">Primal</div> <div class="text-sm flex mt-1"> <div class="mt-1">Fuente(s):</div> <input id="primal1" type="text" class="w-10 rounded-md border" /> <div class="mt-1">Sumidero(s):</div> <input id="primal2" type="text" class="w-10 rounded-md border" /> <div class="mt-1">Flujo deseado:</div> <input id="primal3" type="text" class="w-10 rounded-md border" /> <button class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none ml-1" onclick="actualizarGrafica(primal)" > Buscar </button> </div> </div> <!-- dual --> <div class="border-t border-b p-1"> <div class="font-bold">Dual</div> <div class="text-sm flex mt-1"> <div class="mt-1">Fuente(s):</div> <input id="dual1" type="text" class="w-10 rounded-md border" /> <div class="mt-1">Sumidero(s):</div> <input id="dual2" type="text" class="w-10 rounded-md border" /> <div class="mt-1">Flujo deseado:</div> <input id="dual3" type="text" class="w-10 rounded-md border" /> <button class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none ml-1" onclick="actualizarGrafica(dual)" > Buscar </button> </div> </div> <!-- simplex --> <div class="border-t border-b p-1"> <div class="font-bold">Simplex</div> <div class="text-sm flex mt-1"> <button class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none ml-1" onclick="pintarArbol(simplex)" > Buscar </button> </div> </div> <div> <button class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none" onclick="copiarGrafica()" > Copiar gráfica </button> <button class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none" onclick="restauraGrafica()" > Restaurar gráfica </button> <button class="bg-red-500 rounded-md px-2 py-1 text-white hover:bg-red-600 focus:outline-none" onclick="vaciaGrafica()" > Vaciar gráfica </button> </div>';
   }
   grafica.tipo = tipo;
 
@@ -687,7 +687,53 @@ const pintarArbol = (algoritmo) => {
     if (arbol.aristas.includes(i.title)) i.color = "#ff0000";
   });
 
+  if (arbol.objetoAristas != undefined) {
+    for (i in arbol.objetoAristas) {
+      let arista = arbol.objetoAristas[i];
+      // Si es un lazo disminuimos el numero de lazos
+      if (arista.fuente == arista.sumidero) {
+        grafica.lazos[arista.fuente] -= 1;
+        if (!grafica.lazos[arista.fuente] == 0)
+          delete grafica.lazos[arista.fuente];
+      }
+      grafica.editarArista(
+        i,
+        arista.peso,
+        arista.flujoMin,
+        arista.flujo,
+        arista.flujoMax
+      );
+    }
+
+    aristas.get().map((i) => {
+      i.label =
+        "[" +
+        (arbol.objetoAristas[i.title].flujoMin
+          ? arbol.objetoAristas[i.title].flujoMin
+          : 0) +
+        ", " +
+        (arbol.objetoAristas[i.title].flujoMax
+          ? arbol.objetoAristas[i.title].flujoMax != Infinity
+            ? arbol.objetoAristas[i.title].flujoMax
+            : "∞"
+          : 0) +
+        ", $" +
+        arbol.objetoAristas[i.title].costo +
+        "]\n" +
+        arbol.objetoAristas[i.title].peso;
+    });
+
+    aristas.update(aristas.get());
+  }
+
   aristas.update(aristas.get());
+
+  // Vaciamos el mensaje de salida
+  mensaje.innerHTML = "";
+  mensaje.classList.remove("text-red-500", "text-green-500");
+
+  mensaje.classList.add("text-green-500");
+  mensaje.innerHTML = arbol.msj;
 };
 
 const actualizarGrafica = (algoritmo) => {
@@ -703,7 +749,13 @@ const actualizarGrafica = (algoritmo) => {
       if (!grafica.lazos[arista.fuente] == 0)
         delete grafica.lazos[arista.fuente];
     }
-    grafica.editarArista(i, arista.flujoMin, arista.flujo, arista.flujoMax);
+    grafica.editarArista(
+      i,
+      arista.peso,
+      arista.flujoMin,
+      arista.flujo,
+      arista.flujoMax
+    );
   }
 
   aristas.get().map((i) => {

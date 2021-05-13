@@ -10,24 +10,35 @@ class Grafica {
     this.tipo;
   }
 
-  agregarVertice(vertice, flujoMin, flujoMax) {
+  agregarVertice(vertice, flujoMin, flujoMax, valor) {
     flujoMin = parseInt(flujoMin) || undefined;
     flujoMax = parseInt(flujoMax) || undefined;
+    valor = parseInt(valor);
 
     this.vertices[vertice] = {
       etiqueta: vertice,
       grado: 0,
       flujoMin: flujoMin,
       flujoMax: flujoMax,
+      valor: valor,
     };
 
     this.aristas[vertice] = [];
   }
 
-  agregarArista(v1, v2, peso, etiqueta, flujoMin, flujo, costo) {
-    costo = parseInt(costo) || 0;
-    flujoMin = parseInt(flujoMin) || 0;
-    flujo = parseInt(flujo) || 0;
+  agregarArista(etiqueta, v1, v2, peso, flujoMin, flujo, flujoMax, costo) {
+    if (typeof peso == "string") peso = parseInt(peso) || 0;
+    if (typeof flujoMin == "string") flujoMin = parseInt(flujoMin) || 0;
+    if (typeof flujo == "string") flujo = parseInt(flujo) || 0;
+    if (typeof flujoMax == "string") flujoMax = parseInt(flujoMax) || Infinity;
+    if (typeof costo == "string") costo = parseInt(costo) || 0;
+
+    if (peso == undefined) peso = 0;
+    if (flujoMin == undefined) flujoMin = 0;
+    if (flujo == undefined) flujo = 0;
+    if (flujoMax == undefined) flujoMax = Infinity;
+    if (costo == undefined) costo = 0;
+
     this.numAristas += 1;
     if (v1 == v2) {
       this.vertices[v1].grado += 2;
@@ -36,28 +47,25 @@ class Grafica {
       this.vertices[v2].grado += 1;
     }
 
-    if (peso) {
-      this.pesos[etiqueta] = parseInt(peso);
-    } else {
-      this.pesos[etiqueta] = 0;
-    }
+    this.pesos[etiqueta] = peso;
 
-    // Red
+    // Grafica y Digrafica
     if (this.tipo != "red") {
       this.listaAristas.push({
         etiqueta: etiqueta,
         v1: v1,
         v2: v2,
-        peso: parseInt(peso),
+        peso: peso,
       });
     }
-    // Grafica
+    // Red
     else {
       this.listaAristas.push({
         etiqueta: etiqueta,
         v1: v1,
         v2: v2,
-        flujoMax: peso == Infinity ? Infinity : parseInt(peso),
+        peso: peso,
+        flujoMax: flujoMax,
         flujo: flujo,
         flujoMin: flujoMin,
         costo: costo,
@@ -69,12 +77,12 @@ class Grafica {
       this.aristas[v1].push({
         etiqueta: etiqueta,
         vertice: v2,
-        peso: parseInt(peso),
+        peso: peso,
       });
       this.aristas[v2].push({
         etiqueta: etiqueta,
         vertice: v1,
-        peso: parseInt(peso),
+        peso: peso,
       });
     }
     // Digrafica
@@ -82,13 +90,13 @@ class Grafica {
       this.aristas[v1].push({
         etiqueta: etiqueta,
         vertice: v2,
-        peso: parseInt(peso),
+        peso: peso,
         tipo: "saliente",
       });
       this.aristas[v2].push({
         etiqueta: etiqueta,
         vertice: v1,
-        peso: parseInt(peso),
+        peso: peso,
         tipo: "entrante",
       });
     }
@@ -97,22 +105,22 @@ class Grafica {
       this.aristas[v1].push({
         etiqueta: etiqueta,
         vertice: v2,
+        peso: peso,
         flujoMin: flujoMin,
-        flujo: 0,
-        flujoMax: peso == Infinity ? Infinity : parseInt(peso),
+        flujo: flujo,
+        flujoMax: flujoMax,
         tipo: "saliente",
         costo: costo,
-        peso: costo,
       });
       this.aristas[v2].push({
         etiqueta: etiqueta,
         vertice: v1,
+        peso: peso,
         flujoMin: flujoMin,
-        flujo: 0,
-        flujoMax: peso == Infinity ? Infinity : parseInt(peso),
+        flujo: flujo,
+        flujoMax: flujoMax,
         tipo: "entrante",
         costo: costo,
-        peso: costo,
       });
     }
   }
@@ -150,12 +158,14 @@ class Grafica {
       }
   }
 
-  editarArista(etiqueta, flujoMin, flujo, flujoMax) {
+  editarArista(etiqueta, peso, flujoMin, flujo, flujoMax) {
     for (let i in this.listaAristas) {
       if (this.listaAristas[i].etiqueta == etiqueta) {
+        this.listaAristas[i].peso = peso;
         this.listaAristas[i].flujoMin = flujoMin;
         this.listaAristas[i].flujo = flujo;
         this.listaAristas[i].flujoMax = flujoMax;
+
         break;
       }
     }
@@ -163,9 +173,11 @@ class Grafica {
     for (let i in this.aristas) {
       for (let j in this.aristas[i]) {
         if (this.aristas[i][j].etiqueta == etiqueta) {
+          this.aristas[i][j].peso = peso;
           this.aristas[i][j].flujoMin = flujoMin;
           this.aristas[i][j].flujo = flujo;
           this.aristas[i][j].flujoMax = flujoMax;
+
           break;
         }
       }

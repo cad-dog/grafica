@@ -1,0 +1,20 @@
+{
+  "estilo": "'simplex'",
+  "vertices": [
+    { "etiqueta": "a", "valor": "2" },
+    { "etiqueta": "b", "valor": "5" },
+    { "etiqueta": "c", "valor": "1" },
+    { "etiqueta": "d", "valor": "-4" },
+    { "etiqueta": "e", "valor": "-4" }
+  ],
+  "aristas": [
+    { "etiqueta": "e1", "v1": "a", "v2": "b", "costo": "5", "peso": "0" },
+    { "etiqueta": "e2", "v1": "a", "v2": "c", "costo": "-2", "peso": "0" },
+    { "etiqueta": "e3", "v1": "a", "v2": "d", "costo": "2", "peso": "2" },
+    { "etiqueta": "e4", "v1": "b", "v2": "c", "costo": "-4", "peso": "5" },
+    { "etiqueta": "e5", "v1": "c", "v2": "e", "costo": "0", "peso": "6" },
+    { "etiqueta": "e6", "v1": "d", "v2": "c", "costo": "4", "peso": "0" },
+    { "etiqueta": "e7", "v1": "e", "v2": "b", "costo": "6", "peso": "0" },
+    { "etiqueta": "e8", "v1": "e", "v2": "d", "costo": "3", "peso": "2" }
+  ]
+}
