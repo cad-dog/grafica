@@ -21,41 +21,54 @@ const graficarArchivo2 = () => {
   };
 
   let graficaArchivo = (datos) => {
+    console.log(datos);
+
     if (datos.vertices) {
       for (let i in datos.vertices) {
         let etiqueta = datos.vertices[i].etiqueta;
         grafica.agregarVertice(
           etiqueta,
           datos.vertices[i].flujoMin,
-          datos.vertices[i].flujoMax
+          datos.vertices[i].flujoMax,
+          datos.vertices[i].valor
         );
 
-        if (
-          datos.vertices[i].flujoMin == undefined ||
-          datos.vertices[i].flujoMax == undefined
-        )
+        if (datos.estilo == "simplex") {
           vertices.add({
             id: idVertice,
-            label: etiqueta + "\n",
+            label: etiqueta + "\n" + datos.vertices[i].valor,
             group: grafica.vertices[etiqueta].conjunto == 1 ? "a" : "b",
             flujoMin: undefined,
             flujoMax: undefined,
+            valor: datos.vertices[i].valor,
           });
-        else
-          vertices.add({
-            id: idVertice,
-            label:
-              etiqueta +
-              "\n(" +
-              datos.vertices[i].flujoMin +
-              ", " +
-              datos.vertices[i].flujoMax +
-              ")",
-            group: grafica.vertices[etiqueta].conjunto == 1 ? "a" : "b",
-            flujoMin: datos.vertices[i].flujoMin,
-            flujoMax: datos.vertices[i].flujoMax,
-          });
-
+        } else {
+          if (
+            datos.vertices[i].flujoMin == undefined ||
+            datos.vertices[i].flujoMax == undefined
+          )
+            vertices.add({
+              id: idVertice,
+              label: etiqueta + "\n",
+              group: grafica.vertices[etiqueta].conjunto == 1 ? "a" : "b",
+              flujoMin: undefined,
+              flujoMax: undefined,
+            });
+          else
+            vertices.add({
+              id: idVertice,
+              label:
+                etiqueta +
+                "\n(" +
+                datos.vertices[i].flujoMin +
+                ", " +
+                datos.vertices[i].flujoMax +
+                ")",
+              group: grafica.vertices[etiqueta].conjunto == 1 ? "a" : "b",
+              flujoMin: datos.vertices[i].flujoMin,
+              flujoMax: datos.vertices[i].flujoMax,
+            });
+        }
         let esBipartita = grafica.esBipartita();
 
         vertices.get().map((i) => {
@@ -95,38 +108,65 @@ const graficarArchivo2 = () => {
         }
 
         grafica.agregarArista(
+          datos.aristas[i].etiqueta,
           datos.aristas[i].v1,
           datos.aristas[i].v2,
-          datos.aristas[i].flujoMax,
-          datos.aristas[i].etiqueta,
+          datos.aristas[i].peso,
           datos.aristas[i].flujoMin,
-          "0",
+          datos.aristas[i].flujo,
+          datos.aristas[i].flujoMax,
           datos.aristas[i].costo
         );
 
-        aristas.add([
-          {
-            id: idArista,
-            label:
-              "[" +
-              (datos.aristas[i].flujoMin ? datos.aristas[i].flujoMin : "0") +
-              ", 0, " +
-              datos.aristas[i].flujoMax +
-              "]" +
-              (datos.aristas[i].costo != undefined
-                ? "\n$" + datos.aristas[i].costo
-                : ""),
-            from: v1.id,
-            to: v2.id,
-            arrows: {
-              to: {
-                enabled: true,
+        if (datos.estilo == "simplex") {
+          aristas.add([
+            {
+              id: idArista,
+              label:
+                "[" +
+                (datos.aristas[i].flujoMin ? datos.aristas[i].flujoMin : 0) +
+                ", " +
+                (datos.aristas[i].flujoMax ? datos.aristas[i].flujoMax : 0) +
+                ", $" +
+                datos.aristas[i].costo +
+                "]\n" +
+                datos.aristas[i].peso,
+              from: v1.id,
+              to: v2.id,
+              arrows: {
+                to: {
+                  enabled: true,
+                },
               },
+              title: datos.aristas[i].etiqueta,
+              color: "#6762cc",
             },
-            title: datos.aristas[i].etiqueta,
-            color: "#6762cc",
-          },
-        ]);
+          ]);
+        } else {
+          aristas.add([
+            {
+              id: idArista,
+              label:
+                "[" +
+                (datos.aristas[i].flujoMin ? datos.aristas[i].flujoMin : "0") +
+                ", 0, " +
+                datos.aristas[i].flujoMax +
+                "]" +
+                (datos.aristas[i].costo != undefined
+                  ? "\n$" + datos.aristas[i].costo
+                  : ""),
+              from: v1.id,
+              to: v2.id,
+              arrows: {
+                to: {
+                  enabled: true,
+                },
+              },
+              title: datos.aristas[i].etiqueta,
+              color: "#6762cc",
+            },
+          ]);
+        }
 
         esBipartita = grafica.esBipartita();
         v1.group =

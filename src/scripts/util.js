@@ -74,8 +74,10 @@ const creaObjetoAristas = (grafica) => {
   for (let i = 0; i < grafica.listaAristas.length; i++) {
     let arista = grafica.listaAristas[i];
     objetoAristas[arista.etiqueta] = {
+      etiqueta: arista.etiqueta,
       fuente: arista.v1,
       sumidero: arista.v2,
+      peso: arista.peso,
       flujoMin: arista.flujoMin,
       flujo: arista.flujo,
       flujoMax: arista.flujoMax,
@@ -88,6 +90,7 @@ const creaObjetoAristas = (grafica) => {
         v1: arista.v1,
         v2: arista.v2,
         etiqueta: arista.etiqueta,
+        peso: arista.peso,
         flujoMin: arista.flujoMin,
         flujo: arista.flujo,
         flujoMax: arista.flujoMax,
@@ -107,10 +110,14 @@ const creaSuperVertices = (red, fuente, sumidero) => {
     // Se conectan los vertices fuente con el superfuente
     for (let i in fuente) {
       red.agregarArista(
+        "e" + (parseInt(i) + 1) + "'",
         "superfuente",
         fuente[i],
+        "0",
+        "0",
+        "0",
         Infinity,
-        "e" + (parseInt(i) + 1) + "'"
+        "0"
       );
     }
 
@@ -125,10 +132,14 @@ const creaSuperVertices = (red, fuente, sumidero) => {
     // Se conectan los vertices fuente con el supersumidero
     for (let i in sumidero) {
       red.agregarArista(
+        "e" + (parseInt(i) + 1) + "''",
         sumidero[i],
         "supersumidero",
+        "0",
+        "0",
+        "0",
         Infinity,
-        "e" + (parseInt(i) + 1) + "''"
+        "0"
       );
     }
     sumidero = "supersumidero";
@@ -158,15 +169,20 @@ const satisfacerRestriccionesArcos = (red, fuente, sumidero) => {
       if (!arco) {
         // Creamos una arco
         redCopia.agregarArista(
+          arcosRestriccion[i].etiqueta + "*",
           "A'",
           arcosRestriccion[i].v2,
+          arcosRestriccion[i].peso,
+          0,
+          0,
           arcosRestriccion[i].flujoMin,
-          arcosRestriccion[i].etiqueta + "*"
+          arcosRestriccion[i].costo
         );
 
         objetoAristas[arcosRestriccion[i].etiqueta + "*"] = {
           fuente: "A'",
           sumidero: arcosRestriccion[i].v2,
+          peso: arcosRestriccion[i].peso,
           flujoMin: 0,
           flujo: 0,
           flujoMax: arcosRestriccion[i].flujoMin,
@@ -178,6 +194,7 @@ const satisfacerRestriccionesArcos = (red, fuente, sumidero) => {
         // Cambiamos el flujo maximo del arco existente
         redCopia.editarArista(
           arco.etiqueta,
+          arco.peso,
           arco.flujoMin,
           arco.flujo,
           arco.flujoMax + arcosRestriccion[i].flujoMin
@@ -186,9 +203,10 @@ const satisfacerRestriccionesArcos = (red, fuente, sumidero) => {
         objetoAristas[arco.etiqueta] = {
           fuente: arco.v1,
           sumidero: arco.v2,
+          peso: arco.peso,
           flujoMin: arco.flujoMin,
           flujo: arco.flujo,
-          flujoMax: arco.flujoMax,
+          flujoMax: arco.flujoMax + arcosRestriccion[i].flujoMin,
           costo: arco.costo,
         };
       }
@@ -200,15 +218,20 @@ const satisfacerRestriccionesArcos = (red, fuente, sumidero) => {
       if (!arco) {
         // Creamos una arco
         redCopia.agregarArista(
+          arcosRestriccion[i].etiqueta + "**",
           arcosRestriccion[i].v1,
           "Z'",
+          arcosRestriccion[i].peso,
+          0,
+          0,
           arcosRestriccion[i].flujoMin,
-          arcosRestriccion[i].etiqueta + "**"
+          arcosRestriccion[i].costo
         );
 
         objetoAristas[arcosRestriccion[i].etiqueta + "**"] = {
           fuente: arcosRestriccion[i].v1,
           sumidero: "Z'",
+          peso: arcosRestriccion[i].peso,
           flujoMin: 0,
           flujo: 0,
           flujoMax: arcosRestriccion[i].flujoMin,
@@ -220,6 +243,7 @@ const satisfacerRestriccionesArcos = (red, fuente, sumidero) => {
         // Cambiamos el flujo maximo del arco existente
         redCopia.editarArista(
           arco.etiqueta,
+          arco.peso,
           arco.flujoMin,
           arco.flujo,
           arco.flujoMax + arcosRestriccion[i].flujoMin
@@ -228,10 +252,11 @@ const satisfacerRestriccionesArcos = (red, fuente, sumidero) => {
         objetoAristas[arco.etiqueta] = {
           fuente: arco.v1,
           sumidero: arco.v2,
+          peso: arco.peso,
           flujoMin: arco.flujoMin,
           flujo: arco.flujo,
-          flujoMax: arco.flujoMax,
-          arco: arco.costo,
+          flujoMax: arco.flujoMax + arcosRestriccion[i].flujoMin,
+          costo: arco.costo,
         };
       }
 
@@ -240,6 +265,7 @@ const satisfacerRestriccionesArcos = (red, fuente, sumidero) => {
       redCopia.editarArista(
         arcosRestriccion[i].etiqueta,
         0,
+        arcosRestriccion[i].peso,
         arcosRestriccion[i].flujo,
         arcosRestriccion[i].flujoMax - arcosRestriccion[i].flujoMin
       );
@@ -247,6 +273,7 @@ const satisfacerRestriccionesArcos = (red, fuente, sumidero) => {
       objetoAristas[arcosRestriccion[i].etiqueta] = {
         fuente: arcosRestriccion[i].v1,
         sumidero: arcosRestriccion[i].v2,
+        peso: arcosRestriccion[i].peso,
         flujoMin: 0,
         flujo: 0,
         flujoMax: arcosRestriccion[i].flujoMax - arcosRestriccion[i].flujoMin,
@@ -255,7 +282,7 @@ const satisfacerRestriccionesArcos = (red, fuente, sumidero) => {
     }
 
     // Conectamos los vertices fuente y sumidero
-    redCopia.agregarArista(fuente, sumidero, Infinity, "e*");
+    redCopia.agregarArista("e*", fuente, sumidero, 0, 0, 0, Infinity);
 
     objetoAristas["e*"] = {
       fuente: fuente,
@@ -265,7 +292,7 @@ const satisfacerRestriccionesArcos = (red, fuente, sumidero) => {
       flujoMax: Infinity,
     };
 
-    redCopia.agregarArista(sumidero, fuente, Infinity, "e**");
+    redCopia.agregarArista("e**", sumidero, fuente, 0, 0, 0, Infinity);
 
     objetoAristas["e**"] = {
       fuente: sumidero,
@@ -291,6 +318,7 @@ const satisfacerRestriccionesArcos = (red, fuente, sumidero) => {
 
       redCopia.editarArista(
         arco.etiqueta,
+        arco.peso,
         arco.flujoMin,
         arco.flujoMin + objetoAristas[arco.etiqueta].flujo,
         arco.flujoMax
@@ -299,9 +327,11 @@ const satisfacerRestriccionesArcos = (red, fuente, sumidero) => {
       objetoAristas[arco.etiqueta] = {
         fuente: arco.v1,
         sumidero: arco.v2,
+        peso: arco.peso,
         flujoMin: arco.flujoMin,
         flujo: arco.flujoMin + objetoAristas[arco.etiqueta].flujo,
         flujoMax: arco.flujoMax,
+        costo: arco.costo,
       };
     }
 
@@ -332,34 +362,36 @@ const creaRedMarginal = (red, arcos) => {
 
   for (let i in objetoAristas) {
     redCopia.eliminarArista(i);
-    if (arcos.includes(i)) {
-      if (objetoAristas[i].flujo > objetoAristas[i].flujoMin)
-        redCopia.agregarArista(
-          objetoAristas[i].sumidero,
-          objetoAristas[i].fuente,
-          objetoAristas[i].flujo - objetoAristas[i].flujoMin,
-          i + "-",
-          "0",
-          "0",
-          -red.buscaArista(i).costo
-        );
+    // if (arcos.includes(i)) {
+    if (objetoAristas[i].flujo > objetoAristas[i].flujoMin)
+      redCopia.agregarArista(
+        i + "-",
+        objetoAristas[i].sumidero,
+        objetoAristas[i].fuente,
+        -red.buscaArista(i).costo,
+        0,
+        0,
+        objetoAristas[i].flujo - objetoAristas[i].flujoMin,
+        -red.buscaArista(i).costo
+      );
 
-      if (
-        objetoAristas[i].flujo <
-        objetoAristas[i].flujoMax - objetoAristas[i].flujoMin
-      )
-        redCopia.agregarArista(
-          objetoAristas[i].fuente,
-          objetoAristas[i].sumidero,
-          objetoAristas[i].flujoMax -
-            objetoAristas[i].flujo -
-            objetoAristas[i].flujoMin,
-          i + "+",
-          "0",
-          "0",
-          red.buscaArista(i).costo
-        );
-    }
+    if (
+      objetoAristas[i].flujo <
+      objetoAristas[i].flujoMax - objetoAristas[i].flujoMin
+    )
+      redCopia.agregarArista(
+        i + "+",
+        objetoAristas[i].fuente,
+        objetoAristas[i].sumidero,
+        red.buscaArista(i).costo,
+        0,
+        0,
+        objetoAristas[i].flujoMax -
+          objetoAristas[i].flujo -
+          objetoAristas[i].flujoMin,
+        red.buscaArista(i).costo
+      );
+    // }
   }
   return { redMarginal: redCopia, objetoAristas: objetoAristas };
 };
@@ -382,12 +414,13 @@ const creaClones = (red, verticesDuplicados) => {
       for (let j in red.aristas[i]) {
         if (red.aristas[i][j].tipo == "saliente") {
           red.agregarArista(
+            red.aristas[i][j].etiqueta + "#",
             i.toUpperCase(),
             red.aristas[i][j].vertice,
-            red.aristas[i][j].flujoMax,
-            red.aristas[i][j].etiqueta + "#",
+            "0",
             red.aristas[i][j].flujoMin,
             "0",
+            red.aristas[i][j].flujoMax,
             red.aristas[i][j].costo
           );
 
@@ -400,11 +433,13 @@ const creaClones = (red, verticesDuplicados) => {
 
       // Conectamos el vertice original con el vertice clon
       red.agregarArista(
+        i + "#",
         i,
         i.toUpperCase(),
-        vertice.flujoMax,
-        i + "#",
+        "0",
         vertice.flujoMin,
+        "0",
+        vertice.flujoMax,
         "0"
       );
     }
@@ -420,12 +455,13 @@ const eliminarClones = (red, verticesDuplicados, objetoAristas) => {
       arista = red.aristas[duplicado][j];
       if (arista.tipo == "saliente") {
         red.agregarArista(
+          arista.etiqueta,
           duplicado.toLocaleLowerCase(),
           arista.vertice,
-          objetoAristas[arista.etiqueta].flujoMax,
-          arista.etiqueta,
+          "0",
           objetoAristas[arista.etiqueta].flujoMin,
           objetoAristas[arista.etiqueta].flujo,
+          objetoAristas[arista.etiqueta].flujoMax,
           arista.costo
         );
 
@@ -443,4 +479,143 @@ const eliminarClones = (red, verticesDuplicados, objetoAristas) => {
     // Eliminamos los vertices clon
     red.eliminarVertice(duplicado);
   }
+};
+
+const simplexBasico = (red) => {
+  let solucion = [],
+    noSolucion = [],
+    arcos = [];
+
+  let { objetoAristas } = creaObjetoAristas(red);
+
+  for (let i in red.listaAristas) {
+    let arco = red.listaAristas[i];
+    if (arco.peso > arco.flujoMin && arco.peso < arco.flujoMax)
+      solucion.push(arco.etiqueta);
+    else noSolucion.push(arco.etiqueta);
+  }
+
+  while (true) {
+    let vertices = Object.keys(red.vertices);
+    let arcoMejora = { mejora: 0 };
+
+    for (let i in noSolucion) {
+      let arco = objetoAristas[noSolucion[i]];
+      let miniRed = new Grafica();
+
+      let ciclo = encuentraCiclo(
+        miniRed,
+        vertices,
+        solucion,
+        objetoAristas,
+        arco
+      );
+
+      ciclo.unshift(noSolucion[i]);
+
+      let contrario = false;
+      let verticeSiguiente = objetoAristas[ciclo[0]].fuente;
+      let mejora = 0;
+      let delta = Infinity;
+
+      for (let j in ciclo) {
+        if (ciclo[j] == undefined) break;
+
+        let arista = objetoAristas[ciclo[j]];
+
+        // Mismo sentido
+        if (arista.fuente == verticeSiguiente) {
+          mejora -= arista.costo;
+          contrario = false;
+
+          delta = Math.min(delta, arista.flujoMax - arista.peso);
+        }
+        // Sentido contrario
+        else {
+          mejora += arista.costo;
+          contrario = true;
+
+          delta = Math.min(delta, arista.peso - arista.flujoMin);
+        }
+
+        if (!contrario) verticeSiguiente = arista.sumidero;
+        else verticeSiguiente = arista.fuente;
+      }
+
+      if (mejora > arcoMejora.mejora)
+        arcoMejora = {
+          etiqueta: ciclo[0],
+          mejora: mejora,
+          ciclo: ciclo,
+          delta: delta,
+        };
+    }
+
+    if (arcoMejora.mejora <= 0) break;
+
+    let contrario = false;
+    let verticeSiguiente = objetoAristas[arcoMejora.ciclo[0]].fuente;
+
+    for (let i in arcoMejora.ciclo) {
+      let arista = objetoAristas[arcoMejora.ciclo[i]];
+
+      // Mismo sentido
+      if (arista.fuente == verticeSiguiente) {
+        contrario = false;
+        arista.peso += arcoMejora.delta;
+      }
+      // Sentido contrario
+      else {
+        contrario = true;
+        arista.peso -= arcoMejora.delta;
+      }
+
+      if (arista.peso <= arista.flujoMin || arista.peso >= arista.flujoMax) {
+        noSolucion.push(arista.etiqueta);
+        solucion.splice(solucion.indexOf(arista.etiqueta), 1);
+      }
+
+      if (!contrario) verticeSiguiente = arista.sumidero;
+      else verticeSiguiente = arista.fuente;
+    }
+
+    noSolucion.splice(noSolucion.indexOf(arcoMejora.etiqueta), 1);
+    solucion.push(arcoMejora.etiqueta);
+  }
+
+  arcos = [];
+  let costo = 0;
+  for (let i in solucion) {
+    costo += objetoAristas[solucion[i]].costo * objetoAristas[solucion[i]].peso;
+  }
+
+  let msj = "Costo minimo de " + costo + " unidades.";
+
+  return {
+    aristas: solucion,
+    vertices: Object.keys(red.vertices),
+    objetoAristas: objetoAristas,
+    msj: msj,
+  };
+};
+
+const encuentraCiclo = (red, vertices, solucion, objetoAristas, arco) => {
+  for (let j in vertices) red.agregarVertice(vertices[j]);
+
+  for (let j in solucion) {
+    let a = objetoAristas[solucion[j]];
+    red.agregarArista(
+      solucion[j],
+      a.fuente,
+      a.sumidero,
+      a.peso,
+      a.flujoMin,
+      a.flujo,
+      a.flujoMax,
+      a.costo
+    );
+  }
+  ({ aristas: ciclo } = floyd(red, arco.fuente, arco.sumidero, false));
+
+  return ciclo;
 };

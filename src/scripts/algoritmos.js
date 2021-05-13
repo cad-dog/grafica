@@ -415,12 +415,14 @@ const dijkstra = (grafica) => {
   return { aristas: aristas, vertices: Object.keys(grafica.vertices) };
 };
 
-const floyd = (grafica, a, b) => {
+const floyd = (grafica, a, b, uni) => {
   let dist = {},
     antecesor,
     vertices = [],
     aristas = [],
     longitud = 0;
+
+  if (uni != false) uni = true;
 
   a = a;
   b = b;
@@ -437,7 +439,15 @@ const floyd = (grafica, a, b) => {
     dist[i] = {};
 
     grafica.aristas[i].map((arista) => {
-      if (arista.tipo === "saliente")
+      if (uni) {
+        if (arista.tipo === "saliente")
+          dist[i][arista.vertice] = {
+            etiqueta: arista.vertice,
+            antecesor: i,
+            peso: arista.peso,
+            arista: arista.etiqueta,
+          };
+      } else
         dist[i][arista.vertice] = {
           etiqueta: arista.vertice,
           antecesor: i,
@@ -502,9 +512,6 @@ const floyd = (grafica, a, b) => {
   }
 
   if (destino != "" && inicio != "") {
-    console.log(inicio);
-    console.log(destino);
-
     antecesor = dist[inicio][destino];
 
     vertices.push(destino);
@@ -607,7 +614,6 @@ const fordFulkerson2 = (red, a, b, ff) => {
   // Objeto aristas
   let { objetoAristas } = creaObjetoAristas(red);
 
-  // let iteracion = 0;
   while (true) {
     let etiquetasVertices = {},
       cola = [];
@@ -704,6 +710,7 @@ const fordFulkerson2 = (red, a, b, ff) => {
   for (let i in objetoAristas)
     redCopia.editarArista(
       i,
+      objetoAristas[i].peso,
       objetoAristas[i].flujoMin,
       objetoAristas[i].flujo,
       objetoAristas[i].flujoMax
@@ -770,6 +777,7 @@ const primal = (red) => {
         let arista = objetoAristas[datos.aristas[i].split("+")[0]];
         redCopia.editarArista(
           datos.aristas[i].split("+")[0],
+          arista.peso,
           arista.flujoMin,
           arista.flujo + delta,
           arista.flujoMax
@@ -782,6 +790,7 @@ const primal = (red) => {
         if (arista.flujo - delta < arista.flujo)
           redCopia.editarArista(
             datos.aristas[i].split("-")[0],
+            arista.peso,
             arista.flujoMin,
             arista.flujo - delta,
             arista.flujoMax
@@ -862,6 +871,7 @@ const dual = (red) => {
 
     redCopia.editarArista(
       etiqueta,
+      objetoAristas[etiqueta].peso,
       objetoAristas[etiqueta].flujoMin,
       objetoAristas[etiqueta].flujo + delta,
       objetoAristas[etiqueta].flujoMax
@@ -936,6 +946,7 @@ const dual = (red) => {
 
       redCopia.editarArista(
         etiqueta,
+        objetoAristas[etiqueta].peso,
         objetoAristas[etiqueta].flujoMin,
         objetoAristas[etiqueta].flujo + delta,
         objetoAristas[etiqueta].flujoMax
@@ -981,4 +992,110 @@ const dual = (red) => {
   return { objetoAristas: objetoAristas, msj: msj };
 };
 
-const simplex = (red) => {};
+const simplex = (red) => {
+  let redCopia = _.cloneDeep(red);
+
+  // Agregamos el vertice puente
+  redCopia.agregarVertice("puente");
+
+  // Agregamos las aristas ficticias
+  for (let i in red.vertices) {
+    let vertice = redCopia.vertices[i];
+    let valor = vertice.valor;
+    // if (vertice.etiqueta == "b") console.log(valor);
+
+    for (let j in red.aristas[vertice.etiqueta]) {
+      let arco = red.aristas[vertice.etiqueta][j];
+
+      console.log(arco);
+      if (arco.tipo == "entrante") {
+        valor += arco.flujoMin;
+
+        red.editarArista(
+          arco.etiqueta,
+          arco.flujoMin,
+          arco.flujoMin,
+          arco.flujo,
+          arco.flujoMax
+        );
+      } else {
+        valor -= arco.flujoMin;
+        red.editarArista(
+          arco.etiqueta,
+          arco.flujoMin,
+          arco.flujoMin,
+          arco.flujo,
+          arco.flujoMax
+        );
+      }
+    }
+
+    if (valor > 0) {
+      redCopia.agregarArista(
+        vertice.etiqueta + "%",
+        vertice.etiqueta,
+        "puente",
+        valor,
+        0,
+        0,
+        Infinity,
+        1
+      );
+    } else if (valor < 0) {
+      redCopia.agregarArista(
+        vertice.etiqueta + "%",
+        "puente",
+        vertice.etiqueta,
+        -valor,
+        0,
+        0,
+        Infinity,
+        1
+      );
+    }
+  }
+
+  // Cambiamos los arcos reales
+  for (let i in red.listaAristas) {
+    let arco = redCopia.listaAristas[i];
+    arco.costo = 0;
+  }
+
+  // console.log(redCopia);
+  // console.log(red);
+
+  // return;
+
+  let { objetoAristas } = simplexBasico(redCopia);
+
+  // console.log(objetoAristas);
+  // return;
+
+  for (let i in objetoAristas) {
+    if (!i.includes("%") && objetoAristas[i].peso < objetoAristas[i].flujoMax)
+      red.editarArista(
+        i,
+        objetoAristas[i].peso,
+        objetoAristas[i].flujoMin,
+        objetoAristas[i].flujo,
+        objetoAristas[i].flujoMax
+      );
+  }
+
+  // console.log(objetoAristas);
+  // console.log(redCopia);
+  // console.log(red);
+  // return { objetoAristas };
+
+  ({ aristas: arcos, vertices: v, objetoAristas, msj } = simplexBasico(red));
+
+  console.log(objetoAristas);
+  console.log(redCopia);
+  console.log(red);
+  return;
+  console.log(objetoAristas);
+  console.log(redCopia);
+  console.log(red);
+
+  return { objetoAristas, msj, aristas: arcos, vertices: v };
+};
