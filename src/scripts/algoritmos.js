@@ -1002,16 +1002,14 @@ const simplex = (red) => {
   for (let i in red.vertices) {
     let vertice = redCopia.vertices[i];
     let valor = vertice.valor;
-    // if (vertice.etiqueta == "b") console.log(valor);
 
     for (let j in red.aristas[vertice.etiqueta]) {
       let arco = red.aristas[vertice.etiqueta][j];
 
-      console.log(arco);
       if (arco.tipo == "entrante") {
         valor += arco.flujoMin;
 
-        red.editarArista(
+        redCopia.editarArista(
           arco.etiqueta,
           arco.flujoMin,
           arco.flujoMin,
@@ -1020,7 +1018,7 @@ const simplex = (red) => {
         );
       } else {
         valor -= arco.flujoMin;
-        red.editarArista(
+        redCopia.editarArista(
           arco.etiqueta,
           arco.flujoMin,
           arco.flujoMin,
@@ -1061,18 +1059,10 @@ const simplex = (red) => {
     arco.costo = 0;
   }
 
-  // console.log(redCopia);
-  // console.log(red);
-
-  // return;
-
-  let { objetoAristas } = simplexBasico(redCopia);
-
-  // console.log(objetoAristas);
-  // return;
+  let { objetoAristas } = simplexBasico(redCopia, true);
 
   for (let i in objetoAristas) {
-    if (!i.includes("%") && objetoAristas[i].peso < objetoAristas[i].flujoMax)
+    if (!i.includes("%"))
       red.editarArista(
         i,
         objetoAristas[i].peso,
@@ -1082,20 +1072,7 @@ const simplex = (red) => {
       );
   }
 
-  // console.log(objetoAristas);
-  // console.log(redCopia);
-  // console.log(red);
-  // return { objetoAristas };
-
   ({ aristas: arcos, vertices: v, objetoAristas, msj } = simplexBasico(red));
-
-  console.log(objetoAristas);
-  console.log(redCopia);
-  console.log(red);
-  return;
-  console.log(objetoAristas);
-  console.log(redCopia);
-  console.log(red);
 
   return { objetoAristas, msj, aristas: arcos, vertices: v };
 };

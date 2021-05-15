@@ -481,25 +481,35 @@ const eliminarClones = (red, verticesDuplicados, objetoAristas) => {
   }
 };
 
-const simplexBasico = (red) => {
+const simplexBasico = (red, ficticia) => {
+  if (ficticia != true) ficticia = false;
+
   let solucion = [],
-    noSolucion = [],
-    arcos = [];
-
-  let { objetoAristas } = creaObjetoAristas(red);
-
-  for (let i in red.listaAristas) {
-    let arco = red.listaAristas[i];
-    if (arco.peso > arco.flujoMin && arco.peso < arco.flujoMax)
-      solucion.push(arco.etiqueta);
-    else noSolucion.push(arco.etiqueta);
-  }
+    noSolucion = [];
 
   while (true) {
+    solucion = [];
+    noSolucion = [];
+
+    ({ objetoAristas } = creaObjetoAristas(red));
+
+    for (let i in red.listaAristas) {
+      let arco = red.listaAristas[i];
+      if (arco.peso > arco.flujoMin && arco.peso < arco.flujoMax)
+        solucion.push(arco.etiqueta);
+      else noSolucion.push(arco.etiqueta);
+    }
+
     let vertices = Object.keys(red.vertices);
     let arcoMejora = { mejora: 0 };
 
     for (let i in noSolucion) {
+      if (
+        objetoAristas[noSolucion[i]].peso >=
+        objetoAristas[noSolucion[i]].flujoMax
+      )
+        continue;
+
       let arco = objetoAristas[noSolucion[i]];
       let miniRed = new Grafica();
 
@@ -511,6 +521,8 @@ const simplexBasico = (red) => {
         arco
       );
 
+      if (ciclo[0] == undefined) continue;
+
       ciclo.unshift(noSolucion[i]);
 
       let contrario = false;
@@ -519,7 +531,7 @@ const simplexBasico = (red) => {
       let delta = Infinity;
 
       for (let j in ciclo) {
-        if (ciclo[j] == undefined) break;
+        if (ciclo[j] == undefined) continue;
 
         let arista = objetoAristas[ciclo[j]];
 
@@ -563,11 +575,27 @@ const simplexBasico = (red) => {
       if (arista.fuente == verticeSiguiente) {
         contrario = false;
         arista.peso += arcoMejora.delta;
+
+        red.editarArista(
+          arcoMejora.ciclo[i],
+          arista.peso,
+          arista.flujoMin,
+          arista.flujo,
+          arista.flujoMax
+        );
       }
       // Sentido contrario
       else {
         contrario = true;
         arista.peso -= arcoMejora.delta;
+
+        red.editarArista(
+          arcoMejora.ciclo[i],
+          arista.peso,
+          arista.flujoMin,
+          arista.flujo,
+          arista.flujoMax
+        );
       }
 
       if (arista.peso <= arista.flujoMin || arista.peso >= arista.flujoMax) {
@@ -581,12 +609,28 @@ const simplexBasico = (red) => {
 
     noSolucion.splice(noSolucion.indexOf(arcoMejora.etiqueta), 1);
     solucion.push(arcoMejora.etiqueta);
+
+    let parar = true;
+    for (let i in noSolucion) {
+      if (noSolucion[i].includes("%")) parar = false;
+    }
+
+    if (ficticia) if (parar) break;
   }
 
   arcos = [];
   let costo = 0;
-  for (let i in solucion) {
+  for (let i in solucion)
     costo += objetoAristas[solucion[i]].costo * objetoAristas[solucion[i]].peso;
+
+  solucion = [];
+  noSolucion = [];
+
+  for (let i in red.listaAristas) {
+    let arco = red.listaAristas[i];
+    if (arco.peso > arco.flujoMin && arco.peso < arco.flujoMax)
+      solucion.push(arco.etiqueta);
+    else noSolucion.push(arco.etiqueta);
   }
 
   let msj = "Costo minimo de " + costo + " unidades.";
