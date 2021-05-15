@@ -2,7 +2,7 @@
   "vertices": [
     { "etiqueta": "a" },
     { "etiqueta": "b" },
-    { "etiqueta": "c" },
+    { "etiqueta": "c", "flujoMin": "6", "flujoMax": "Infinity" },
     { "etiqueta": "d" },
     { "etiqueta": "e" },
     { "etiqueta": "f" },
@@ -15,42 +15,48 @@
       "v1": "a",
       "v2": "b",
       "flujoMax": "33",
-      "costo": "15"
+      "costo": "15",
+      "peso": "15"
     },
     {
       "etiqueta": "e2",
       "v1": "a",
       "v2": "c",
       "flujoMax": "72",
-      "costo": "9"
+      "costo": "9",
+      "peso": "9"
     },
     {
       "etiqueta": "e3",
       "v1": "a",
       "v2": "d",
       "flujoMax": "41",
-      "costo": "7"
+      "costo": "7",
+      "peso": "7"
     },
     {
       "etiqueta": "e4",
       "v1": "b",
       "v2": "e",
       "flujoMax": "10",
-      "costo": "7"
+      "costo": "7",
+      "peso": "7"
     },
     {
       "etiqueta": "e5",
       "v1": "c",
       "v2": "b",
       "flujoMax": "19",
-      "costo": "3"
+      "costo": "3",
+      "peso": "3"
     },
     {
       "etiqueta": "e6",
       "v1": "c",
       "v2": "d",
       "flujoMax": "10",
-      "costo": "8"
+      "costo": "8",
+      "peso": "8"
     },
     {
       "etiqueta": "e7",
@@ -58,21 +64,24 @@
       "v2": "f",
       "flujoMin": "5",
       "flujoMax": "25",
-      "costo": "20"
+      "costo": "20",
+      "peso": "20"
     },
     {
       "etiqueta": "e8",
       "v1": "d",
       "v2": "f",
       "flujoMax": "12",
-      "costo": "3"
+      "costo": "3",
+      "peso": "3"
     },
     {
       "etiqueta": "e9",
       "v1": "e",
       "v2": "c",
       "flujoMax": "18",
-      "costo": "2"
+      "costo": "2",
+      "peso": "2"
     },
     {
       "etiqueta": "e10",
@@ -80,21 +89,24 @@
       "v2": "g",
       "flujoMin": "4",
       "flujoMax": "23",
-      "costo": "20"
+      "costo": "20",
+      "peso": "20"
     },
     {
       "etiqueta": "e11",
       "v1": "f",
       "v2": "e",
       "flujoMax": "20",
-      "costo": "7"
+      "costo": "7",
+      "peso": "7"
     },
     {
       "etiqueta": "e12",
       "v1": "f",
       "v2": "g",
       "flujoMax": "40",
-      "costo": "13"
+      "costo": "13",
+      "peso": "13"
     }
   ]
 }

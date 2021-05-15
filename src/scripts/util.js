@@ -113,11 +113,11 @@ const creaSuperVertices = (red, fuente, sumidero) => {
         "e" + (parseInt(i) + 1) + "'",
         "superfuente",
         fuente[i],
-        "0",
-        "0",
-        "0",
+        0,
+        0,
+        0,
         Infinity,
-        "0"
+        0
       );
     }
 
@@ -135,11 +135,11 @@ const creaSuperVertices = (red, fuente, sumidero) => {
         "e" + (parseInt(i) + 1) + "''",
         sumidero[i],
         "supersumidero",
-        "0",
-        "0",
-        "0",
+        0,
+        0,
+        0,
         Infinity,
-        "0"
+        0
       );
     }
     sumidero = "supersumidero";
@@ -264,8 +264,8 @@ const satisfacerRestriccionesArcos = (red, fuente, sumidero) => {
 
       redCopia.editarArista(
         arcosRestriccion[i].etiqueta,
-        0,
         arcosRestriccion[i].peso,
+        0,
         arcosRestriccion[i].flujo,
         arcosRestriccion[i].flujoMax - arcosRestriccion[i].flujoMin
       );
@@ -417,9 +417,9 @@ const creaClones = (red, verticesDuplicados) => {
             red.aristas[i][j].etiqueta + "#",
             i.toUpperCase(),
             red.aristas[i][j].vertice,
-            "0",
+            0,
             red.aristas[i][j].flujoMin,
-            "0",
+            0,
             red.aristas[i][j].flujoMax,
             red.aristas[i][j].costo
           );
@@ -436,11 +436,11 @@ const creaClones = (red, verticesDuplicados) => {
         i + "#",
         i,
         i.toUpperCase(),
-        "0",
+        0,
         vertice.flujoMin,
-        "0",
+        0,
         vertice.flujoMax,
-        "0"
+        0
       );
     }
   }
