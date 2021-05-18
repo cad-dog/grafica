@@ -21,6 +21,9 @@ const graficarArchivo1 = () => {
   };
 
   let graficaArchivo = (datos) => {
+    console.log(datos);
+    console.log(grafica);
+
     if (datos.vertices) {
       for (let i in datos.vertices) {
         let etiqueta = datos.vertices[i].etiqueta;
@@ -69,10 +72,10 @@ const graficarArchivo1 = () => {
         }
 
         grafica.agregarArista(
+          datos.aristas[i].etiqueta,
           datos.aristas[i].v1,
           datos.aristas[i].v2,
-          datos.aristas[i].peso,
-          datos.aristas[i].etiqueta
+          datos.aristas[i].peso
         );
 
         aristas.add([

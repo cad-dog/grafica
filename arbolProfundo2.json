@@ -1,0 +1,27 @@
+{
+  "vertices": [
+    { "etiqueta": "a" },
+    { "etiqueta": "b" },
+    { "etiqueta": "c" },
+    { "etiqueta": "d" },
+    { "etiqueta": "e" },
+    { "etiqueta": "f" },
+    { "etiqueta": "g" },
+    { "etiqueta": "h" },
+    { "etiqueta": "i" }
+  ],
+  "aristas": [
+    { "etiqueta": "e1", "v1": "a", "v2": "b" },
+    { "etiqueta": "e2", "v1": "a", "v2": "c" },
+    { "etiqueta": "e3", "v1": "a", "v2": "d" },
+    { "etiqueta": "e4", "v1": "b", "v2": "c" },
+    { "etiqueta": "e5", "v1": "b", "v2": "d" },
+    { "etiqueta": "e6", "v1": "e", "v2": "h" },
+    { "etiqueta": "e7", "v1": "e", "v2": "f" },
+    { "etiqueta": "e8", "v1": "f", "v2": "h" },
+    { "etiqueta": "e9", "v1": "f", "v2": "i" },
+    { "etiqueta": "e10", "v1": "f", "v2": "g" },
+    { "etiqueta": "e11", "v1": "h", "v2": "g" },
+    { "etiqueta": "e12", "v1": "g", "v2": "i" }
+  ]
+}

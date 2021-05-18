@@ -1,0 +1,39 @@
+{
+  "vertices": [
+    { "etiqueta": "a" },
+    { "etiqueta": "b" },
+    { "etiqueta": "c" },
+    { "etiqueta": "d" },
+    { "etiqueta": "e" },
+    { "etiqueta": "f" },
+    { "etiqueta": "g" },
+    { "etiqueta": "h" },
+    { "etiqueta": "i" },
+    { "etiqueta": "j" },
+    { "etiqueta": "k" }
+  ],
+  "aristas": [
+    { "etiqueta": "e1", "v1": "a", "v2": "b" },
+    { "etiqueta": "e2", "v1": "a", "v2": "h" },
+    { "etiqueta": "e3", "v1": "b", "v2": "c" },
+    { "etiqueta": "e4", "v1": "b", "v2": "f" },
+    { "etiqueta": "e5", "v1": "b", "v2": "g" },
+    { "etiqueta": "e6", "v1": "c", "v2": "d" },
+    { "etiqueta": "e7", "v1": "c", "v2": "f" },
+    { "etiqueta": "e8", "v1": "c", "v2": "i" },
+    { "etiqueta": "e9", "v1": "d", "v2": "e" },
+    { "etiqueta": "e10", "v1": "d", "v2": "f" },
+    { "etiqueta": "e11", "v1": "d", "v2": "k" },
+    { "etiqueta": "e12", "v1": "e", "v2": "f" },
+    { "etiqueta": "e13", "v1": "e", "v2": "g" },
+    { "etiqueta": "e14", "v1": "e", "v2": "j" },
+    { "etiqueta": "e15", "v1": "f", "v2": "g" },
+    { "etiqueta": "e16", "v1": "f", "v2": "h" },
+    { "etiqueta": "e17", "v1": "f", "v2": "i" },
+    { "etiqueta": "e18", "v1": "f", "v2": "j" },
+    { "etiqueta": "e19", "v1": "g", "v2": "h" },
+    { "etiqueta": "e20", "v1": "h", "v2": "i" },
+    { "etiqueta": "e21", "v1": "i", "v2": "j" },
+    { "etiqueta": "e22", "v1": "j", "v2": "k" }
+  ]
+}

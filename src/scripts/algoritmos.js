@@ -37,7 +37,15 @@ const algoritmoFleury = (grafica) => {
   // Inicializamos la pila
   pila.push(comienzo);
 
+  console.log(comienzo);
+
   while (graficaCopia.numAristas > 0) {
+    console.log("------------------------------\naristas");
+    for (let i in graficaCopia.listaAristas) {
+      let a = graficaCopia.listaAristas[i];
+      console.log(a.etiqueta + "(" + a.v1 + ", " + a.v2 + ")");
+    }
+
     if (graficaCopia.aristas[verticeActual].length > 0) {
       // Asignamos la arista que vamos a eliminar
       aristaEliminada = graficaCopia.aristas[verticeActual][0].etiqueta;
@@ -353,17 +361,14 @@ const dijkstra = (grafica) => {
         if (ancestro == destino) {
           hayCiclo = true;
 
-          let mensaje = document.getElementById("mensaje");
+          let msj =
+            "La longitud del ciclo negativo es: " + pesoCiclo + " unidades";
 
-          // Vaciamos el mensaje de salida
-          mensaje.innerHTML = "";
-          mensaje.classList.remove("text-red-500", "text-green-500");
-
-          mensaje.classList.add("text-red-500");
-          mensaje.innerHTML =
-            "<p>La longitud del ciclo negativo es: " + pesoCiclo + " unidades";
-
-          return { aristas: ciclo, vertices: vertices, longitud: pesoCiclo };
+          return {
+            aristas: ciclo,
+            vertices: vertices,
+            msj: { text: msj, color: "text-red-500" },
+          };
         }
 
         if (ancestro == inicial) break;
@@ -412,7 +417,7 @@ const dijkstra = (grafica) => {
     if (camino[i].arista) aristas.push(camino[i].arista);
   }
 
-  return { aristas: aristas, vertices: Object.keys(grafica.vertices) };
+  return { aristas: aristas, vertices: Object.keys(grafica.vertices), msj: "" };
 };
 
 const floyd = (grafica, a, b, uni) => {
@@ -491,21 +496,17 @@ const floyd = (grafica, a, b, uni) => {
           antecesor = dist[i][antecesor.antecesor];
         }
 
-        let mensaje = document.getElementById("mensaje");
-
-        // Vaciamos el mensaje de salida
-        mensaje.innerHTML = "";
-        mensaje.classList.remove("text-red-500", "text-green-500");
-
-        mensaje.classList.add("text-red-500");
-        mensaje.innerHTML =
-          "<p>La longitud del ciclo negativo es: " + longitud + " unidades";
+        let msj = {
+          text: "La longitud del ciclo negativo es: " + longitud + " unidades",
+          color: "text-red-500",
+        };
 
         return {
           vertices: vertices,
           aristas: aristas,
           ciclo: ciclo,
           longitud: longitud,
+          msj: msj,
         };
       }
     }
@@ -547,7 +548,7 @@ const floyd = (grafica, a, b, uni) => {
     }
   }
 
-  return { aristas: aristas, vertices: vertices, longitud: undefined };
+  return { aristas: aristas, vertices: vertices, longitud: undefined, msj: "" };
 };
 
 const fordFulkerson = (red) => {

@@ -183886,4 +183886,7 @@ video {
             animation: bounce 1s infinite;
   }
 }
-  
+
+  .dropdown:hover .dropdown-menu {
+  display: block;
+}
