@@ -1,4 +1,6 @@
 const algoritmoFleury = (grafica) => {
+  cerrarModal();
+
   if (!grafica.esConexa()) return false;
 
   let impares = 0;
@@ -72,6 +74,8 @@ const algoritmoFleury = (grafica) => {
 };
 
 const busquedaAncho = (grafica) => {
+  cerrarModal();
+
   let cola = [],
     aristasMarcadas = [],
     verticesMarcados = [],
@@ -103,6 +107,8 @@ const busquedaAncho = (grafica) => {
 };
 
 const busquedaProfundidad = (grafica) => {
+  cerrarModal();
+
   let verticesMarcados = [],
     aristasMarcadas = [],
     pila = [],
@@ -144,6 +150,8 @@ const busquedaProfundidad = (grafica) => {
 };
 
 const kruskal = (grafica) => {
+  cerrarModal();
+
   let aristasMarcadas = [],
     padres = {},
     aristaActual,
@@ -175,6 +183,8 @@ const kruskal = (grafica) => {
 };
 
 const prim = (grafica) => {
+  cerrarModal();
+
   let cola = new ColaPrioridad(),
     verticesMarcados = [],
     aristasMarcadas = [],
@@ -230,6 +240,8 @@ const prim = (grafica) => {
 };
 
 const prufer = (secuencia) => {
+  cerrarModal();
+
   secuencia = secuencia.split(",");
 
   let l = [],
@@ -279,6 +291,8 @@ const prufer = (secuencia) => {
 };
 
 const dijkstra = (grafica) => {
+  cerrarModal();
+
   let camino = {},
     cola = new ColaPrioridad(),
     aristas = [],
@@ -427,6 +441,8 @@ const dijkstra = (grafica) => {
 };
 
 const floyd = (grafica, a, b, uni) => {
+  cerrarModal();
+
   let dist = {},
     antecesor,
     vertices = [],
@@ -558,6 +574,8 @@ const floyd = (grafica, a, b, uni) => {
 };
 
 const fordFulkerson = (red) => {
+  cerrarModal();
+
   let flujo = 0,
     redCopia = _.cloneDeep(red);
 
@@ -731,6 +749,8 @@ const fordFulkerson2 = (red, a, b, ff) => {
 };
 
 const primal = (red) => {
+  cerrarModal();
+
   let costo,
     objetoAristas,
     flujoMax,
@@ -837,6 +857,8 @@ const primal = (red) => {
 };
 
 const dual = (red) => {
+  cerrarModal();
+
   let costo;
 
   let delta,
@@ -939,11 +961,16 @@ const dual = (red) => {
   for (let i in objetoAristas)
     if (i.includes("'") || i.includes("#")) delete objetoAristas[i];
 
-  let msj = "El costo minimo es de " + costo + " unidades";
-  return { objetoAristas: objetoAristas, msj: msj, costo: true };
+  let msj = {
+    text: "El costo minimo es de " + costo + " unidades",
+    color: "text-green-500",
+  };
+  return { objetoAristas: objetoAristas, msj, costo: true };
 };
 
 const simplex = (red) => {
+  cerrarModal();
+
   let redCopia = _.cloneDeep(red);
 
   // Agregamos el vertice puente
@@ -1023,7 +1050,14 @@ const simplex = (red) => {
       );
   }
 
-  ({ aristas: arcos, vertices: v, objetoAristas, msj } = simplexBasico(red));
+  ({
+    aristas: arcos,
+    vertices: v,
+    objetoAristas,
+    msj: text,
+  } = simplexBasico(red));
+
+  let msj = { text: text, color: "text-green-500" };
 
   return { objetoAristas, msj, aristas: arcos, vertices: v };
 };

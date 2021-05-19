@@ -1,4 +1,6 @@
 const graficarArchivo2 = () => {
+  cerrarModal();
+
   let archivo = "../" + document.getElementById("archivo2").files[0].name;
 
   console.log(archivo);
@@ -41,31 +43,23 @@ const graficarArchivo2 = () => {
             valor: datos.vertices[i].valor,
           });
         } else {
-          if (
-            datos.vertices[i].flujoMin == undefined ||
-            datos.vertices[i].flujoMax == undefined
-          )
-            vertices.add({
-              id: idVertice,
-              label: etiqueta + "\n",
-              group: grafica.vertices[etiqueta].conjunto == 1 ? "a" : "b",
-              flujoMin: undefined,
-              flujoMax: undefined,
-            });
-          else
-            vertices.add({
-              id: idVertice,
-              label:
-                etiqueta +
-                "\n(" +
-                datos.vertices[i].flujoMin +
-                ", " +
-                datos.vertices[i].flujoMax +
-                ")",
-              group: grafica.vertices[etiqueta].conjunto == 1 ? "a" : "b",
-              flujoMin: datos.vertices[i].flujoMin,
-              flujoMax: datos.vertices[i].flujoMax,
-            });
+          vertices.add({
+            id: idVertice,
+            label:
+              etiqueta +
+              "\n(" +
+              (datos.vertices[i].flujoMin != undefined
+                ? datos.vertices[i].flujoMin
+                : "0") +
+              ", " +
+              (datos.vertices[i].flujoMax != undefined
+                ? datos.vertices[i].flujoMax
+                : "∞") +
+              ")",
+            group: grafica.vertices[etiqueta].conjunto == 1 ? "a" : "b",
+            flujoMin: datos.vertices[i].flujoMin,
+            flujoMax: datos.vertices[i].flujoMax,
+          });
         }
         let esBipartita = grafica.esBipartita();
 
@@ -208,6 +202,8 @@ const graficarArchivo2 = () => {
 };
 
 const agregaVertice2 = () => {
+  cerrarModal();
+
   // Entradas
   let etiqueta = document.getElementById("agregaVR1").value;
   let flujoMin = document.getElementById("agregaVR2").value;
@@ -285,12 +281,13 @@ const agregaVertice2 = () => {
   // Actualizamos el numero de vertices en la pagina
   numVertices.innerHTML = grafica.numVertices;
 
-  cerrarModal();
   grafica.pintarAristas();
   grafica.pintarVertices();
 };
 
 const agregaArista2 = () => {
+  cerrarModal();
+
   // Entradas
   let etiqueta = document.getElementById("agregaAR1").value;
   let etiquetaVertice1 = document.getElementById("agregaAR2").value;
@@ -454,6 +451,8 @@ const agregaArista2 = () => {
 };
 
 const eliminaVertice2 = () => {
+  cerrarModal();
+
   // Entradas
   let etiqueta = document.getElementById("eliminaVR1").value;
 
@@ -528,6 +527,8 @@ const eliminaVertice2 = () => {
 };
 
 const eliminaArista2 = () => {
+  cerrarModal();
+
   // Entradas
   let etiqueta = document.getElementById("eliminaAR1").value;
 
