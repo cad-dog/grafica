@@ -281,143 +281,149 @@ const prufer = (secuencia) => {
 const dijkstra = (grafica) => {
   let camino = {},
     cola = new ColaPrioridad(),
-    marcasDef = [],
     aristas = [],
     verticeActual,
-    aristaActual,
-    objetoAristas = {},
     inicio,
     destino,
-    aux,
-    hayCiclo = false,
-    ciclo = [],
-    pesoCiclo,
-    ancestro,
     vertices = [];
 
-  for (let i = 0; i < grafica.listaAristas.length; i++) {
-    objetoAristas[grafica.listaAristas[i].etiqueta] = {
-      inicio: grafica.listaAristas[i].v1,
-      destino: grafica.listaAristas[i].v2,
-      peso: grafica.listaAristas[i].peso,
-    };
-  }
+  // Creamos el objeto de aristas
+  let { objetoAristas } = creaObjetoAristas(grafica);
 
-  let inicial = document.getElementById("dijkstra")
-    ? document.getElementById("dijkstra").value
-    : "a";
+  inicio = document.getElementById("dijkstra1").value;
+  destino = document.getElementById("dijkstra2").value;
 
-  camino[inicial] = { arista: undefined, peso: 0 };
+  // Dijkstra Basico
+  if (inicio == "") inicio = "a";
 
-  cola.agregar(inicial, 0);
-  while (cola.longitud > 0) {
-    verticeActual = cola.sacar();
-    marcasDef.push(verticeActual.etiqueta);
-    grafica.aristas[verticeActual.etiqueta].map((a) => {
-      if (a.tipo === "saliente" && !marcasDef.includes(a.vertice)) {
-        aux = cola.existe(a.vertice);
-        if (aux) {
-          if (a.peso + verticeActual.peso < aux.peso) {
-            cola.cambiarPeso(a.vertice, a.peso + verticeActual.peso);
-            camino[a.vertice] = {
-              arista: a.etiqueta,
-              peso: a.peso + verticeActual.peso,
-            };
-          }
-        } else {
-          cola.agregar(a.vertice, a.peso + verticeActual.peso);
-          camino[a.vertice] = {
-            arista: a.etiqueta,
-            peso: a.peso + verticeActual.peso,
-          };
-        }
-      }
-    });
-  }
+  ({ vertices, aristas, camino, msj } = dijkstraBasico(grafica, inicio, ""));
 
-  for (let i in camino) {
-    if (camino[i].arista) aristas.push(camino[i].arista);
-  }
-
+  cola = [];
   for (i in objetoAristas) {
     if (!aristas.includes(i)) {
-      cola.agregar(i, objetoAristas[i].peso);
+      cola.push(i);
     }
   }
 
-  while (cola.longitud > 0) {
-    aristaActual = cola.sacar().etiqueta;
-    inicio = objetoAristas[aristaActual].inicio;
-    destino = objetoAristas[aristaActual].destino;
-    if (
-      camino[inicio].peso + objetoAristas[aristaActual].peso <
-      camino[destino].peso
-    ) {
-      ancestro = inicio;
-      ciclo = [aristaActual];
-      vertices = [destino];
-      pesoCiclo = objetoAristas[aristaActual].peso;
-      while (!hayCiclo) {
-        if (ancestro == destino) {
-          hayCiclo = true;
+  let continuar = true;
 
-          let msj =
-            "La longitud del ciclo negativo es: " + pesoCiclo + " unidades";
+  while (continuar) {
+    continuar = false;
 
-          return {
-            aristas: ciclo,
-            vertices: vertices,
-            msj: { text: msj, color: "text-red-500" },
-          };
+    for (let i in cola) {
+      let a = objetoAristas[cola[i]];
+
+      if (camino[a.fuente].peso + a.peso < camino[a.sumidero].peso) {
+        let ancestros = [];
+        let descendientes = [];
+
+        verticeActual = a.fuente;
+
+        // Guardamos los ancestros en un arreglo
+        while (verticeActual != inicio) {
+          ancestros.push(camino[verticeActual].anterior);
+          verticeActual = camino[verticeActual].anterior;
         }
 
-        if (ancestro == inicial) break;
-        ciclo.push(camino[ancestro].arista);
-        pesoCiclo += objetoAristas[camino[ancestro].arista].peso;
-        vertices.push(ancestro);
+        // Guardamos los descendientes en un arreglo
+        for (let j in grafica.vertices) {
+          verticeActual = j;
 
-        ancestro = objetoAristas[camino[ancestro].arista].inicio;
-      }
+          while (verticeActual != inicio) {
+            if (camino[verticeActual].anterior == a.sumidero) {
+              descendientes.push(j);
+              break;
+            }
 
-      if (!hayCiclo) {
-        if (camino[destino].arista)
-          cola.agregar(
-            camino[destino].arista,
-            objetoAristas[camino[destino].arista].peso
-          );
+            verticeActual = camino[verticeActual].anterior;
+          }
+        }
 
-        camino[destino] = {
-          arista: aristaActual,
-          peso: camino[inicio].peso + objetoAristas[aristaActual].peso,
-        };
+        if (a.sumidero == inicio || ancestros.includes(a.sumidero)) {
+          let longitud = a.peso;
 
-        for (i = 0; i < grafica.aristas[destino].length; i++) {
-          if (grafica.aristas[destino][i].tipo === "saliente") {
-            if (camino[grafica.aristas[destino][i].vertice].arista)
-              cola.agregar(
-                camino[grafica.aristas[destino][i].vertice].arista,
-                objetoAristas[
-                  camino[grafica.aristas[destino][i].vertice].arista
-                ].peso
-              );
+          verticeActual = a.fuente;
+          vertices = [a.fuente];
+          aristas = [a.etiqueta];
+          while (verticeActual != a.sumidero) {
+            vertices.push(camino[verticeActual].anterior);
+            aristas.push(camino[verticeActual].arista);
+            longitud += objetoAristas[camino[verticeActual].arista].peso;
 
-            camino[grafica.aristas[destino][i].vertice] = {
-              arista: grafica.aristas[destino][i].etiqueta,
-              peso: camino[destino].peso + grafica.aristas[destino][i].peso,
+            verticeActual = camino[verticeActual].anterior;
+          }
+
+          if (longitud == 0) continue;
+
+          msj = {
+            text:
+              "La longitud del ciclo negativo es de " + longitud + " unidades.",
+            color: "text-red-500",
+          };
+
+          return { aristas: aristas, vertices: vertices, msj: msj };
+        } else {
+          camino[a.sumidero] = {
+            arista: a.etiqueta,
+            anterior: a.fuente,
+            peso: camino[a.fuente].peso + a.peso,
+          };
+
+          for (let j in descendientes) {
+            camino[descendientes[j]] = {
+              arista: camino[descendientes[j]].arista,
+              anterior: camino[descendientes[j]].anterior,
+              peso: camino[camino[descendientes[j]].anterior].peso + a.peso,
             };
           }
         }
+        continuar = true;
+        break;
       }
     }
   }
 
+  vertices = [];
   aristas = [];
 
-  for (let i in camino) {
-    if (camino[i].arista) aristas.push(camino[i].arista);
+  if (destino != "") {
+    verticeActual = destino;
+    vertices.push(verticeActual);
+    while (verticeActual != inicio) {
+      vertices.push(camino[verticeActual].anterior);
+
+      if (camino[verticeActual].arista != undefined)
+        aristas.push(camino[verticeActual].arista);
+
+      verticeActual = camino[verticeActual].anterior;
+    }
+  } else {
+    for (let i in grafica.vertices) {
+      verticeActual = i;
+
+      vertices.push(verticeActual);
+      while (verticeActual != inicio) {
+        vertices.push(camino[verticeActual].anterior);
+
+        if (camino[verticeActual].arista != undefined)
+          aristas.push(camino[verticeActual].arista);
+
+        verticeActual = camino[verticeActual].anterior;
+      }
+    }
   }
 
-  return { aristas: aristas, vertices: Object.keys(grafica.vertices), msj: "" };
+  let longitud = 0;
+  for (let i in aristas) {
+    longitud += objetoAristas[aristas[i]].peso;
+  }
+
+  msj = {
+    text: "La longitud de la arborescencia es de " + longitud + " unidades.",
+    color: "text-green-500",
+  };
+
+  return { aristas: aristas, vertices: vertices, msj: msj };
 };
 
 const floyd = (grafica, a, b, uni) => {

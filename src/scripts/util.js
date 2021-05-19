@@ -101,6 +101,126 @@ const creaObjetoAristas = (grafica) => {
   return { objetoAristas: objetoAristas, arcosRestriccion: arcosRestriccion };
 };
 
+const dijkstraBasico = (grafica, inicio, destino) => {
+  let camino = {},
+    cola = new ColaPrioridad(),
+    marcasDef = [],
+    aristas = [],
+    verticeActual,
+    vertices = [];
+
+  // Creamos el objeto de aristas
+  let { objetoAristas } = creaObjetoAristas(grafica);
+
+  if (inicio == "") inicio = "a";
+
+  for (let i in grafica.vertices) camino[i] = { anterior: i, peso: Infinity };
+
+  camino[inicio] = {
+    arista: undefined,
+    anterior: inicio,
+    peso: 0,
+  };
+
+  cola.agregar(inicio, 0);
+
+  // Mientras existan vertices con marca temporal
+  while (cola.longitud > 0) {
+    verticeActual = cola.sacar();
+    marcasDef.push(verticeActual.etiqueta);
+
+    // Si se llego al destino paramos
+    if (verticeActual.etiqueta == destino) break;
+    // Si no
+    else {
+      // Por cada vertice adyacente
+      for (let i in grafica.aristas[verticeActual.etiqueta]) {
+        let a = grafica.aristas[verticeActual.etiqueta][i];
+        let adyacente = objetoAristas[a.etiqueta];
+        if (a.tipo == "saliente" && !marcasDef.includes(adyacente.sumidero)) {
+          // Si no tiene marca temporal
+          if (!cola.existe(adyacente.sumidero)) {
+            // Se etiqueta temporal
+            cola.agregar(adyacente.sumidero, adyacente.peso);
+            camino[adyacente.sumidero] = {
+              arista: a.etiqueta,
+              anterior: adyacente.fuente,
+              peso: camino[verticeActual.etiqueta].peso + a.peso,
+            };
+          }
+          // Si tiene marca temporal
+          else {
+            // Si el peso es menor que el peso que ya tenia
+            if (
+              camino[verticeActual.etiqueta].peso + a.peso <
+              camino[adyacente.sumidero]
+            ) {
+              // Se actualiza
+              cola.cambiarPeso(
+                adyacente.sumidero,
+                camino[verticeActual.etiqueta].peso + a.peso
+              );
+              camino[adyacente.sumidero] = {
+                arista: a.etiqueta,
+                anterior: adyacente.fuente,
+                peso: camino[verticeActual.etiqueta].peso + a.peso,
+              };
+            }
+          }
+        }
+      }
+    }
+  }
+
+  if (destino != "")
+    if (!camino[destino]) {
+      console.log("no existe ruta");
+      return {
+        aristas: aristas,
+        vertices: vertices,
+        msj: {
+          text: "No existe una ruta de " + inicio + " a " + destino,
+          color: "text-red-500",
+        },
+      };
+    }
+
+  if (destino != "") {
+    verticeActual = destino;
+    vertices.push(verticeActual);
+    while (verticeActual != inicio) {
+      vertices.push(camino[verticeActual].anterior);
+
+      if (
+        camino[verticeActual].arista != undefined &&
+        !arista.includes(camino[verticeActual].arista)
+      )
+        aristas.push(camino[verticeActual].arista);
+
+      verticeActual = camino[verticeActual].anterior;
+    }
+  } else {
+    for (let i in grafica.vertices) {
+      verticeActual = i;
+
+      vertices.push(verticeActual);
+      while (verticeActual != inicio) {
+        vertices.push(camino[verticeActual].anterior);
+
+        if (
+          camino[verticeActual].arista != undefined &&
+          !aristas.includes(camino[verticeActual].arista)
+        )
+          aristas.push(camino[verticeActual].arista);
+
+        verticeActual = camino[verticeActual].anterior;
+      }
+    }
+  }
+
+  return { camino: camino, aristas: aristas, vertices: vertices, msj: "" };
+};
+
 const creaSuperVertices = (red, fuente, sumidero) => {
   // Si hay mas de un vertice fuente
   if (fuente.length > 1) {
