@@ -21,8 +21,6 @@ const graficarArchivo2 = () => {
   };
 
   let graficaArchivo = (datos) => {
-    console.log(datos);
-
     if (datos.vertices) {
       for (let i in datos.vertices) {
         let etiqueta = datos.vertices[i].etiqueta;
@@ -212,15 +210,18 @@ const graficarArchivo2 = () => {
 const agregaVertice2 = () => {
   // Entradas
   let etiqueta = document.getElementById("agregaVR1").value;
+  let flujoMin = document.getElementById("agregaVR2").value;
+  let flujoMax = document.getElementById("agregaVR3").value;
+  let valor = document.getElementById("agregaVR4").value;
 
-  let flujoMin =
-    document.getElementById("agregaVR2").value != ""
-      ? document.getElementById("agregaVR2").value
-      : "0";
-  let flujoMax =
-    document.getElementById("agregaVR3").value != ""
-      ? document.getElementById("agregaVR3").value
-      : "0";
+  let estilo;
+
+  if (valor == "") estilo = "flujo";
+  else estilo = "simplex";
+
+  if (flujoMin == "") flujoMin = "0";
+  if (flujoMax == "") flujoMax = Infinity;
+  if (valor == "") valor = "0";
 
   // Vaciamos el mensaje de salida
   mensaje.innerHTML = "";
@@ -235,14 +236,22 @@ const agregaVertice2 = () => {
   }
 
   // Agregamos el vertice a la estructura grafica
-  grafica.agregarVertice(etiqueta, flujoMin, flujoMax);
+  grafica.agregarVertice(etiqueta, flujoMin, flujoMax, valor);
 
   // Agregagamos el vertice a la grafica visual
-  vertices.add({
-    id: idVertice,
-    label: etiqueta + "\n(" + flujoMin + ", " + flujoMax + ")",
-    group: grafica.vertices[etiqueta].conjunto == 1 ? "a" : "b",
-  });
+  if (estilo == "flujo")
+    vertices.add({
+      id: idVertice,
+      label: etiqueta + "\n(" + flujoMin + ", " + flujoMax + ")",
+      group: grafica.vertices[etiqueta].conjunto == 1 ? "a" : "b",
+    });
+  else if (estilo == "simplex")
+    vertices.add({
+      id: idVertice,
+      label: etiqueta + "\n" + valor,
+      group: grafica.vertices[etiqueta].conjunto == 1 ? "a" : "b",
+      valor: valor,
+    });
 
   // Asignamos la particion
   esBipartita = grafica.esBipartita();
@@ -276,6 +285,7 @@ const agregaVertice2 = () => {
   // Actualizamos el numero de vertices en la pagina
   numVertices.innerHTML = grafica.numVertices;
 
+  cerrarModal();
   grafica.pintarAristas();
   grafica.pintarVertices();
 };
@@ -285,10 +295,23 @@ const agregaArista2 = () => {
   let etiqueta = document.getElementById("agregaAR1").value;
   let etiquetaVertice1 = document.getElementById("agregaAR2").value;
   let etiquetaVertice2 = document.getElementById("agregaAR3").value;
-  let fujoMax = document.getElementById("agregaAR5").value;
   let flujoMin = document.getElementById("agregaAR4").value;
+  let flujoMax = document.getElementById("agregaAR5").value;
+  let flujo = document.getElementById("agregaAR6").value;
+  let peso = document.getElementById("agregaAR7").value;
+  let costo = document.getElementById("agregaAR8").value;
 
-  flujoMin = flujoMin == "" ? "0" : flujoMin;
+  let estilo;
+
+  if (flujoMin == "") flujoMin = "0";
+  if (flujo == "") flujo = "0";
+  if (flujoMax == "") flujoMax = Infinity;
+
+  if (peso == "" && costo == "") estilo = "flujo";
+  else estilo == "simplex";
+
+  if (peso == "") peso = "0";
+  if (costo == "") costo = "0";
 
   // Vaciamos el mensaje de salida
   mensaje.innerHTML = "";
@@ -317,7 +340,6 @@ const agregaArista2 = () => {
   let v1, v2;
 
   // Obtenemos los vertices de la grafica visual
-
   v1 = vertices.get({
     filter: (item) => {
       return item.label.split("\n")[0] == etiquetaVertice1;
@@ -337,29 +359,69 @@ const agregaArista2 = () => {
   }
 
   // Agregamos la arista a la estructura grafica
-  grafica.agregarArista(etiquetaVertice1, etiquetaVertice2, fujoMax, etiqueta);
+  grafica.agregarArista(
+    etiqueta,
+    etiquetaVertice1,
+    etiquetaVertice2,
+    peso,
+    flujoMin,
+    flujo,
+    flujoMax,
+    costo
+  );
 
   // Agregamos la arista a la grafica visual
-
-  aristas.add([
-    {
-      id: idArista,
-      label: "[" + flujoMin + ", 0, " + fujoMax + "]",
-      from: v1.id,
-      to: v2.id,
-      arrows: {
-        to: {
-          enabled: true,
+  if (estilo == "flujo")
+    aristas.add([
+      {
+        id: idArista,
+        label:
+          "[" +
+          flujoMin +
+          ", " +
+          flujo +
+          ", " +
+          (flujoMax == Infinity ? "∞" : flujoMax) +
+          "]",
+        from: v1.id,
+        to: v2.id,
+        arrows: {
+          to: {
+            enabled: true,
+          },
         },
-      },
 
-      title: etiqueta,
-      color: "#6762cc",
-    },
-  ]);
+        title: etiqueta,
+        color: "#6762cc",
+      },
+    ]);
+  else
+    aristas.add([
+      {
+        id: idArista,
+        label:
+          "[" +
+          flujoMin +
+          ", " +
+          (flujoMax == Infinity ? "∞" : flujoMax) +
+          ", $" +
+          costo +
+          "]\n" +
+          datos.aristas[i].peso,
+        from: v1.id,
+        to: v2.id,
+        arrows: {
+          to: {
+            enabled: true,
+          },
+        },
+        title: datos.aristas[i].etiqueta,
+        color: "#6762cc",
+      },
+    ]);
 
   // Actualizamos el conjunto al que pertenece cada vertice
-  esBipartita = grafica.esBipartita();
+  aristas.esBipartita = grafica.esBipartita();
   v1.group = grafica.vertices[etiquetaVertice1].conjunto == 1 ? "a" : "b";
   v2.group = grafica.vertices[etiquetaVertice2].conjunto == 1 ? "a" : "b";
 
