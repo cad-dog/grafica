@@ -195,10 +195,21 @@ class Grafica {
     return false;
   }
 
-  buscaArista2(v1, v2) {
+  buscaArista2(v1, v2, etiquetas) {
+    if (etiquetas == undefined) etiquetas = [];
+
     for (let i in this.listaAristas) {
-      if (this.listaAristas[i].v1 == v1 && this.listaAristas[i].v2 == v2)
-        return this.listaAristas[i];
+      if (this.tipo == "grafica") {
+        if (
+          ((this.listaAristas[i].v1 == v1 && this.listaAristas[i].v2 == v2) ||
+            (this.listaAristas[i].v2 == v1 && this.listaAristas[i].v1 == v2)) &&
+          !etiquetas.includes(this.listaAristas[i].etiqueta)
+        )
+          return this.listaAristas[i];
+      } else {
+        if (this.listaAristas[i].v1 == v1 && this.listaAristas[i].v2 == v2)
+          return this.listaAristas[i];
+      }
     }
     return false;
   }

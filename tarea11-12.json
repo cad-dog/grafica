@@ -2,7 +2,7 @@
   "vertices": [
     { "etiqueta": "a" },
     { "etiqueta": "b" },
-    { "etiqueta": "c", "flujoMin": "6", "flujoMax": "Infinity" },
+    { "etiqueta": "c", "flujoMin": "6" },
     { "etiqueta": "d" },
     { "etiqueta": "e" },
     { "etiqueta": "f" },

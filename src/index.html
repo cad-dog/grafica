@@ -314,7 +314,7 @@
             <div
               id="grafica"
               class="bg-gray-700 h-12"
-              style="width: 37.5rem; height: 25rem"
+              style="width: 60rem; height: 30rem"
             ></div>
 
             <!-- Inicio menu inferior -->
@@ -370,7 +370,7 @@
                   w-1/4
                   justify-center
                 "
-                onclick="abrirModal('menu')"
+                onclick="copiarGrafica()"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -383,10 +383,10 @@
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     stroke-width="2"
-                    d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
                   />
                 </svg>
-                <div class="ml-1 select-none">Arco</div>
+                <div class="ml-1 select-none">Copiar</div>
               </button>
               <button
                 class="
@@ -404,6 +404,7 @@
                   w-1/4
                   justify-center
                 "
+                onclick="restauraGrafica()"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -416,10 +417,10 @@
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     stroke-width="2"
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
                   />
                 </svg>
-                <div class="ml-1 select-none">Vértice</div>
+                <div class="ml-1 select-none">Pegar</div>
               </button>
               <button
                 class="
@@ -438,6 +439,7 @@
                   w-1/4
                   justify-center
                 "
+                onclick="vaciaGrafica()"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -453,7 +455,7 @@
                     d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                   />
                 </svg>
-                <div class="ml-1 select-none">Arco</div>
+                <div class="ml-1 select-none">Gráfica</div>
               </button>
             </div>
             <!-- Fin menu inferior -->
@@ -461,8 +463,8 @@
         </div>
         <div class="px-10 text-gray-800">
           <div class="flex">
-            <div id="bipartita"></div>
-            <div id="leyenda" class="flex items-center ml-2"></div>
+            <div id="bipartita" class="text-white"></div>
+            <div id="leyenda" class="flex items-center ml-2 text-white"></div>
           </div>
           <div id="mensaje"></div>
         </div>

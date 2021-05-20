@@ -1,5 +1,5 @@
 {
-  "estilo": "'simplex'",
+  "estilo": "simplex",
   "vertices": [
     { "etiqueta": "a", "valor": "2" },
     { "etiqueta": "b", "valor": "5" },

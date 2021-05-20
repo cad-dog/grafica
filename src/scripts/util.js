@@ -602,6 +602,8 @@ const eliminarClones = (red, verticesDuplicados, objetoAristas) => {
 };
 
 const simplexBasico = (red, ficticia) => {
+  let soluciones = {};
+
   if (ficticia != true) ficticia = false;
 
   let solucion = [],
@@ -735,6 +737,11 @@ const simplexBasico = (red, ficticia) => {
       if (noSolucion[i].includes("%")) parar = false;
     }
 
+    soluciones[Object.keys(soluciones).length + 1] = [];
+
+    for (let i in objetoAristas)
+      soluciones[Object.keys(soluciones).length].push(objetoAristas[i]);
+
     if (ficticia) if (parar) break;
   }
 
@@ -755,11 +762,14 @@ const simplexBasico = (red, ficticia) => {
 
   let msj = "Costo minimo de " + costo + " unidades.";
 
+  console.log(soluciones);
+
   return {
     aristas: solucion,
     vertices: Object.keys(red.vertices),
     objetoAristas: objetoAristas,
     msj: msj,
+    soluciones: soluciones,
   };
 };
 
@@ -779,7 +789,7 @@ const encuentraCiclo = (red, vertices, solucion, objetoAristas, arco) => {
       a.costo
     );
   }
-  ({ aristas: ciclo } = floyd(red, arco.fuente, arco.sumidero, false));
+  ({ etiquetasAristas: ciclo } = floyd(red, arco.fuente, arco.sumidero, false));
 
   return ciclo;
 };

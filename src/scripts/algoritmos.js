@@ -17,12 +17,16 @@ const algoritmoFleury = (grafica) => {
       comienzo = i;
     }
     if (impares > 2) {
+      vaciarMensaje();
+      imprimirMensaje("La gráfica no tiene paseo de Euler", "text-red-500");
       return false;
     }
   }
 
   // Checamos que la grafica no tenga solo 1 vertice de
   if (impares == 1) {
+    vaciarMensaje();
+    imprimirMensaje("La gráfica no tiene paseo de Euler", "text-red-500");
     return false;
   }
 
@@ -39,15 +43,7 @@ const algoritmoFleury = (grafica) => {
   // Inicializamos la pila
   pila.push(comienzo);
 
-  console.log(comienzo);
-
   while (graficaCopia.numAristas > 0) {
-    console.log("------------------------------\naristas");
-    for (let i in graficaCopia.listaAristas) {
-      let a = graficaCopia.listaAristas[i];
-      console.log(a.etiqueta + "(" + a.v1 + ", " + a.v2 + ")");
-    }
-
     if (graficaCopia.aristas[verticeActual].length > 0) {
       // Asignamos la arista que vamos a eliminar
       aristaEliminada = graficaCopia.aristas[verticeActual][0].etiqueta;
@@ -70,7 +66,22 @@ const algoritmoFleury = (grafica) => {
     }
   }
 
-  return pila.concat(cola);
+  let a = [];
+  let ignorar = [];
+
+  pila = pila.concat(cola);
+
+  for (let i = 0; i < pila.length; i++) {
+    if (i == pila.length - 1) break;
+    let ae = grafica.buscaArista2(pila[i], pila[i + 1], ignorar);
+    ignorar.push(ae.etiqueta);
+    a.push(ae);
+  }
+
+  vaciarMensaje();
+  imprimirMensaje("Paseo de Euler: {" + pila + "}", "text-green-500");
+
+  return { aristas: a, vertices: pila };
 };
 
 const busquedaAncho = (grafica) => {
@@ -95,7 +106,7 @@ const busquedaAncho = (grafica) => {
       verticeActual = cola.shift();
       grafica.aristas[verticeActual].map((i) => {
         if (!verticesMarcados.includes(i.vertice)) {
-          aristasMarcadas.push(i.etiqueta);
+          aristasMarcadas.push(grafica.buscaArista(i.etiqueta));
           verticesMarcados.push(i.vertice);
           cola.push(i.vertice);
         }
@@ -130,7 +141,7 @@ const busquedaProfundidad = (grafica) => {
       }
     }
     if (arista) {
-      aristasMarcadas.push(arista.etiqueta);
+      aristasMarcadas.push(grafica.buscaArista(arista.etiqueta));
       pila.push(verticeActual);
       verticeActual = arista.vertice;
     } else {
@@ -175,9 +186,17 @@ const kruskal = (grafica) => {
       busqueda(aristaActual.v1, padres) != busqueda(aristaActual.v2, padres)
     ) {
       union(aristaActual.v1, aristaActual.v2, padres);
-      aristasMarcadas.push(aristaActual.etiqueta);
+      aristasMarcadas.push(grafica.buscaArista(aristaActual.etiqueta));
     }
   }
+
+  let peso = 0;
+  for (let i in aristasMarcadas) peso += aristasMarcadas[i].peso;
+
+  vaciarMensaje();
+  imprimirMensaje(
+    "El peso del árbol de expansión mínima es de " + peso + " unidades."
+  );
 
   return { aristas: aristasMarcadas, vertices: Object.keys(grafica.vertices) };
 };
@@ -207,7 +226,7 @@ const prim = (grafica) => {
     if (cola.longitud > 0) {
       menor = cola.sacar().etiqueta;
 
-      aristasMarcadas.push(menor.etiqueta);
+      aristasMarcadas.push(grafica.buscaArista(menor.etiqueta));
       verticesMarcados.push(menor.vertice);
       verticesNoMarcados.splice(verticesNoMarcados.indexOf(menor.vertice), 1);
     }
@@ -231,10 +250,18 @@ const prim = (grafica) => {
       if (!verticesMarcados.includes(menor.vertice)) {
         verticesMarcados.push(menor.vertice);
         verticesNoMarcados.splice(verticesNoMarcados.indexOf(menor.vertice), 1);
-        aristasMarcadas.push(menor.etiqueta);
+        aristasMarcadas.push(grafica.buscaArista(menor.etiqueta));
       }
     }
   }
+
+  let peso = 0;
+  for (let i in aristasMarcadas) peso += aristasMarcadas[i].peso;
+
+  vaciarMensaje();
+  imprimirMensaje(
+    "El peso del árbol de expansión mínima es de " + peso + " unidades."
+  );
 
   return { aristas: aristasMarcadas, vertices: Object.keys(grafica.vertices) };
 };
@@ -358,10 +385,10 @@ const dijkstra = (grafica) => {
 
           verticeActual = a.fuente;
           vertices = [a.fuente];
-          aristas = [a.etiqueta];
+          aristas = [grafica.buscaArista(a.etiqueta)];
           while (verticeActual != a.sumidero) {
             vertices.push(camino[verticeActual].anterior);
-            aristas.push(camino[verticeActual].arista);
+            aristas.push(grafica.buscaArista(camino[verticeActual].arista));
             longitud += objetoAristas[camino[verticeActual].arista].peso;
 
             verticeActual = camino[verticeActual].anterior;
@@ -369,13 +396,13 @@ const dijkstra = (grafica) => {
 
           if (longitud == 0) continue;
 
-          msj = {
-            text:
-              "La longitud del ciclo negativo es de " + longitud + " unidades.",
-            color: "text-red-500",
-          };
+          vaciarMensaje();
+          imprimirMensaje(
+            "La longitud del ciclo negativo es de " + longitud + " unidades.",
+            "text-red-500"
+          );
 
-          return { aristas: aristas, vertices: vertices, msj: msj };
+          return { aristas: aristas.reverse(), vertices: vertices, msj: msj };
         } else {
           camino[a.sumidero] = {
             arista: a.etiqueta,
@@ -407,11 +434,28 @@ const dijkstra = (grafica) => {
       vertices.push(camino[verticeActual].anterior);
 
       if (camino[verticeActual].arista != undefined)
-        aristas.push(camino[verticeActual].arista);
+        aristas.push(grafica.buscaArista(camino[verticeActual].arista));
 
       verticeActual = camino[verticeActual].anterior;
     }
+
+    aristas.reverse();
+
+    let peso = 0;
+    for (let i in aristas) peso += aristas[i].peso;
+
+    vaciarMensaje();
+    imprimirMensaje(
+      "El peso de la ruta mas corta de " +
+        inicio +
+        " a " +
+        destino +
+        " es de " +
+        peso +
+        " unidades."
+    );
   } else {
+    let ignorar = [];
     for (let i in grafica.vertices) {
       verticeActual = i;
 
@@ -420,16 +464,31 @@ const dijkstra = (grafica) => {
         vertices.push(camino[verticeActual].anterior);
 
         if (camino[verticeActual].arista != undefined)
-          aristas.push(camino[verticeActual].arista);
+          if (!ignorar.includes(camino[verticeActual].arista)) {
+            aristas.push(grafica.buscaArista(camino[verticeActual].arista));
+            ignorar.push(camino[verticeActual].arista);
+          }
 
         verticeActual = camino[verticeActual].anterior;
       }
     }
+
+    let peso = 0;
+    for (let i in aristas) peso += aristas[i].peso;
+
+    vaciarMensaje();
+    imprimirMensaje(
+      "El peso de la arborescencia con raiz en " +
+        inicio +
+        " es de " +
+        peso +
+        " unidades."
+    );
   }
 
   let longitud = 0;
   for (let i in aristas) {
-    longitud += objetoAristas[aristas[i]].peso;
+    longitud += objetoAristas[aristas[i].etiqueta].peso;
   }
 
   msj = {
@@ -447,6 +506,7 @@ const floyd = (grafica, a, b, uni) => {
     antecesor,
     vertices = [],
     aristas = [],
+    etiquetasAristas = [],
     longitud = 0;
 
   if (uni != false) uni = true;
@@ -513,7 +573,8 @@ const floyd = (grafica, a, b, uni) => {
         while (true) {
           if (vertices.includes(antecesor.antecesor)) break;
           vertices.push(antecesor.antecesor);
-          aristas.push(antecesor.arista);
+          aristas.push(grafica.buscaArista(antecesor.arista));
+          etiquetasAristas.push(antecesor.arista);
           ciclo.push(grafica.buscaArista(antecesor.arista));
           antecesor = dist[i][antecesor.antecesor];
         }
@@ -523,34 +584,62 @@ const floyd = (grafica, a, b, uni) => {
           color: "text-red-500",
         };
 
+        vaciarMensaje();
+        imprimirMensaje(
+          "La longitud del ciclo negativo es de " + longitud + " unidades.",
+          "text-red-500"
+        );
+
+        aristas.reverse();
+
         return {
           vertices: vertices,
           aristas: aristas,
           ciclo: ciclo,
           longitud: longitud,
           msj: msj,
+          etiquetasAristas,
         };
       }
     }
   }
 
-  if (destino != "" && inicio != "") {
+  if (destino != "") {
     antecesor = dist[inicio][destino];
 
     vertices.push(destino);
 
     while (antecesor.antecesor != inicio) {
       vertices.push(antecesor.antecesor);
-      aristas.push(antecesor.arista);
+      aristas.push(grafica.buscaArista(antecesor.arista));
+      etiquetasAristas.push(antecesor.arista);
       antecesor = dist[inicio][antecesor.antecesor];
     }
 
-    aristas.push(antecesor.arista);
+    aristas.push(grafica.buscaArista(antecesor.arista));
+    etiquetasAristas.push(antecesor.arista);
     vertices.push(inicio);
 
     dist[inicio][destino].antecesor;
+
+    let peso = 0;
+    for (let i in aristas) peso += aristas[i].peso;
+
+    vaciarMensaje();
+    imprimirMensaje(
+      "El peso de la ruta mas corta de " +
+        inicio +
+        " a " +
+        destino +
+        " es de " +
+        peso +
+        " unidades."
+    );
+
+    aristas.reverse();
   } else {
     inicio = "a";
+    let ignorar = [];
     for (let i in grafica.vertices) {
       destino = i;
       antecesor = dist[inicio][destino];
@@ -559,18 +648,48 @@ const floyd = (grafica, a, b, uni) => {
 
       while (antecesor.antecesor != inicio) {
         vertices.push(antecesor.antecesor);
-        aristas.push(antecesor.arista);
+        if (!ignorar.includes(antecesor.arista)) {
+          aristas.push(grafica.buscaArista(antecesor.arista));
+          etiquetasAristas.push(antecesor.arista);
+          ignorar.push(antecesor.arista);
+        }
         antecesor = dist[inicio][antecesor.antecesor];
       }
 
-      aristas.push(antecesor.arista);
+      if (!ignorar.includes(antecesor.arista)) {
+        let a = grafica.buscaArista(antecesor.arista);
+        if (a) {
+          aristas.push(a);
+          etiquetasAristas.push(a.etiqueta);
+          ignorar.push(antecesor.arista);
+        }
+      }
       vertices.push(inicio);
-
-      dist[inicio][destino].antecesor;
     }
+
+    let peso = 0;
+    for (let i in aristas) {
+      console.log(aristas[i]);
+      peso += aristas[i].peso;
+    }
+
+    vaciarMensaje();
+    imprimirMensaje(
+      "El peso de la arborescencia con raíz en " +
+        inicio +
+        " es de " +
+        peso +
+        " unidades."
+    );
   }
 
-  return { aristas: aristas, vertices: vertices, longitud: undefined, msj: "" };
+  return {
+    aristas: aristas,
+    vertices: vertices,
+    longitud: undefined,
+    msj: "",
+    etiquetasAristas,
+  };
 };
 
 const fordFulkerson = (red) => {
@@ -617,6 +736,9 @@ const fordFulkerson = (red) => {
     if (i.includes("'") || i.includes("#")) delete objetoAristas[i];
 
   let msj = "El flujo maximo es de: " + flujo + " unidades";
+
+  vaciarMensaje();
+  imprimirMensaje(msj);
 
   return {
     objetoAristas: objetoAristas,
@@ -783,7 +905,6 @@ const primal = (red) => {
     flujoFactible
   ));
 
-  // return;
   while (true) {
     // Creamos la red marginal
     let { redMarginal } = creaRedMarginal(redCopia);
@@ -794,16 +915,16 @@ const primal = (red) => {
 
     let delta = Infinity;
 
-    for (let i in datos.aristas) {
-      let valor = redMarginal.buscaArista(datos.aristas[i]).flujoMax;
+    for (let i in datos.etiquetasAristas) {
+      let valor = redMarginal.buscaArista(datos.etiquetasAristas[i]).flujoMax;
       delta = Math.min(delta, valor);
     }
 
-    for (let i in datos.aristas) {
-      if (datos.aristas[i].includes("+")) {
-        let arista = objetoAristas[datos.aristas[i].split("+")[0]];
+    for (let i in datos.etiquetasAristas) {
+      if (datos.etiquetasAristas[i].includes("+")) {
+        let arista = objetoAristas[datos.etiquetasAristas[i].split("+")[0]];
         redCopia.editarArista(
-          datos.aristas[i].split("+")[0],
+          datos.etiquetasAristas[i].split("+")[0],
           arista.peso,
           arista.flujoMin,
           arista.flujo + delta,
@@ -812,11 +933,11 @@ const primal = (red) => {
 
         arista.flujo += delta;
       } else {
-        let arista = objetoAristas[datos.aristas[i].split("-")[0]];
+        let arista = objetoAristas[datos.etiquetasAristas[i].split("-")[0]];
 
         if (arista.flujo - delta < arista.flujo)
           redCopia.editarArista(
-            datos.aristas[i].split("-")[0],
+            datos.etiquetasAristas[i].split("-")[0],
             arista.peso,
             arista.flujoMin,
             arista.flujo - delta,
@@ -848,6 +969,10 @@ const primal = (red) => {
   let msj = "El costo minimo es de " + costo + " unidades";
 
   console.log(objetoAristas);
+
+  vaciarMensaje();
+  imprimirMensaje(msj);
+
   return {
     objetoAristas: objetoAristas,
     flujoMax: flujoMax,
@@ -896,7 +1021,7 @@ const dual = (red) => {
     ({ redMarginal, objetoAristas } = creaRedMarginal(redCopia));
 
     // aplicamos floyd
-    let { aristas: arcos } = floyd(redMarginal, fuente, sumidero);
+    let { etiquetasAristas: arcos } = floyd(redMarginal, fuente, sumidero);
 
     delta = Infinity;
 
@@ -965,13 +1090,18 @@ const dual = (red) => {
     text: "El costo minimo es de " + costo + " unidades",
     color: "text-green-500",
   };
+
+  vaciarMensaje();
+  imprimirMensaje(msj.text);
+
   return { objetoAristas: objetoAristas, msj, costo: true };
 };
 
 const simplex = (red) => {
   cerrarModal();
 
-  let redCopia = _.cloneDeep(red);
+  let redCopia = _.cloneDeep(red),
+    aristas = [];
 
   // Agregamos el vertice puente
   redCopia.agregarVertice("puente");
@@ -1039,8 +1169,12 @@ const simplex = (red) => {
 
   let { objetoAristas } = simplexBasico(redCopia, true);
 
+  let primeraSolucion = [];
+  // aristas.push(soluciones);
+  // aristas.push(objetoAristas);
+
   for (let i in objetoAristas) {
-    if (!i.includes("%"))
+    if (!i.includes("%")) {
       red.editarArista(
         i,
         objetoAristas[i].peso,
@@ -1048,6 +1182,9 @@ const simplex = (red) => {
         objetoAristas[i].flujo,
         objetoAristas[i].flujoMax
       );
+
+      primeraSolucion.push(objetoAristas[i]);
+    }
   }
 
   ({
@@ -1055,9 +1192,26 @@ const simplex = (red) => {
     vertices: v,
     objetoAristas,
     msj: text,
+    soluciones,
   } = simplexBasico(red));
+
+  soluciones["0"] = primeraSolucion;
+
+  console.log(soluciones);
 
   let msj = { text: text, color: "text-green-500" };
 
-  return { objetoAristas, msj, aristas: arcos, vertices: v };
+  v = [];
+
+  for (let i in red.vertices) {
+    v.push(i + "\n" + red.vertices[i].valor);
+  }
+
+  return {
+    objetoAristas,
+    msj,
+    aristas: arcos,
+    vertices: v,
+    iteraciones: soluciones,
+  };
 };

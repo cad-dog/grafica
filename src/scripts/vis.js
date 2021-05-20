@@ -1,6 +1,8 @@
 let vertices,
   tipo,
   aristas,
+  aristasPintadas,
+  verticesPintados,
   aristasCopia,
   verticesCopia,
   graficaVis,
@@ -13,14 +15,19 @@ let vertices,
       a: { color: "#f4b1f7" }, // amarillo
       b: { color: "#f7f6b1" }, // morado
       c: { color: "#b5f7b1" }, // verde
-      d: { color: { border: "#ff0000" } }, // borde rojo
+      d: { color: { border: "#ff499b" } }, // borde rojo
+      e: { color: "#ff499b" },
     },
     nodes: {
       font: {
         color: tipo == "red" ? "#ffffff" : "#000000",
       },
     },
-  };
+    edges: {
+      color: { color: "#ff9900" },
+    },
+  },
+  opcionesCopia;
 
 let grafica = new Grafica();
 
@@ -180,8 +187,12 @@ const graficarArchivo = () => {
       vertices.update(vertices.get());
 
       // Imprimimimos si la grafica es o no es bipartita
-      bipartita.innerHTML =
-        "<p>Gráfica " + (esBipartita ? "" : "no ") + "bipartita</p>";
+      if (tipo == "grafica")
+        bipartita.innerHTML =
+          "<p>Gráfica " + (esBipartita ? "" : "no ") + "bipartita</p>";
+      else if (tipo == "digrafica")
+        bipartita.innerHTML =
+          "<p>Digráfica " + (esBipartita ? "" : "no ") + "bipartita</p>";
 
       // Imprimimos la leyenda
       leyenda.innerHTML = esBipartita
@@ -609,6 +620,12 @@ const vaciarVertice1 = () => {
 };
 
 const vaciaGrafica = () => {
+  // Vaciamos el mensaje de salida
+  mensaje.innerHTML = "";
+  mensaje.classList.remove("text-red-500", "text-green-500");
+
+  bipartita.innerHTML = "";
+
   vertices = new vis.DataSet([]);
   aristas = new vis.DataSet([]);
   let contenedor = document.getElementById("grafica");
@@ -637,31 +654,42 @@ const vaciaGrafica = () => {
 
 const copiarGrafica = () => {
   graficaCopia = _.cloneDeep(grafica);
-
-  aristasCopia = new vis.DataSet();
-  verticesCopia = new vis.DataSet();
-
-  aristasCopia.add(aristas.get());
-  verticesCopia.add(vertices.get());
+  aristasCopia = _.cloneDeep(aristas);
+  verticesCopia = _.cloneDeep(vertices);
+  opcionesCopia = _.cloneDeep(opciones);
 };
 
 const restauraGrafica = () => {
+  // Vaciamos el mensaje de salida
+  mensaje.innerHTML = "";
+  mensaje.classList.remove("text-red-500", "text-green-500");
+
   if (!graficaCopia) {
     console.log("No hay una copia guardada");
     return;
   }
 
-  vertices = verticesCopia;
-  aristas = aristasCopia;
+  vertices = _.cloneDeep(verticesCopia);
+  aristas = _.cloneDeep(aristasCopia);
 
   let datos = {
     nodes: vertices,
     edges: aristas,
   };
 
+  // Si la grafica no es bipartita ponemos todos los vertices en el mismo conjunto
+  if (!esBipartita) {
+    vertices.get().map((i) => {
+      i.group = "c";
+    });
+  }
+
+  // Actualizamos la grafica
+  vertices.update(vertices.get());
+
   graficaVis = new vis.Network(contenedor, datos, opciones);
 
-  grafica = graficaCopia;
+  grafica = _.cloneDeep(graficaCopia);
 
   grafica.pintarAristas();
 
@@ -679,14 +707,11 @@ const pintarArbol = (algoritmo) => {
   mensaje.innerHTML = "";
   mensaje.classList.remove("text-red-500", "text-green-500");
 
-  // let aristasMarcadas;
-  // aristasMarcadas = algoritmo(grafica);
-
   let arbol = algoritmo(grafica);
 
   console.log(arbol);
 
-  /// Pintamos el borde de los vertices
+  // Pintamos el borde de los vertices
   vertices.get().map((i) => {
     if (arbol.vertices.includes(i.label)) i.group = "d";
   });
@@ -743,6 +768,8 @@ const pintarArbol = (algoritmo) => {
   mensaje.innerHTML = "";
   mensaje.classList.remove("text-red-500", "text-green-500");
 
+  if (arbol.msj.color == undefined) arbol.msj.color = "text-green-500";
+
   mensaje.classList.add(arbol.msj.color);
   mensaje.innerHTML = arbol.msj.text;
 };
@@ -787,9 +814,20 @@ const actualizarGrafica = (algoritmo) => {
   let mensaje = document.getElementById("mensaje");
 
   // Vaciamos el mensaje de salida
-  mensaje.innerHTML = "";
-  mensaje.classList.remove("text-red-500", "text-green-500");
+  // mensaje.innerHTML = "";
+  // mensaje.classList.remove("text-red-500", "text-green-500");
 
-  mensaje.classList.add(datos["msj"]["color"]);
-  mensaje.innerHTML = datos["msj"]["text"];
+  // mensaje.classList.add(datos["msj"]["color"]);
+  // mensaje.innerHTML = datos["msj"]["text"];
+};
+
+const vaciarMensaje = () => {
+  mensaje.classList.remove("text-red-500", "text-green-500");
+  mensaje.innerHTML = "";
+};
+
+const imprimirMensaje = (msj, color) => {
+  if (color == undefined) color = "text-green-500";
+  mensaje.classList.add(color);
+  mensaje.innerHTML = msj;
 };

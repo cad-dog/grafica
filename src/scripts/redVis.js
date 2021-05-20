@@ -26,6 +26,7 @@ const graficarArchivo2 = () => {
     if (datos.vertices) {
       for (let i in datos.vertices) {
         let etiqueta = datos.vertices[i].etiqueta;
+
         grafica.agregarVertice(
           etiqueta,
           datos.vertices[i].flujoMin,
@@ -52,7 +53,8 @@ const graficarArchivo2 = () => {
                 ? datos.vertices[i].flujoMin
                 : "0") +
               ", " +
-              (datos.vertices[i].flujoMax != undefined
+              (datos.vertices[i].flujoMax != undefined ||
+              datos.vertices[i].flujoMax == "Infinity"
                 ? datos.vertices[i].flujoMax
                 : "∞") +
               ")",
@@ -186,7 +188,7 @@ const graficarArchivo2 = () => {
 
       // Imprimimimos si la grafica es o no es bipartita
       bipartita.innerHTML =
-        "<p>Gráfica " + (esBipartita ? "" : "no ") + "bipartita</p>";
+        "<p>Red de transporte " + (esBipartita ? "" : "no ") + "bipartita</p>";
 
       // Imprimimos la leyenda
       leyenda.innerHTML = esBipartita
