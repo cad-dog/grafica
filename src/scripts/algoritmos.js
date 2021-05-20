@@ -1111,7 +1111,8 @@ const simplex = (red) => {
   cerrarModal();
 
   let redCopia = _.cloneDeep(red),
-    aristas = [];
+    numAristasSolucion = 0,
+    solucion = true;
 
   // Agregamos el vertice puente
   redCopia.agregarVertice("puente");
@@ -1207,8 +1208,6 @@ const simplex = (red) => {
 
   soluciones["0"] = primeraSolucion;
 
-  console.log(soluciones);
-
   let msj = { text: text, color: "text-green-500" };
 
   v = [];
@@ -1217,11 +1216,38 @@ const simplex = (red) => {
     v.push(i + "\n" + red.vertices[i].valor);
   }
 
+  for (let i in soluciones[
+    Object.keys(soluciones)[Object.keys(soluciones).length - 1]
+  ]) {
+    if (
+      soluciones[Object.keys(soluciones)[Object.keys(soluciones).length - 1]][i]
+        .peso >
+        soluciones[Object.keys(soluciones)[Object.keys(soluciones).length - 1]][
+          i
+        ].flujoMin &&
+      soluciones[Object.keys(soluciones)[Object.keys(soluciones).length - 1]][i]
+        .peso <
+        soluciones[Object.keys(soluciones)[Object.keys(soluciones).length - 1]][
+          i
+        ].flujoMax
+    ) {
+      numAristasSolucion++;
+    }
+  }
+
+  if (numAristasSolucion != red.numVertices - 1) {
+    solucion = false;
+    msj = {
+      text: "La red de transporte no tiene solución",
+      color: "text-red-500",
+    };
+  }
   return {
     objetoAristas,
     msj,
     aristas: arcos,
     vertices: v,
     iteraciones: soluciones,
+    solucion,
   };
 };
