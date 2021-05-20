@@ -3,13 +3,13 @@ let vertices,
   aristas,
   aristasPintadas,
   verticesPintados,
+  esBipartita,
   aristasCopia,
   verticesCopia,
   graficaVis,
   idVertice = 1,
   idArista = 1,
   graficaCopia,
-  esBipartita,
   opciones = {
     groups: {
       a: { color: "#f4b1f7" }, // amarillo
@@ -35,7 +35,7 @@ let grafica = new Grafica();
 let header = document.getElementById("header");
 let mensaje = document.getElementById("mensaje");
 let contenedor = document.getElementById("grafica");
-let bipartita = document.getElementById("bipartita");
+let bipartitamsj = document.getElementById("bipartita");
 let numVertices = document.getElementById("numVertices");
 let numAristas = document.getElementById("numAristas");
 let leyenda = document.getElementById("leyenda");
@@ -52,8 +52,6 @@ const graficar = () => {
 
   grafica.tipo = tipo;
 
-  esBipartita = grafica.esBipartita();
-
   let datos = {
     nodes: vertices,
     edges: aristas,
@@ -69,7 +67,7 @@ const graficar = () => {
 
   // header.innerHTML = titulo;
 
-  bipartita.innerHTML =
+  bipartitamsj.innerHTML =
     "<p>" + titulo + " " + (esBipartita ? "" : "no ") + "bipartita</p>";
 };
 
@@ -110,7 +108,7 @@ const graficarArchivo = () => {
           group: grafica.vertices[etiqueta].conjunto == 1 ? "a" : "b",
         });
 
-        let esBipartita = grafica.esBipartita();
+        let esBipartita = bipartita(grafica);
 
         vertices.get().map((i) => {
           i.group = grafica.vertices[i.label].conjunto ? "a" : "b";
@@ -170,7 +168,7 @@ const graficarArchivo = () => {
           },
         ]);
 
-        esBipartita = grafica.esBipartita();
+        esBipartita = bipartita(grafica);
         v1.group =
           grafica.vertices[datos.aristas[i].v1].conjunto == 1 ? "a" : "b";
         v2.group =
@@ -188,10 +186,10 @@ const graficarArchivo = () => {
 
       // Imprimimimos si la grafica es o no es bipartita
       if (tipo == "grafica")
-        bipartita.innerHTML =
+        bipartitamsj.innerHTML =
           "<p>Gráfica " + (esBipartita ? "" : "no ") + "bipartita</p>";
       else if (tipo == "digrafica")
-        bipartita.innerHTML =
+        bipartitamsj.innerHTML =
           "<p>Digráfica " + (esBipartita ? "" : "no ") + "bipartita</p>";
 
       // Imprimimos la leyenda
@@ -240,7 +238,7 @@ const agregaVertice1 = () => {
   });
 
   // Asignamos la particion
-  esBipartita = grafica.esBipartita();
+  esBipartita = bipartita(grafica);
 
   vertices.get().map((i) => {
     i.group = grafica.vertices[i.label].conjunto ? "a" : "b";
@@ -260,7 +258,7 @@ const agregaVertice1 = () => {
   grafica.numVertices += 1;
 
   // Imprimimimos si la grafica es o no es bipartita
-  bipartita.innerHTML =
+  bipartitamsj.innerHTML =
     "<p>Gráfica " + (esBipartita ? "" : "no ") + "bipartita</p>";
 
   // Imprimimos la leyenda
@@ -353,7 +351,7 @@ const agregaArista1 = () => {
   ]);
 
   // Actualizamos el conjunto al que pertenece cada vertice
-  esBipartita = grafica.esBipartita();
+  esBipartita = bipartita(grafica);
   v1.group = grafica.vertices[etiquetaVertice1].conjunto == 1 ? "a" : "b";
   v2.group = grafica.vertices[etiquetaVertice2].conjunto == 1 ? "a" : "b";
 
@@ -370,7 +368,7 @@ const agregaArista1 = () => {
   idArista += 1;
 
   // Imprimimimos si la grafica es o no es bipartita
-  bipartita.innerHTML =
+  bipartitamsj.innerHTML =
     "<p>Gráfica " + (esBipartita ? "" : "no ") + "bipartita</p>";
 
   // Imprimimos la leyenda
@@ -428,7 +426,7 @@ const eliminaVertice1 = () => {
   );
 
   // Asignamos la particion
-  esBipartita = grafica.esBipartita();
+  esBipartita = bipartita(grafica);
 
   vertices.get().map((i) => {
     i.group = grafica.vertices[i.label].conjunto ? "a" : "b";
@@ -445,7 +443,7 @@ const eliminaVertice1 = () => {
   vertices.update(vertices.get());
 
   // Imprimimimos si la grafica es o no es bipartita
-  bipartita.innerHTML =
+  bipartitamsj.innerHTML =
     "<p>Gráfica " + (esBipartita ? "" : "no ") + "bipartita</p>";
 
   // Imprimimos la leyenda
@@ -512,7 +510,7 @@ const eliminaArista1 = () => {
   aristas.remove({ id: arista.id });
 
   // Asignamos la particion
-  esBipartita = grafica.esBipartita();
+  esBipartita = bipartita(grafica);
   if (tipo == "red")
     vertices.get().map((i) => {
       i.group = grafica.vertices[i.label.split("\n")[0]].conjunto ? "a" : "b";
@@ -533,7 +531,7 @@ const eliminaArista1 = () => {
   vertices.update(vertices.get());
 
   // Imprimimimos si la grafica es o no es bipartita
-  bipartita.innerHTML =
+  bipartitamsj.innerHTML =
     "<p>Gráfica " + (esBipartita ? "" : "no ") + "bipartita</p>";
 
   // Imprimimos la leyenda
@@ -583,7 +581,7 @@ const vaciarVertice1 = () => {
   grafica.vaciaVertice(etiqueta);
 
   // Asignamos la particion
-  esBipartita = grafica.esBipartita();
+  esBipartita = bipartita(grafica);
   if (tipo == "red")
     vertices.get().map((i) => {
       i.group = grafica.vertices[i.label.split("\n")[0]].conjunto ? "a" : "b";
@@ -604,7 +602,7 @@ const vaciarVertice1 = () => {
   vertices.update(vertices.get());
 
   // Imprimimos si la grafica es bipartita o no
-  bipartita.innerHTML =
+  bipartitamsj.innerHTML =
     "<p>Gráfica " + (esBipartita ? "" : "no ") + "bipartita</p>";
 
   // Imprimimos la leyenda
@@ -624,7 +622,7 @@ const vaciaGrafica = () => {
   mensaje.innerHTML = "";
   mensaje.classList.remove("text-red-500", "text-green-500");
 
-  bipartita.innerHTML = "";
+  bipartitamsj.innerHTML = "";
 
   vertices = new vis.DataSet([]);
   aristas = new vis.DataSet([]);
@@ -639,7 +637,7 @@ const vaciaGrafica = () => {
   grafica = new Grafica();
 
   // Imprimimos si la grafica es bipartita o no
-  bipartita.innerHTML =
+  bipartitamsj.innerHTML =
     "<p>Gráfica " + (esBipartita ? "" : "no ") + "bipartita</p>";
 
   // Imprimimos la leyenda
@@ -694,7 +692,7 @@ const restauraGrafica = () => {
   grafica.pintarAristas();
 
   // Imprimimos si la grafica es bipartita o no
-  bipartita.innerHTML =
+  bipartitamsj.innerHTML =
     "<p>Gráfica " + (esBipartita ? "" : "no ") + "bipartita</p>";
 
   // Actualizamos el numero de vertices y aristas

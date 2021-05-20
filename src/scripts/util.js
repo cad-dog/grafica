@@ -66,6 +66,70 @@ const union = (u, v, padre) => {
   padre[busqueda(u, padre)] = busqueda(v, padre);
 };
 
+const bipartita = (grafica) => {
+  let cola = [],
+    aristasMarcadas = [],
+    verticesMarcados = [],
+    verticeActual;
+
+  for (let i in grafica.vertices) {
+    grafica.vertices[i].conjunto = undefined;
+  }
+
+  while (verticesMarcados.length < grafica.numVertices) {
+    for (let i in grafica.vertices) {
+      if (!verticesMarcados.includes(i)) {
+        verticeActual = i;
+        break;
+      }
+    }
+
+    cola.push(verticeActual);
+    grafica.vertices[verticeActual].conjunto = 0;
+    verticesMarcados.push(verticeActual);
+    while (cola.length > 0) {
+      verticeActual = cola.shift();
+
+      if (!verticesMarcados.includes(verticeActual))
+        verticesMarcados.push(verticeActual);
+
+      for (let i in grafica.aristas[verticeActual]) {
+        let a = grafica.aristas[verticeActual][i];
+
+        if (!verticesMarcados.includes(a.vertice)) cola.push(a.vertice);
+
+        if (!aristasMarcadas.includes(a.etiqueta))
+          aristasMarcadas.push(a.etiqueta);
+
+        if (
+          grafica.vertices[verticeActual].conjunto !==
+          grafica.vertices[a.vertice].conjunto
+        ) {
+          if (grafica.vertices[verticeActual].conjunto == 0) {
+            grafica.asignarConjunto(a.vertice, 1);
+            // grafica.vertices[i.vertice].conjunto = 1;
+          } else {
+            grafica.asignarConjunto(a.vertice, 0);
+
+            // grafica.vertices[i.vertice].conjunto = 0;
+          }
+        } else {
+          console.log("no bipartita");
+          return false;
+        }
+      }
+    }
+  }
+
+  return true;
+};
+
+const esConexa = (grafica) => {
+  let { conexa } = busquedaAncho(grafica);
+
+  return conexa;
+};
+
 const creaObjetoAristas = (grafica) => {
   let objetoAristas = {},
     arcosRestriccion = [];

@@ -1,0 +1,65 @@
+{
+  "estilo": "simplex",
+  "vertices": [
+    { "etiqueta": "a", "valor": "1" },
+    { "etiqueta": "b", "valor": "0" },
+    { "etiqueta": "c", "valor": "2" },
+    { "etiqueta": "d", "valor": "-3" }
+  ],
+  "aristas": [
+    {
+      "etiqueta": "e1",
+      "v1": "a",
+      "v2": "b",
+      "flujoMin": "2",
+      "flujoMax": "5",
+      "costo": "1",
+      "peso": "0"
+    },
+    {
+      "etiqueta": "e2",
+      "v1": "b",
+      "v2": "d",
+      "flujoMin": "0",
+      "flujoMax": "2",
+      "costo": "-1",
+      "peso": "0"
+    },
+    {
+      "etiqueta": "e3",
+      "v1": "a",
+      "v2": "d",
+      "flujoMin": "1",
+      "flujoMax": "3",
+      "costo": "-2",
+      "peso": "0"
+    },
+    {
+      "etiqueta": "e4",
+      "v1": "c",
+      "v2": "a",
+      "flujoMin": "0",
+      "flujoMax": "5",
+      "costo": "5",
+      "peso": "0"
+    },
+    {
+      "etiqueta": "e5",
+      "v1": "d",
+      "v2": "c",
+      "flujoMin": "0",
+      "flujoMax": "5",
+      "costo": "3",
+      "peso": "0"
+    },
+    {
+      "etiqueta": "e6",
+      "v1": "c",
+      "v2": "b",
+      "flujoMin": "0",
+      "flujoMax": "2",
+      "costo": "1",
+      "peso": "0"
+    }
+  ]
+}

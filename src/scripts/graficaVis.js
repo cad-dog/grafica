@@ -37,7 +37,7 @@ const graficarArchivo1 = () => {
           group: grafica.vertices[etiqueta].conjunto == 1 ? "a" : "b",
         });
 
-        let esBipartita = grafica.esBipartita();
+        let esBipartita = bipartita(grafica);
 
         vertices.get().map((i) => {
           i.group = grafica.vertices[i.label].conjunto ? "a" : "b";
@@ -96,7 +96,7 @@ const graficarArchivo1 = () => {
           },
         ]);
 
-        esBipartita = grafica.esBipartita();
+        esBipartita = bipartita(grafica);
         v1.group =
           grafica.vertices[datos.aristas[i].v1].conjunto == 1 ? "a" : "b";
         v2.group =
@@ -120,10 +120,10 @@ const graficarArchivo1 = () => {
 
       // Imprimimimos si la grafica es o no es bipartit
       if (tipo == "grafica")
-        bipartita.innerHTML =
+        bipartitamsj.innerHTML =
           "<p>Gráfica " + (esBipartita ? "" : "no ") + "bipartita</p>";
       else {
-        bipartita.innerHTML =
+        bipartitamsj.innerHTML =
           "<p>Digráfica " + (esBipartita ? "" : "no ") + "bipartita</p>";
       }
 
@@ -246,11 +246,16 @@ const pintarIteraciones = async (algoritmo) => {
 
     await sleep(1000);
   }
+
+  for (let i in vVis) {
+    vVis[i].group = "d";
+  }
+
+  vertices.update(vVis);
 };
 
 const actualizarIteraciones = async (algoritmo) => {
-  let { iteraciones, msj } = algoritmo(grafica);
-
+  let { iteraciones, msj, objetoAristas } = algoritmo(grafica);
   let aVis = aristas.get();
   let vVis = vertices.get();
 
@@ -289,7 +294,7 @@ const actualizarIteraciones = async (algoritmo) => {
                 ? iteracion.flujoMax
                 : "∞") +
               ", $" +
-              iteracion.costo +
+              objetoAristas[iteracion.etiqueta].costo +
               "]\n" +
               iteracion.peso;
             break;
@@ -336,6 +341,8 @@ const actualizarIteraciones = async (algoritmo) => {
 };
 
 const crearGrafica = (algoritmo) => {
+  let inputPrufer = document.getElementById("prufer");
+
   let listas = algoritmo(inputPrufer.value);
   let verticesAlg = listas[0],
     aristasAlg = listas[1],
@@ -364,4 +371,6 @@ const crearGrafica = (algoritmo) => {
     ]);
     idArista++;
   }
+
+  cerrarModal();
 };

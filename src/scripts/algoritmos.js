@@ -1,7 +1,11 @@
 const algoritmoFleury = (grafica) => {
   cerrarModal();
 
-  if (!grafica.esConexa()) return false;
+  if (!esConexa(grafica)) {
+    vaciarMensaje();
+    imprimirMensaje("La gráfica no tiene paseo de Euler", "text-red-500");
+    return false;
+  }
 
   let impares = 0;
   let comienzo;
@@ -90,7 +94,9 @@ const busquedaAncho = (grafica) => {
   let cola = [],
     aristasMarcadas = [],
     verticesMarcados = [],
-    verticeActual;
+    verticeActual,
+    conexa = true,
+    c = 0;
 
   while (verticesMarcados.length < grafica.numVertices) {
     for (let i in grafica.vertices) {
@@ -112,9 +118,15 @@ const busquedaAncho = (grafica) => {
         }
       });
     }
+    c++;
   }
 
-  return { aristas: aristasMarcadas, vertices: Object.keys(grafica.vertices) };
+  if (c > 1) conexa = false;
+  return {
+    aristas: aristasMarcadas,
+    vertices: Object.keys(grafica.vertices),
+    conexa,
+  };
 };
 
 const busquedaProfundidad = (grafica) => {
@@ -267,8 +279,6 @@ const prim = (grafica) => {
 };
 
 const prufer = (secuencia) => {
-  cerrarModal();
-
   secuencia = secuencia.split(",");
 
   let l = [],

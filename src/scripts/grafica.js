@@ -21,6 +21,7 @@ class Grafica {
       flujoMin: flujoMin,
       flujoMax: flujoMax,
       valor: valor,
+      conjunto: undefined,
     };
 
     this.aristas[vertice] = [];
@@ -344,4 +345,12 @@ class Grafica {
   pintarAristas() {
     console.log(this.aristas);
   }
+
+  asignarConjunto(vertice, conjunto) {
+    this.vertices[vertice].conjunto = conjunto;
+  }
+
+  // cambiaConjunto(vertice, conjkunto) {
+  //   this.vertices[vertice].conjunto
+  // }
 }

@@ -5,7 +5,7 @@ const seleccionaTipo = (opcion) => {
   mensaje.innerHTML = "";
   mensaje.classList.remove("text-red-500", "text-green-500");
 
-  bipartita.innerHTML = "";
+  bipartitamsj.innerHTML = "";
 
   vaciaGrafica();
 

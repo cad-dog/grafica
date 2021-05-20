@@ -63,7 +63,7 @@ const graficarArchivo2 = () => {
             flujoMax: datos.vertices[i].flujoMax,
           });
         }
-        let esBipartita = grafica.esBipartita();
+        esBipartita = bipartita(grafica);
 
         vertices.get().map((i) => {
           i.group = grafica.vertices[i.label.split("\n")[0]].conjunto
@@ -162,7 +162,7 @@ const graficarArchivo2 = () => {
           ]);
         }
 
-        esBipartita = grafica.esBipartita();
+        esBipartita = bipartita(grafica);
         v1.group =
           grafica.vertices[datos.aristas[i].v1].conjunto == 1 ? "a" : "b";
         v2.group =
@@ -252,7 +252,7 @@ const agregaVertice2 = () => {
     });
 
   // Asignamos la particion
-  esBipartita = grafica.esBipartita();
+  esBipartita = bipartita(grafica);
 
   vertices.get().map((i) => {
     i.group = grafica.vertices[i.label.split("\n")[0]].conjunto ? "a" : "b";
@@ -420,7 +420,7 @@ const agregaArista2 = () => {
     ]);
 
   // Actualizamos el conjunto al que pertenece cada vertice
-  aristas.esBipartita = grafica.esBipartita();
+  esBipartita = bipartita(grafica);
   v1.group = grafica.vertices[etiquetaVertice1].conjunto == 1 ? "a" : "b";
   v2.group = grafica.vertices[etiquetaVertice2].conjunto == 1 ? "a" : "b";
 
@@ -495,7 +495,7 @@ const eliminaVertice2 = () => {
   );
 
   // Asignamos la particion
-  esBipartita = grafica.esBipartita();
+  esBipartita = bipartita(grafica);
 
   vertices.get().map((i) => {
     i.group = grafica.vertices[i.label.split("\n")[0]].conjunto ? "a" : "b";
@@ -579,7 +579,7 @@ const eliminaArista2 = () => {
   aristas.remove({ id: arista.id });
 
   // Asignamos la particion
-  esBipartita = grafica.esBipartita();
+  esBipartita = bipartita(grafica);
 
   vertices.get().map((i) => {
     i.group = grafica.vertices[i.label.split("\n")[0]].conjunto ? "a" : "b";
