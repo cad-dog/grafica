@@ -1,0 +1,30 @@
+{
+  "vertices": [
+    { "etiqueta": "a" },
+    { "etiqueta": "b" },
+    { "etiqueta": "c" },
+    { "etiqueta": "d" },
+    { "etiqueta": "e" },
+    { "etiqueta": "f" },
+    { "etiqueta": "g" }
+  ],
+  "aristas": [
+    { "etiqueta": "e1", "v1": "a", "v2": "b", "peso": "3" },
+    { "etiqueta": "e2", "v1": "a", "v2": "c", "peso": "1" },
+    { "etiqueta": "e3", "v1": "a", "v2": "d", "peso": "2" },
+    { "etiqueta": "e4", "v1": "b", "v2": "e", "peso": "4" },
+    { "etiqueta": "e5", "v1": "c", "v2": "a", "peso": "-1" },
+    { "etiqueta": "e6", "v1": "c", "v2": "b", "peso": "2" },
+    { "etiqueta": "e7", "v1": "c", "v2": "d", "peso": "3" },
+    { "etiqueta": "e8", "v1": "c", "v2": "e", "peso": "-1" },
+    { "etiqueta": "e9", "v1": "c", "v2": "f", "peso": "5" },
+    { "etiqueta": "e10", "v1": "d", "v2": "a", "peso": "-2" },
+    { "etiqueta": "e11", "v1": "e", "v2": "c", "peso": "1" },
+    { "etiqueta": "e12", "v1": "e", "v2": "g", "peso": "3" },
+    { "etiqueta": "e13", "v1": "f", "v2": "d", "peso": "-3" },
+    { "etiqueta": "e14", "v1": "f", "v2": "e", "peso": "-1" },
+    { "etiqueta": "e15", "v1": "f", "v2": "g", "peso": "2" },
+    { "etiqueta": "e16", "v1": "g", "v2": "e", "peso": "-3" },
+    { "etiqueta": "e17", "v1": "g", "v2": "f", "peso": "-2" }
+  ]
+}

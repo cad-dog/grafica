@@ -10,81 +10,465 @@
     ></script>
     <title id="titulo">Gráfica</title>
   </head>
-  <body id="body" class="py-5">
-    <header class="px-10 text-gray-800 flex items-end">
-      <div id="header" class="text-3xl"></div>
-      <div class="flex space-x-10 ml-20">
-        <div class="flex">
-          Vértices:
-          <div id="numVertices" class="ml-1">0</div>
-        </div>
-        <div class="flex">
-          Aristas:
-          <div id="numAristas" class="ml-1">0</div>
-        </div>
-      </div>
-    </header>
-
-    <div class="flex flex-auto px-10">
+  <body id="body" class="py-5 bg-gray-800">
+    <!-- Inicio modal -->
+    <div id="modal" class="inset-0 bg-white bg-opacity-20 fixed z-20 hidden">
       <div
-        id="grafica"
-        class="bg-gray-100 h-12"
-        style="width: 37.5rem; height: 25rem"
-      ></div>
-
-      <div class="ml-2">
-        <div class="bg-gray-100 text-gray-800 px-4 py-2">
-          <div class="font-bold text-lg">Menú</div>
-          <div id="menu" class="flex flex-col">
-            <div class="border-t border-b p-1">
-              <div class="font-bold">Seleccione el tipo de grafica</div>
-              <div class="flex items-center justify-center">
-                <div>
-                  Grafica<input
-                    id="tipo1"
-                    type="radio"
-                    class="mt-1 ml-1"
-                    name="tipo"
-                    value="grafica"
-                    checked
-                  />
-                </div>
-                <div class="ml-5">
-                  Digrafica<input
-                    id="tipo2"
-                    type="radio"
-                    class="mt-1 ml-1"
-                    name="tipo"
-                    value="digrafica"
-                  />
-                </div>
-                <div class="ml-5">
-                  Red de transporte<input
-                    id="tipo3"
-                    type="radio"
-                    class="mt-1 ml-1"
-                    name="tipo"
-                    value="red"
-                  />
-                </div>
-              </div>
-              <button
-                class="bg-blue-500 rounded-md px-2 py-1 text-white hover:bg-blue-600 focus:outline-none mt-1 w-full"
-                onclick="graficar()"
+        class="
+          bg-gray-800
+          w-2/5
+          border-2
+          rounded-md
+          bg-gray-50
+          p-4
+          text-white
+          mx-auto
+          my-12
+          flex flex-col
+        "
+      >
+        <div class="flex justify-between align-middle">
+          <div id="tituloModal" class="text-3xl"></div>
+          <div class="self-center">
+            <button class="focus:outline-none" onclick="cerrarModal()">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
               >
-                Aceptar
-              </button>
-            </div>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
           </div>
         </div>
+        <div class="border-t-2 mt-2"></div>
+        <div id="contenidoModal"></div>
       </div>
     </div>
-    <div class="px-10 text-gray-800">
-      <div class="flex">
-        <div id="bipartita"></div>
-        <div id="leyenda" class="flex items-center ml-2"></div>
+
+    <!-- Fin modal -->
+
+    <!-- Inicio header -->
+    <div class="flex flex-col items-center">
+      <div>
+        <header class="px-10 text-white flex items-end">
+          <!-- Inicio dropdown -->
+          <div class="dropdown inline-block relative z-10">
+            <button
+              id="displayTipo"
+              class="
+                bg-gray-800
+                text-3xl text-white
+                font-semibold
+                py-2
+                px-4
+                rounded
+                inline-flex
+                items-center
+                focus:outline-none
+                border-2 border-white
+              "
+            >
+              <span class="mr-1">Tipo de gráfica</span>
+              <svg
+                class="fill-current h-4 w-4"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+                />
+              </svg>
+            </button>
+            <ul class="dropdown-menu absolute hidden text-gray-700 pt-1">
+              <li class="">
+                <a
+                  class="
+                    rounded-t
+                    bg-gray-200
+                    hover:bg-gray-400
+                    py-2
+                    px-4
+                    block
+                    whitespace-no-wrap
+                  "
+                  href="#"
+                  onclick="seleccionaTipo('grafica')"
+                  >Gráfica</a
+                >
+              </li>
+              <li class="">
+                <a
+                  class="
+                    bg-gray-200
+                    hover:bg-gray-400
+                    py-2
+                    px-4
+                    block
+                    whitespace-no-wrap
+                  "
+                  href="#"
+                  onclick="seleccionaTipo('digrafica')"
+                  >Digráfica</a
+                >
+              </li>
+              <li class="">
+                <a
+                  class="
+                    rounded-b
+                    bg-gray-200
+                    hover:bg-gray-400
+                    py-2
+                    px-4
+                    block
+                    whitespace-no-wrap
+                  "
+                  href="#"
+                  onclick="seleccionaTipo('red')"
+                  >Red de transporte</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <!-- Fin dropdown -->
+
+          <div class="flex space-x-10 ml-20">
+            <div class="flex">
+              <div id="verticesh"></div>
+              <div id="numVertices" class="ml-1"></div>
+            </div>
+            <div class="flex">
+              <div id="aristash"></div>
+              <div id="numAristas" class="ml-1"></div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Fin header -->
+
+        <div class="flex px-10 mt-2">
+          <div class="flex flex-col">
+            <!-- Inicio menu superior -->
+
+            <div class="flex bg-gray-300 rounded-t-2xl">
+              <!-- Agregar vertice -->
+
+              <a
+                class="
+                  p-2
+                  bg-gradient-to-t
+                  from-blue-300
+                  to-green-300
+                  flex
+                  rounded-tl-2xl
+                  hover:from-blue-400
+                  hover:to-green-300
+                  focus:from-blue-500
+                  focus:to-green-300
+                  focus:outline-none
+                  text-gray-100
+                  w-1/4
+                  justify-center
+                "
+                onclick="abrirModal('agregarVertice')"
+                href="#"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <div class="ml-1 select-none">Vértice</div>
+              </a>
+
+              <!-- Agregar Arista -->
+
+              <button
+                class="
+                  p-2
+                  bg-gradient-to-t
+                  from-blue-300
+                  to-green-300
+                  flex
+                  hover:from-blue-400
+                  hover:to-green-300
+                  focus:from-blue-500
+                  focus:to-green-300
+                  focus:outline-none
+                  text-gray-100
+                  w-1/4
+                  justify-center
+                "
+                onclick="abrirModal('agregarArco')"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <div class="ml-1 select-none">Arco</div>
+              </button>
+
+              <!-- Eliminar vertice -->
+
+              <button
+                class="
+                  p-2
+                  bg-gradient-to-t
+                  from-blue-300
+                  to-green-300
+                  flex
+                  hover:from-blue-400
+                  hover:to-green-300
+                  focus:from-blue-500
+                  focus:to-green-300
+                  focus:outline-none
+                  text-gray-100
+                  w-1/4
+                  justify-center
+                "
+                onclick="abrirModal('eliminarVertice')"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
+                </svg>
+                <div class="ml-1 select-none">Vértice</div>
+              </button>
+
+              <!-- Eliminar arista -->
+
+              <button
+                class="
+                  p-2
+                  bg-gradient-to-t
+                  from-blue-300
+                  to-green-300
+                  flex
+                  rounded-tr-2xl
+                  hover:from-blue-400
+                  hover:to-green-300
+                  focus:from-blue-500
+                  focus:to-green-300
+                  focus:outline-none
+                  text-gray-100
+                  w-1/4
+                  justify-center
+                "
+                onclick="abrirModal('eliminarArista')"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
+                </svg>
+                <div class="ml-1 select-none">Arco</div>
+              </button>
+            </div>
+            <!-- Fin menu superior -->
+            <div
+              id="grafica"
+              class="bg-gray-700 h-12"
+              style="width: 60rem; height: 30rem"
+            ></div>
+
+            <!-- Inicio menu inferior -->
+            <div class="flex bg-gray-300 rounded-b-2xl">
+              <button
+                class="
+                  p-2
+                  bg-gradient-to-t
+                  from-blue-300
+                  to-green-300
+                  flex
+                  rounded-bl-2xl
+                  hover:from-blue-400
+                  hover:to-green-300
+                  focus:from-blue-500
+                  focus:to-green-300
+                  focus:outline-none
+                  text-gray-100
+                  w-1/4
+                  justify-center
+                "
+                onclick="abrirModal('menu')"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                </svg>
+                <div class="ml-1 select-none">Menú</div>
+              </button>
+              <button
+                class="
+                  p-2
+                  bg-gradient-to-t
+                  from-blue-300
+                  to-green-300
+                  flex
+                  hover:from-blue-400
+                  hover:to-green-300
+                  focus:from-blue-500
+                  focus:to-green-300
+                  focus:outline-none
+                  text-gray-100
+                  w-1/4
+                  justify-center
+                "
+                onclick="copiarGrafica()"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  />
+                </svg>
+                <div class="ml-1 select-none">Copiar</div>
+              </button>
+              <button
+                class="
+                  p-2
+                  bg-gradient-to-t
+                  from-blue-300
+                  to-green-300
+                  flex
+                  hover:from-blue-400
+                  hover:to-green-300
+                  focus:from-blue-500
+                  focus:to-green-300
+                  focus:outline-none
+                  text-gray-100
+                  w-1/4
+                  justify-center
+                "
+                onclick="restauraGrafica()"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                  />
+                </svg>
+                <div class="ml-1 select-none">Pegar</div>
+              </button>
+              <button
+                class="
+                  p-2
+                  bg-gradient-to-t
+                  from-blue-300
+                  to-green-300
+                  flex
+                  rounded-br-2xl
+                  hover:from-blue-400
+                  hover:to-green-300
+                  focus:from-blue-500
+                  focus:to-green-300
+                  focus:outline-none
+                  text-gray-100
+                  w-1/4
+                  justify-center
+                "
+                onclick="vaciaGrafica()"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
+                </svg>
+                <div class="ml-1 select-none">Gráfica</div>
+              </button>
+            </div>
+            <!-- Fin menu inferior -->
+          </div>
+        </div>
+        <div class="px-10 text-gray-800">
+          <div class="flex">
+            <div id="bipartita" class="text-white"></div>
+            <div id="leyenda" class="flex items-center ml-2 text-white"></div>
+          </div>
+          <div id="mensaje"></div>
+        </div>
       </div>
-      <div id="mensaje"></div>
     </div>
   </body>
   <script src="lodash.js"></script>
@@ -94,4 +478,5 @@
   <script src="scripts/vis.js"></script>
   <script src="scripts/graficaVis.js"></script>
   <script src="scripts/redVis.js"></script>
+  <script src="scripts/script.js"></script>
 </html>

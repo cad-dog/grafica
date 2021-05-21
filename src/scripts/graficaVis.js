@@ -1,4 +1,6 @@
 const graficarArchivo1 = () => {
+  cerrarModal();
+
   let archivo = "../" + document.getElementById("archivo").files[0].name;
 
   console.log(archivo);
@@ -21,6 +23,9 @@ const graficarArchivo1 = () => {
   };
 
   let graficaArchivo = (datos) => {
+    console.log(datos);
+    console.log(grafica);
+
     if (datos.vertices) {
       for (let i in datos.vertices) {
         let etiqueta = datos.vertices[i].etiqueta;
@@ -32,7 +37,7 @@ const graficarArchivo1 = () => {
           group: grafica.vertices[etiqueta].conjunto == 1 ? "a" : "b",
         });
 
-        let esBipartita = grafica.esBipartita();
+        let esBipartita = bipartita(grafica);
 
         vertices.get().map((i) => {
           i.group = grafica.vertices[i.label].conjunto ? "a" : "b";
@@ -69,10 +74,10 @@ const graficarArchivo1 = () => {
         }
 
         grafica.agregarArista(
+          datos.aristas[i].etiqueta,
           datos.aristas[i].v1,
           datos.aristas[i].v2,
-          datos.aristas[i].peso,
-          datos.aristas[i].etiqueta
+          datos.aristas[i].peso
         );
 
         aristas.add([
@@ -91,7 +96,7 @@ const graficarArchivo1 = () => {
           },
         ]);
 
-        esBipartita = grafica.esBipartita();
+        esBipartita = bipartita(grafica);
         v1.group =
           grafica.vertices[datos.aristas[i].v1].conjunto == 1 ? "a" : "b";
         v2.group =
@@ -113,9 +118,14 @@ const graficarArchivo1 = () => {
       aristas.update(aristas.get());
       vertices.update(vertices.get());
 
-      // Imprimimimos si la grafica es o no es bipartita
-      bipartita.innerHTML =
-        "<p>Gráfica " + (esBipartita ? "" : "no ") + "bipartita</p>";
+      // Imprimimimos si la grafica es o no es bipartit
+      if (tipo == "grafica")
+        bipartitamsj.innerHTML =
+          "<p>Gráfica " + (esBipartita ? "" : "no ") + "bipartita</p>";
+      else {
+        bipartitamsj.innerHTML =
+          "<p>Digráfica " + (esBipartita ? "" : "no ") + "bipartita</p>";
+      }
 
       // Imprimimos la leyenda
       leyenda.innerHTML = esBipartita
@@ -131,6 +141,7 @@ const graficarArchivo1 = () => {
 };
 
 const buscaVertice = () => {
+  cerrarModal();
   // Entradas
   let etiqueta = document.getElementById("buscarVertice").value;
 
@@ -142,6 +153,14 @@ const buscaVertice = () => {
   if (grafica.buscaVertice(etiqueta)) {
     mensaje.classList.add("text-green-500");
     mensaje.innerHTML = "<p> El vértice " + etiqueta + " existe</p>";
+
+    if (tipo != "red") {
+      for (let i in vertices.get()) {
+        if (vertices.get()[i].label == etiqueta) vertices.get()[i].group = "e";
+      }
+    }
+
+    vertices.update(vertices.get());
   } else {
     mensaje.classList.add("text-red-500");
     mensaje.innerHTML = "<p> El vértice " + etiqueta + " no existe</p>";
@@ -191,23 +210,143 @@ const gradoVertice = () => {
     " </p>";
 };
 
-const encuentraPaseo = () => {
-  // Vaciamos el mensaje de salida
-  mensaje.innerHTML = "";
-  mensaje.classList.remove("text-red-500", "text-green-500");
+const pintarIteraciones = async (algoritmo) => {
+  let { aristas: arcos } = algoritmo(grafica);
 
-  let salida = algoritmoFleury(grafica);
+  let aVis = aristas.get();
+  let vVis = vertices.get();
 
-  if (!salida) {
-    mensaje.classList.add("text-red-500");
-    mensaje.innerHTML = "<p>La gráfica no tiene paseo de Euler</p>";
-  } else {
-    mensaje.classList.add("text-green-500");
-    mensaje.innerHTML = "<p>Paseo de Euler: {" + salida + "}</p>";
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
+
+  for (i in arcos) {
+    let a = arcos[i];
+    let vs = [a.v1, a.v2];
+
+    for (let j in aVis) {
+      if (a.etiqueta == aVis[j].title) {
+        aVis[j].color = "#ff499b";
+        break;
+      }
+    }
+
+    for (let j in vVis) {
+      if (vs.length < 1) break;
+
+      if (vs.includes(vVis[j].label)) {
+        vVis[j].group = "d";
+
+        vs.splice(vs.indexOf(vVis[j].label), 1);
+      }
+    }
+
+    vertices.update(vVis);
+    aristas.update(aVis);
+
+    await sleep(1000);
+  }
+
+  for (let i in vVis) {
+    vVis[i].group = "d";
+  }
+
+  vertices.update(vVis);
+};
+
+const actualizarIteraciones = async (algoritmo) => {
+  let { iteraciones, msj, objetoAristas, aristas: arcos } = algoritmo(grafica);
+  let aVis = aristas.get();
+  let vVis = vertices.get();
+
+  console.log(arcos);
+
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  for (let i = 0; i < 1; i++) {
+    sleep(5000);
+  }
+  for (let i in iteraciones) {
+    for (let j in iteraciones[i]) {
+      let iteracion = iteraciones[i][j];
+      let vs = [iteracion.fuente, iteracion.sumidero];
+
+      grafica.editarArista(
+        iteracion.etiqueta,
+        iteracion.peso,
+        iteracion.flujoMin,
+        iteracion.flujo,
+        iteracion.flujoMax
+      );
+
+      // if (arcos) {
+      for (let k in aVis) {
+        if (iteracion.etiqueta == aVis[k].title) {
+          if (arcos.includes(aVis[k].title)) {
+            aVis[k].color = "#ff499b";
+          } else {
+            aVis[k].color = "#6864cc";
+          }
+          aVis[k].label =
+            "[" +
+            (iteracion.flujoMin ? iteracion.flujoMin : 0) +
+            ", " +
+            (iteracion.flujoMax != Infinity && iteracion.flujoMax
+              ? iteracion.flujoMax
+              : "∞") +
+            ", $" +
+            objetoAristas[iteracion.etiqueta].costo +
+            "]\n" +
+            iteracion.peso;
+          break;
+        }
+      }
+      // } else {
+      //   for (let k in aVis) {
+      //     if (iteracion.etiqueta == aVis[k].title) {
+      //       aVis[k].color = "#6864cc";
+      //       aVis[k].label =
+      //         "[" +
+      //         (iteracion.flujoMin ? iteracion.flujoMin : 0) +
+      //         ", " +
+      //         (iteracion.flujoMax != Infinity && iteracion.flujoMax
+      //           ? iteracion.flujoMax
+      //           : "∞") +
+      //         ", $" +
+      //         iteracion.costo +
+      //         "]\n" +
+      //         iteracion.peso;
+      //       break;
+      //     }
+      //   }
+      // }
+
+      for (let j in vVis) {
+        if (vs.length < 1) break;
+
+        if (vs.includes(vVis[j].label)) {
+          vVis[j].group = "d";
+
+          vs.splice(vs.indexOf(vVis[j].label), 1);
+        }
+      }
+
+      vertices.update(vVis);
+      aristas.update(aVis);
+    }
+    await sleep(3000);
+  }
+  vaciarMensaje();
+
+  console.log(msj);
+  imprimirMensaje(msj["text"], msj["color"]);
 };
 
 const crearGrafica = (algoritmo) => {
+  let inputPrufer = document.getElementById("prufer");
+
   let listas = algoritmo(inputPrufer.value);
   let verticesAlg = listas[0],
     aristasAlg = listas[1],
@@ -236,4 +375,6 @@ const crearGrafica = (algoritmo) => {
     ]);
     idArista++;
   }
+
+  cerrarModal();
 };
