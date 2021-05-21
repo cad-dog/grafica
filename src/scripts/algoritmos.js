@@ -648,7 +648,7 @@ const floyd = (grafica, a, b, uni) => {
 
     aristas.reverse();
   } else {
-    inicio = "a";
+    if (inicio == undefined) inicio = "a";
     let ignorar = [];
     for (let i in grafica.vertices) {
       destino = i;
@@ -691,6 +691,8 @@ const floyd = (grafica, a, b, uni) => {
         peso +
         " unidades."
     );
+
+    aristas = aristas.reverse();
   }
 
   return {
@@ -1111,11 +1113,24 @@ const simplex = (red) => {
   cerrarModal();
 
   let redCopia = _.cloneDeep(red),
-    numAristasSolucion = 0,
-    solucion = true;
+    numAristasSolucion = 0;
 
   // Agregamos el vertice puente
   redCopia.agregarVertice("puente");
+
+  for (let i in red.listaAristas) {
+    let a = red.listaAristas[i];
+
+    redCopia.editarArista(
+      a.etiqueta,
+      a.flujoMin,
+      a.flujoMin,
+      a.flujo,
+      a.flujoMax
+    );
+
+    red.editarArista(a.etiqueta, a.flujoMin, a.flujoMin, a.flujo, a.flujoMax);
+  }
 
   // Agregamos las aristas ficticias
   for (let i in red.vertices) {
@@ -1123,27 +1138,12 @@ const simplex = (red) => {
     let valor = vertice.valor;
 
     for (let j in red.aristas[vertice.etiqueta]) {
-      let arco = red.aristas[vertice.etiqueta][j];
+      let arco = redCopia.aristas[vertice.etiqueta][j];
 
       if (arco.tipo == "entrante") {
-        valor += arco.flujoMin;
-
-        redCopia.editarArista(
-          arco.etiqueta,
-          arco.flujoMin,
-          arco.flujoMin,
-          arco.flujo,
-          arco.flujoMax
-        );
+        valor += arco.peso;
       } else {
-        valor -= arco.flujoMin;
-        redCopia.editarArista(
-          arco.etiqueta,
-          arco.flujoMin,
-          arco.flujoMin,
-          arco.flujo,
-          arco.flujoMax
-        );
+        valor -= arco.peso;
       }
     }
 
@@ -1178,7 +1178,28 @@ const simplex = (red) => {
     arco.costo = 0;
   }
 
-  let { objetoAristas } = simplexBasico(redCopia, true);
+  // console.log(redCopia);
+  // console.log(red);
+
+  let solucion = [],
+    noSolucion = [];
+
+  for (let i in redCopia.listaAristas) {
+    let arco = redCopia.listaAristas[i];
+    if (arco.peso > arco.flujoMin && arco.peso < arco.flujoMax)
+      solucion.push(arco.etiqueta);
+    else noSolucion.push(arco.etiqueta);
+  }
+
+  ({ objetoAristas, solucion } = simplexBasico(
+    redCopia,
+    solucion,
+    noSolucion,
+    true
+  ));
+
+  // console.log(objetoAristas);
+  // return;
 
   let primeraSolucion = [];
   // aristas.push(soluciones);
@@ -1198,13 +1219,38 @@ const simplex = (red) => {
     }
   }
 
+  // console.log(primeraSolucion);
+  // console.log(soluciones);
+
+  // return;
+
+  noSolucion = [];
+
+  for (let i in red.listaAristas) {
+    if (!solucion.includes(red.listaAristas[i].etiqueta))
+      noSolucion.push(red.listaAristas[i].etiqueta);
+  }
+
+  console.log(solucion);
+  console.log(noSolucion);
+
   ({
     aristas: arcos,
     vertices: v,
     objetoAristas,
     msj: text,
     soluciones,
-  } = simplexBasico(red));
+  } = simplexBasico(red, solucion, noSolucion));
+
+  // console.log(
+  //   ({
+  //     aristas: arcos,
+  //     vertices: v,
+  //     objetoAristas,
+  //     msj: text,
+  //     soluciones,
+  //   } = simplexBasico(red))
+  // );
 
   soluciones["0"] = primeraSolucion;
 
@@ -1216,36 +1262,41 @@ const simplex = (red) => {
     v.push(i + "\n" + red.vertices[i].valor);
   }
 
-  for (let i in soluciones[
-    Object.keys(soluciones)[Object.keys(soluciones).length - 1]
-  ]) {
-    if (
-      soluciones[Object.keys(soluciones)[Object.keys(soluciones).length - 1]][i]
-        .peso >
-        soluciones[Object.keys(soluciones)[Object.keys(soluciones).length - 1]][
-          i
-        ].flujoMin &&
-      soluciones[Object.keys(soluciones)[Object.keys(soluciones).length - 1]][i]
-        .peso <
-        soluciones[Object.keys(soluciones)[Object.keys(soluciones).length - 1]][
-          i
-        ].flujoMax
-    ) {
-      numAristasSolucion++;
-    }
-  }
+  // console.log(soluciones);
 
-  if (numAristasSolucion != red.numVertices - 1) {
-    solucion = false;
-    msj = {
-      text: "La red de transporte no tiene solución",
-      color: "text-red-500",
-    };
-  }
+  // for (let i in soluciones[
+  //   Object.keys(soluciones)[Object.keys(soluciones).length - 1]
+  // ]) {
+  //   if (
+  //     soluciones[Object.keys(soluciones)[Object.keys(soluciones).length - 1]][i]
+  //       .peso >
+  //       soluciones[Object.keys(soluciones)[Object.keys(soluciones).length - 1]][
+  //         i
+  //       ].flujoMin &&
+  //     soluciones[Object.keys(soluciones)[Object.keys(soluciones).length - 1]][i]
+  //       .peso <
+  //       soluciones[Object.keys(soluciones)[Object.keys(soluciones).length - 1]][
+  //         i
+  //       ].flujoMax
+  //   ) {
+  //     numAristasSolucion++;
+  //   }
+  // }
+
+  // if (numAristasSolucion != red.numVertices - 1) {
+  //   solucion = false;
+  //   msj = {
+  //     text: "La red de transporte no tiene solución",
+  //     color: "text-red-500",
+  //   };
+  // }
+
+  console.log(soluciones);
+
   return {
     objetoAristas,
     msj,
-    aristas: arcos,
+    aristas: solucion,
     vertices: v,
     iteraciones: soluciones,
     solucion,

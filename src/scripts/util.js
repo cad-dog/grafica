@@ -665,26 +665,13 @@ const eliminarClones = (red, verticesDuplicados, objetoAristas) => {
   }
 };
 
-const simplexBasico = (red, ficticia) => {
+const simplexBasico = (red, solucion, noSolucion, ficticia) => {
   let soluciones = {};
 
   if (ficticia != true) ficticia = false;
 
-  let solucion = [],
-    noSolucion = [];
-
   while (true) {
-    solucion = [];
-    noSolucion = [];
-
     ({ objetoAristas } = creaObjetoAristas(red));
-
-    for (let i in red.listaAristas) {
-      let arco = red.listaAristas[i];
-      if (arco.peso > arco.flujoMin && arco.peso < arco.flujoMax)
-        solucion.push(arco.etiqueta);
-      else noSolucion.push(arco.etiqueta);
-    }
 
     let vertices = Object.keys(red.vertices);
     let arcoMejora = { mejora: 0 };
@@ -740,16 +727,178 @@ const simplexBasico = (red, ficticia) => {
         else verticeSiguiente = arista.fuente;
       }
 
-      if (mejora > arcoMejora.mejora)
+      if (delta <= 0) continue;
+
+      if (mejora > arcoMejora.mejora) {
         arcoMejora = {
           etiqueta: ciclo[0],
           mejora: mejora,
           ciclo: ciclo,
           delta: delta,
         };
+      }
     }
 
-    if (arcoMejora.mejora <= 0) break;
+    console.log(arcoMejora);
+    console.log("------------------------\nAntes");
+    console.log("arcos ciclo");
+    for (let i in arcoMejora.ciclo) {
+      let x = objetoAristas[arcoMejora.ciclo[i]];
+      console.log(
+        x.etiqueta + "(" + x.fuente + "->" + x.sumidero + ")",
+        "min: " + x.flujoMin,
+        "max: " + x.flujoMax,
+        "peso: " + x.peso,
+        "costo: " + x.costo
+      );
+    }
+
+    console.log(
+      "arco: " + arcoMejora.etiqueta,
+      "mejora: " + arcoMejora.mejora,
+      "delta: " + arcoMejora.delta
+    );
+    console.log("arcos solucion");
+    for (let i in solucion) {
+      let x = objetoAristas[solucion[i]];
+      console.log(
+        x.etiqueta + "(" + x.fuente + "->" + x.sumidero + ")",
+        "min: " + x.flujoMin,
+        "max: " + x.flujoMax,
+        "peso: " + x.peso,
+        "costo: " + x.costo
+      );
+    }
+    console.log("arcos no solucion");
+    for (let i in noSolucion) {
+      let x = objetoAristas[noSolucion[i]];
+      console.log(
+        x.etiqueta + "(" + x.fuente + "->" + x.sumidero + ")",
+        "min: " + x.flujoMin,
+        "max: " + x.flujoMax,
+        "peso: " + x.peso,
+        "costo: " + x.costo
+      );
+    }
+
+    if (arcoMejora.mejora <= 0) {
+      if (ficticia) {
+        // Sacamos aristas ficticias
+
+        console.log(solucion);
+
+        let numFicticios = 0;
+
+        for (let i in solucion) if (solucion[i].includes("%")) numFicticios++;
+
+        solucion = solucion.filter((a) => !a.includes("%"));
+
+        if (numFicticios > 1) {
+          // Elegimos una arista de la red original para formar el arbol de expansion
+          for (let i in objetoAristas) {
+            if (!solucion.includes(i)) {
+              solucion.push(i);
+              break;
+            }
+          }
+        }
+
+        console.log(solucion);
+
+        // soluciones[Object.keys(soluciones).length + 1] = [];
+
+        // for (let i in objetoAristas)
+        //   soluciones[Object.keys(soluciones).length].push(objetoAristas[i]);
+
+        console.log(soluciones);
+
+        for (let i in red.listaAristas) {
+          let a = red.listaAristas[i];
+          if (a.peso <= a.flujoMin || a.peso >= a.flujoMax) {
+            console.log("TOTO");
+
+            console.log("sool: " + solucion);
+            console.log("length: " + solucion.length);
+            if (solucion.length == red.numVertices) {
+              console.log("TATA");
+              noSolucion.push(a.etiqueta);
+              solucion.splice(solucion.indexOf(a.etiqueta), 1);
+
+              console.log("sacamos");
+              console.log(a);
+              break;
+            }
+          }
+        }
+
+        for (let i in red.listaAristas) {
+          let a = red.listaAristas[i];
+          if (a.peso <= a.flujoMin || a.peso >= a.flujoMax) {
+            console.log("TOTO");
+
+            console.log("sool: " + solucion);
+            console.log("length: " + solucion.length);
+            if (solucion.length == red.numVertices) {
+              console.log("TATA");
+              noSolucion.push(a.etiqueta);
+              solucion.splice(solucion.indexOf(a.etiqueta), 1);
+
+              console.log("sacamos");
+              console.log(a);
+              break;
+            }
+          }
+        }
+
+        let costo = 0;
+
+        for (let i in objetoAristas)
+          costo += objetoAristas[i].costo * objetoAristas[i].peso;
+
+        let msj = "Costo minimo de " + costo + " unidades.";
+
+        return {
+          aristas: solucion,
+          vertices: Object.keys(red.vertices),
+          objetoAristas: objetoAristas,
+          msj: msj,
+          soluciones: soluciones,
+          solucion: solucion,
+        };
+      } else {
+        for (let i in arcoMejora.ciclo) {
+          let a = objetoAristas[arcoMejora.ciclo[i]];
+
+          if (a.peso <= a.flujoMin || a.peso >= a.flujoMax) {
+            noSolucion.push(a.etiqueta);
+            solucion.splice(solucion.indexOf(a.etiqueta), 1);
+
+            console.log("sacamos");
+            console.log(a);
+            break;
+          }
+        }
+
+        console.log("BBB");
+        let costo = 0;
+
+        for (let i in objetoAristas)
+          costo += objetoAristas[i].costo * objetoAristas[i].peso;
+
+        let msj = "Costo minimo de " + costo + " unidades.";
+
+        console.log(solucion);
+
+        return {
+          aristas: solucion,
+          vertices: Object.keys(red.vertices),
+          objetoAristas: objetoAristas,
+          msj: msj,
+          soluciones: soluciones,
+          solucion: solucion,
+        };
+      }
+    }
 
     let contrario = false;
     let verticeSiguiente = objetoAristas[arcoMejora.ciclo[0]].fuente;
@@ -784,17 +933,98 @@ const simplexBasico = (red, ficticia) => {
         );
       }
 
-      if (arista.peso <= arista.flujoMin || arista.peso >= arista.flujoMax) {
-        noSolucion.push(arista.etiqueta);
-        solucion.splice(solucion.indexOf(arista.etiqueta), 1);
-      }
+      // if (arista.peso <= arista.flujoMin || arista.peso >= arista.flujoMax) {
+      //   noSolucion.push(arista.etiqueta);
+      //   solucion.splice(solucion.indexOf(arista.etiqueta), 1);
+      // }
 
       if (!contrario) verticeSiguiente = arista.sumidero;
       else verticeSiguiente = arista.fuente;
     }
 
+    console.log("------------------------\nDespues");
+    for (let i in arcoMejora.ciclo) {
+      let x = objetoAristas[arcoMejora.ciclo[i]];
+      console.log(
+        x.etiqueta + "(" + x.fuente + "->" + x.sumidero + ")",
+        "min: " + x.flujoMin,
+        "max: " + x.flujoMax,
+        "peso: " + x.peso,
+        "costo: " + x.costo
+      );
+    }
+    console.log("arcos solucion");
+    for (let i in solucion) {
+      let x = objetoAristas[solucion[i]];
+      console.log(
+        x.etiqueta + "(" + x.fuente + "->" + x.sumidero + ")",
+        "min: " + x.flujoMin,
+        "max: " + x.flujoMax,
+        "peso: " + x.peso,
+        "costo: " + x.costo
+      );
+    }
+    console.log("arcos no solucion");
+    for (let i in noSolucion) {
+      let x = objetoAristas[noSolucion[i]];
+      console.log(
+        x.etiqueta + "(" + x.fuente + "->" + x.sumidero + ")",
+        "min: " + x.flujoMin,
+        "max: " + x.flujoMax,
+        "peso: " + x.peso,
+        "costo: " + x.costo
+      );
+    }
+
     noSolucion.splice(noSolucion.indexOf(arcoMejora.etiqueta), 1);
     solucion.push(arcoMejora.etiqueta);
+
+    /// BORARRR
+    console.log(objetoAristas);
+    for (let i in arcoMejora.ciclo) {
+      let a = objetoAristas[arcoMejora.ciclo[i]];
+
+      if (ficticia) {
+        if (a.etiqueta.includes("%")) {
+          if (a.peso <= a.flujoMin) {
+            noSolucion.push(a.etiqueta);
+            solucion.splice(solucion.indexOf(a.etiqueta), 1);
+
+            console.log(solucion);
+            console.log("sacamos");
+            console.log(a);
+            break;
+          }
+        } /*else {
+          console.log(a.peso, a.flujoMin, a.flujoMax);
+          if (a.peso <= a.flujoMin || a.peso >= a.flujoMax) {
+            console.log("TOTO");
+
+            console.log("sool: " + solucion);
+            console.log("length: " + solucion.length);
+            if (solucion.length == red.numVertices) {
+              console.log("TATA");
+              noSolucion.push(a.etiqueta);
+              solucion.splice(solucion.indexOf(a.etiqueta), 1);
+
+              console.log("sacamos");
+              console.log(a);
+              break;
+            }
+          }
+        }*/
+      } else {
+        if (a.peso <= a.flujoMin || a.peso >= a.flujoMax) {
+          noSolucion.push(a.etiqueta);
+          solucion.splice(solucion.indexOf(a.etiqueta), 1);
+
+          console.log("sacamos");
+          console.log(a);
+          break;
+        }
+      }
+    }
+    //////////////
 
     let parar = true;
     for (let i in noSolucion) {
@@ -811,8 +1041,8 @@ const simplexBasico = (red, ficticia) => {
 
   arcos = [];
   let costo = 0;
-  for (let i in solucion)
-    costo += objetoAristas[solucion[i]].costo * objetoAristas[solucion[i]].peso;
+  for (let i in objetoAristas)
+    costo += objetoAristas[i].costo * objetoAristas[i].peso;
 
   solucion = [];
   noSolucion = [];
@@ -826,10 +1056,8 @@ const simplexBasico = (red, ficticia) => {
 
   let msj = "Costo minimo de " + costo + " unidades.";
 
-  console.log(soluciones);
-
   return {
-    aristas: solucion,
+    solucion: solucion,
     vertices: Object.keys(red.vertices),
     objetoAristas: objetoAristas,
     msj: msj,

@@ -255,89 +255,88 @@ const pintarIteraciones = async (algoritmo) => {
 };
 
 const actualizarIteraciones = async (algoritmo) => {
-  let { iteraciones, msj, objetoAristas, solucion } = algoritmo(grafica);
+  let { iteraciones, msj, objetoAristas, aristas: arcos } = algoritmo(grafica);
   let aVis = aristas.get();
   let vVis = vertices.get();
 
-  console.log(solucion);
+  console.log(arcos);
 
-  if (solucion) {
-    function sleep(ms) {
-      return new Promise((resolve) => setTimeout(resolve, ms));
-    }
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
 
-    for (let i = 0; i < 1; i++) {
-      sleep(5000);
-    }
-    for (let i in iteraciones) {
-      for (let j in iteraciones[i]) {
-        let iteracion = iteraciones[i][j];
-        let vs = [iteracion.fuente, iteracion.sumidero];
+  for (let i = 0; i < 1; i++) {
+    sleep(5000);
+  }
+  for (let i in iteraciones) {
+    for (let j in iteraciones[i]) {
+      let iteracion = iteraciones[i][j];
+      let vs = [iteracion.fuente, iteracion.sumidero];
 
-        grafica.editarArista(
-          iteracion.etiqueta,
-          iteracion.peso,
-          iteracion.flujoMin,
-          iteracion.flujo,
-          iteracion.flujoMax
-        );
+      grafica.editarArista(
+        iteracion.etiqueta,
+        iteracion.peso,
+        iteracion.flujoMin,
+        iteracion.flujo,
+        iteracion.flujoMax
+      );
 
-        if (
-          iteracion.peso > iteracion.flujoMin &&
-          iteracion.peso < iteracion.flujoMax
-        ) {
-          for (let k in aVis) {
-            if (iteracion.etiqueta == aVis[k].title) {
-              aVis[k].color = "#ff499b";
-              aVis[k].label =
-                "[" +
-                (iteracion.flujoMin ? iteracion.flujoMin : 0) +
-                ", " +
-                (iteracion.flujoMax != Infinity && iteracion.flujoMax
-                  ? iteracion.flujoMax
-                  : "∞") +
-                ", $" +
-                objetoAristas[iteracion.etiqueta].costo +
-                "]\n" +
-                iteracion.peso;
-              break;
-            }
+      // if (arcos) {
+      for (let k in aVis) {
+        if (iteracion.etiqueta == aVis[k].title) {
+          if (arcos.includes(aVis[k].title)) {
+            aVis[k].color = "#ff499b";
+          } else {
+            aVis[k].color = "#6864cc";
           }
-        } else {
-          for (let k in aVis) {
-            if (iteracion.etiqueta == aVis[k].title) {
-              aVis[k].color = "#6864cc";
-              aVis[k].label =
-                "[" +
-                (iteracion.flujoMin ? iteracion.flujoMin : 0) +
-                ", " +
-                (iteracion.flujoMax != Infinity && iteracion.flujoMax
-                  ? iteracion.flujoMax
-                  : "∞") +
-                ", $" +
-                iteracion.costo +
-                "]\n" +
-                iteracion.peso;
-              break;
-            }
-          }
+          aVis[k].label =
+            "[" +
+            (iteracion.flujoMin ? iteracion.flujoMin : 0) +
+            ", " +
+            (iteracion.flujoMax != Infinity && iteracion.flujoMax
+              ? iteracion.flujoMax
+              : "∞") +
+            ", $" +
+            objetoAristas[iteracion.etiqueta].costo +
+            "]\n" +
+            iteracion.peso;
+          break;
         }
-
-        for (let j in vVis) {
-          if (vs.length < 1) break;
-
-          if (vs.includes(vVis[j].label)) {
-            vVis[j].group = "d";
-
-            vs.splice(vs.indexOf(vVis[j].label), 1);
-          }
-        }
-
-        vertices.update(vVis);
-        aristas.update(aVis);
       }
-      await sleep(3000);
+      // } else {
+      //   for (let k in aVis) {
+      //     if (iteracion.etiqueta == aVis[k].title) {
+      //       aVis[k].color = "#6864cc";
+      //       aVis[k].label =
+      //         "[" +
+      //         (iteracion.flujoMin ? iteracion.flujoMin : 0) +
+      //         ", " +
+      //         (iteracion.flujoMax != Infinity && iteracion.flujoMax
+      //           ? iteracion.flujoMax
+      //           : "∞") +
+      //         ", $" +
+      //         iteracion.costo +
+      //         "]\n" +
+      //         iteracion.peso;
+      //       break;
+      //     }
+      //   }
+      // }
+
+      for (let j in vVis) {
+        if (vs.length < 1) break;
+
+        if (vs.includes(vVis[j].label)) {
+          vVis[j].group = "d";
+
+          vs.splice(vs.indexOf(vVis[j].label), 1);
+        }
+      }
+
+      vertices.update(vVis);
+      aristas.update(aVis);
     }
+    await sleep(3000);
   }
   vaciarMensaje();
 

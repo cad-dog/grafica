@@ -21,7 +21,7 @@
     { "etiqueta": "s" }
   ],
   "aristas": [
-    { "etiqueta": "e1", "v1": "a", "v2": "b", "peso": "-8" },
+    { "etiqueta": "e1", "v1": "a", "v2": "b", "peso": "8" },
     { "etiqueta": "e2", "v1": "a", "v2": "e", "peso": "10" },
     { "etiqueta": "e3", "v1": "b", "v2": "f", "peso": "2" },
     { "etiqueta": "e4", "v1": "b", "v2": "c", "peso": "14" },

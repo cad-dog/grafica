@@ -1,0 +1,105 @@
+{
+  "vertices": [
+    { "etiqueta": "a" },
+    { "etiqueta": "b" },
+    { "etiqueta": "c" },
+    { "etiqueta": "d" },
+    { "etiqueta": "e" },
+    { "etiqueta": "f" },
+    { "etiqueta": "g" }
+  ],
+
+  "aristas": [
+    {
+      "etiqueta": "e1",
+      "v1": "a",
+      "v2": "b",
+      "flujoMax": "12",
+      "costo": "7"
+    },
+    {
+      "etiqueta": "e2",
+      "v1": "a",
+      "v2": "c",
+      "flujoMax": "26",
+      "costo": "1"
+    },
+    {
+      "etiqueta": "e3",
+      "v1": "a",
+      "v2": "d",
+      "flujoMax": "13",
+      "costo": "10"
+    },
+    {
+      "etiqueta": "e4",
+      "v1": "b",
+      "v2": "e",
+      "flujoMax": "26",
+      "costo": "3"
+    },
+    {
+      "etiqueta": "e5",
+      "v1": "c",
+      "v2": "b",
+      "flujoMax": "4",
+      "costo": "5"
+    },
+    {
+      "etiqueta": "e6",
+      "v1": "c",
+      "v2": "d",
+      "flujoMax": "40",
+      "costo": "2"
+    },
+    {
+      "etiqueta": "e7",
+      "v1": "c",
+      "v2": "e",
+      "flujoMax": "13",
+      "costo": "7"
+    },
+    {
+      "etiqueta": "e8",
+      "v1": "c",
+      "v2": "f",
+      "flujoMax": "19",
+      "costo": "6"
+    },
+    {
+      "etiqueta": "e9",
+      "v1": "d",
+      "v2": "b",
+      "flujoMax": "10",
+      "costo": "2"
+    },
+    {
+      "etiqueta": "e10",
+      "v1": "d",
+      "v2": "f",
+      "flujoMax": "26",
+      "costo": "3"
+    },
+    {
+      "etiqueta": "e11",
+      "v1": "e",
+      "v2": "g",
+      "flujoMax": "50",
+      "costo": "3"
+    },
+    {
+      "etiqueta": "e12",
+      "v1": "e",
+      "v2": "f",
+      "flujoMax": "30",
+      "costo": "10"
+    },
+    {
+      "etiqueta": "e13",
+      "v1": "f",
+      "v2": "g",
+      "flujoMax": "41",
+      "costo": "2"
+    }
+  ]
+}
